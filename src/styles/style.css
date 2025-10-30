@@ -1,0 +1,47 @@
+
+:root {
+    --primary-color: #FFFFFF;
+    --secondary-color: #F3DCBB;
+    --secondary-color_dark: #DBBD92;
+    --third-color: #482E21;
+    --third-color_light:#E6E6E6;
+    --third-color_dark: #2B1900;
+    --fourth-color: #000000;
+    --delete-btn-color: #930000;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+}
+.fourth_color {
+  background-color: var(--fourth-color);
+}
+
+h2 {
+  font-family: "Pattaya", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 2.8rem;
+}
+.dropdown .btn-secondary:hover{
+    background-color: #00000000;
+}
+
+.siderbar_left {
+  align-content: flex-start;
+  width: 15.625vw;
+  box-shadow: 4px 0 6px -3px rgba(0, 0, 0, 0.3);
+  height: 93.77vh;
+}
+
+.sidebar_option {
+  font-family: "Roboto", sans-serif;
+  width: 15.625vw;
+  height: 5vh;
+  text-align: center; 
+  align-content: center;
+}
+
+.sidebar_option:hover {
+  background-color: var(--secondary-color) ;
+}

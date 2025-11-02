@@ -1,0 +1,75 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Layout from "../layouts/Layout.astro";
+import loginImage from "../../public/loginimage.jpg";
+---
+
+<Layout>
+  <Navbar />
+
+  <div class="container-fluid p-0 d-flex flex-column" style="height: 100vh; max-height: 100vh; overflow: hidden;">
+    
+    <!-- Contenido principal -->
+    <div class="row flex-grow-1 m-0" style="min-height: 0;">
+      
+      <!-- Imagen -->
+      <div class="col-md-6 d-none d-md-block p-0">
+        <img 
+          src={loginImage.src}
+          alt="Café"
+          class="w-100 h-100"
+          style="object-fit: cover;"
+        >
+      </div>
+
+      <!-- Formulario -->
+      <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-white p-3">
+        <div class="w-100" style="max-width: 300px;">
+          <h2 class="mb-2 text-center fw-semibold" style="color: #5a3c2e; font-size: 1.4rem;">
+            Iniciar Sesión
+          </h2>
+
+          <form style="font-size: 0.8rem;">
+            <div class="mb-2">
+              <input type="email" class="form-control form-control-sm" placeholder="Correo electrónico">
+            </div>
+            <div class="mb-2">
+              <input type="password" class="form-control form-control-sm" placeholder="Contraseña">
+            </div>
+            <div class="d-flex justify-content-center mt-2">
+              <button 
+                type="submit"
+                class="btn text-white px-3 py-1 d-flex align-items-center justify-content-center gap-1"
+                style="background-color:#5a3c2e; font-size: 0.8rem;"
+              >
+                Login
+                <i class="bi bi-arrow-right"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer 
+      class="text-white d-flex justify-content-between align-items-center px-2"
+      style="background-color:#3b2a23; height:50px; flex-shrink: 0;"
+    >
+      <div class="d-flex align-items-center">
+        <img src="/EstacionCafeWhite.png" alt="Estación Café" width="90" class="me-2">
+      </div>
+
+      <small class="text-center flex-grow-1 mb-0" style="font-size: 0.7rem;">
+        © 2025 Estación Café. Todos los derechos reservados.
+      </small>
+
+      <div class="d-flex align-items-center">
+        <a href="#" class="text-white me-2 text-decoration-none" style="font-size: 0.75rem;">Contáctanos</a>
+        <a href="#" class="text-white me-1"><i class="bi bi-facebook" style="font-size: 0.8rem;"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-instagram" style="font-size: 0.8rem;"></i></a>
+      </div>
+    </footer>
+
+  </div>
+</Layout>

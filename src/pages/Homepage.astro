@@ -1,0 +1,53 @@
+---
+import Navbar from "../components/Navbar.astro";
+import Layout from "../layouts/Layout.astro";
+import loginImage from '../../public/loginimage.jpg'
+---
+
+<Layout>
+    <Navbar />
+
+    <div class="container py-4">
+       
+        <div class="row g-3">
+            
+            <div class="col-md-6">
+                <div class="menu-item position-relative shadow-lg rounded">
+                    <img src="home1.png" alt="Pedidos" class="img-fluid w-100" style="height: 200px; object-fit: cover;">
+                    <div class="position-absolute top-50 start-50 translate-middle text-center w-100">
+                        <h3 class="mb-0 fst-italic fw-semibold" style="color: #F3DCBB; font-size: 1.6rem;">Realizar Pedido</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="menu-item position-relative shadow-lg rounded">
+                    <img src="home2.png" alt="Mesa" class="img-fluid w-100" style="height: 200px; object-fit: cover;">
+                    <div class="position-absolute top-50 start-50 translate-middle text-center w-100">
+                        <h3 class="mb-0 fst-italic fw-semibold" style="color: #F3DCBB; font-size: 1.6rem;">Mesa</h3>
+                    </div>
+                </div>
+            </div>
+            
+          
+            <div class="col-md-6">
+                <div class="menu-item position-relative shadow-lg rounded">
+                    <img src="home3.png" alt="Para llevar" class="img-fluid w-100" style="height: 200px; object-fit: cover;">
+                    <div class="position-absolute top-50 start-50 translate-middle text-center w-100">
+                        <h3 class="mb-0 fst-italic fw-semibold" style="color: #F3DCBB; font-size: 1.6rem;">Para llevar</h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="menu-item position-relative shadow-lg rounded">
+                    <img src="home4.png" alt="Administración" class="img-fluid w-100" style="height: 200px; object-fit: cover;">
+                    <div class="position-absolute top-50 start-50 translate-middle text-center w-100">
+                        <h3 class="mb-0 fst-italic fw-semibold" style="color: #F3DCBB; font-size: 1.6rem;">Administración</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</Layout>

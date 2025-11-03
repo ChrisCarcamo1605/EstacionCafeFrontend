@@ -7,44 +7,55 @@ import loginImage from "../../public/loginimage.jpg";
 <Layout>
   <Navbar />
 
-  <div class="container-fluid p-0 d-flex flex-column" style="height: 100vh; max-height: 100vh; overflow: hidden;">
+  <div class="container-fluid d-flex flex-column min-vh-100 p-0">
     
-
-    <div class="row flex-grow-1 m-0" style="min-height: 0;">
+    <div class="row flex-grow-1 g-0">
       
-   
-      <div class="col-md-6 d-none d-md-block p-0">
+
+      <div class="col-md-6 d-none d-md-block position-relative">
         <img 
           src={loginImage.src}
           alt="Café"
           class="w-100 h-100"
-          style="object-fit: cover;"
+          style="object-fit: cover; filter: brightness(50%);" 
         >
       </div>
 
-     
-      <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-white p-3">
-        <div class="w-100" style="max-width: 300px;">
-          <h2 class="mb-2 text-center fw-semibold" style="color: #5a3c2e; font-size: 1.4rem;">
+      
+      <div class="col-md-6 d-flex flex-column justify-content-center align-items-center bg-white">
+        <div class="w-100 text-center" style="max-width: 340px;">
+          <h2 class="fw-semibold mb-3 text-center" style="color:#5a3c2e;">
             Iniciar Sesión
           </h2>
 
-          <form style="font-size: 0.8rem;">
-            <div class="mb-2">
-              <input type="email" class="form-control form-control-sm" placeholder="Correo electrónico">
-            </div>
-            <div class="mb-2">
-              <input type="password" class="form-control form-control-sm" placeholder="Contraseña">
-            </div>
-            <div class="d-flex justify-content-center mt-2">
-              <button 
-                type="submit"
-                class="btn text-white px-3 py-1 d-flex align-items-center justify-content-center gap-1"
-                style="background-color:#5a3c2e; font-size: 0.8rem;"
+          <form>
+            <div class="mb-3">
+              <input 
+                type="email" 
+                class="form-control form-control-lg" 
+                placeholder="Correo electrónico"
+                required
               >
-                Login
-                <i class="bi bi-arrow-right"></i>
+            </div>
+            <div class="mb-4">
+              <input 
+                type="password" 
+                class="form-control form-control-lg" 
+                placeholder="Contraseña"
+                required
+              >
+            </div>
+            <div class="d-grid gap-3">
+              <button 
+                type="submit" 
+                class="btn btn-lg text-white fw-semibold"
+                style="background-color:#5a3c2e;"
+              >
+                Ingresar <i class="bi bi-arrow-right ms-1"></i>
               </button>
+              <a href="#" class="text-decoration-none" style="color:#5a3c2e;">
+                ¿Olvidaste tu contraseña?
+              </a>
             </div>
           </form>
         </div>
@@ -53,23 +64,23 @@ import loginImage from "../../public/loginimage.jpg";
 
     
     <footer 
-      class="text-white d-flex justify-content-between align-items-center px-2"
-      style="background-color:#3b2a23; height:50px; flex-shrink: 0;"
+      class="text-white d-flex justify-content-between align-items-center px-3"
+      style="background-color:#3b2a23; height:50px;"
     >
       <div class="d-flex align-items-center">
         <img src="/EstacionCafeWhite.png" alt="Estación Café" width="90" class="me-2">
       </div>
 
-      <small class="text-center flex-grow-1 mb-0" style="font-size: 0.7rem;">
+      <small class="text-center flex-grow-1 mb-0" style="font-size: 0.8rem;">
         © 2025 Estación Café. Todos los derechos reservados.
       </small>
 
       <div class="d-flex align-items-center">
-        <a href="#" class="text-white me-2 text-decoration-none" style="font-size: 0.75rem;">Contáctanos</a>
-        <a href="#" class="text-white me-1"><i class="bi bi-facebook" style="font-size: 0.8rem;"></i></a>
-        <a href="#" class="text-white"><i class="bi bi-instagram" style="font-size: 0.8rem;"></i></a>
+        <a href="#" class="text-white me-2 text-decoration-none" style="font-size: 0.8rem;">Contáctanos</a>
+        <a href="#" class="text-white me-1"><i class="bi bi-facebook" style="font-size: 1rem;"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-instagram" style="font-size: 1rem;"></i></a>
       </div>
     </footer>
 
   </div>
-</Layout> 
+</Layout>

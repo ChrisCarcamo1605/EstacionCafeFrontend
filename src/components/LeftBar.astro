@@ -1,10 +1,10 @@
 ---
-const sideBar_options = [
-  "Consumibles",
-  "Ingrediente",
-  "Productos",
-  "Proveedores",
-];
+interface Props {
+  options?: string[];
+  title: string;
+}
+
+const { options = [], title } = Astro.props as Props;
 ---
 
 <div
@@ -27,15 +27,19 @@ const sideBar_options = [
   </div>
 
   <div class="mt-5 align-items-center">
-    <h2 class="text-center">Lugar</h2>
+    <h2 class="text-center">{title}</h2>
 
     <div class="d-flex pt-4 flex-column gap-3 align-items-center">
       {
-        sideBar_options.map((option) => (
-          <div class="sidebar_option">
-            <span>{option}</span>
-          </div>
-        ))
+        options && options.length > 0 ? (
+          options.map((option: string) => (
+            <div class="sidebar_option">
+              <span>{option}</span>
+            </div>
+          ))
+        ) : (
+          <span>No hay opciones disponibles</span>
+        )
       }
     </div>
   </div>

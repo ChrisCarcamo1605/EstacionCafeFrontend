@@ -2,16 +2,22 @@
 interface Props {
   options?: string[];
   title: string;
+  selectedOption?: string;
 }
 
-const { options = [], title } = Astro.props as Props;
+const { options = [], title, selectedOption = "" } = Astro.props;
 ---
+
+<!-- Cargar la fuente Pattaya solo para este componente -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pattaya&display=swap" rel="stylesheet">
 
 <div
   class="siderbar_left d-flex align-items-center flex-column border-end pt-3 px-3 z-2"
 >
   <div class="w-100 d-flex flex-row align-items-left">
-    <div role="button">
+    <div role="button" class="back-button">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -26,17 +32,23 @@ const { options = [], title } = Astro.props as Props;
     </div>
   </div>
 
-  <div class="mt-5 align-items-center">
-    <h2 class="text-center">{title}</h2>
+  <div class="mt-5 align-items-center w-100">
+    <!-- Título con fuente Pattaya -->
+    <h2 class="text-center pattaya-title">{title}</h2>
 
-    <div class="d-flex pt-4 flex-column gap-3 align-items-center">
+    <div class="d-flex pt-4 flex-column gap-0 align-items-center w-100">
       {
         options && options.length > 0 ? (
-          options.map((option: string) => (
-            <div class="sidebar_option">
-              <span>{option}</span>
-            </div>
-          ))
+          options.map((option: string) => {
+            const isSelected = selectedOption === option;
+            return (
+              <div class="option-container w-100">
+                <div class={`sidebar_option w-100 ${isSelected ? 'selected' : ''}`}>
+                  <span class="option-text">{option}</span>
+                </div>
+              </div>
+            );
+          })
         ) : (
           <span>No hay opciones disponibles</span>
         )
@@ -44,3 +56,65 @@ const { options = [], title } = Astro.props as Props;
     </div>
   </div>
 </div>
+
+<style is:global>
+  .pattaya-title {
+    font-family: 'Pattaya', serif;
+    font-size: 2.8rem;
+    font-weight: 400;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+  }
+  
+  .siderbar_left {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    width: 280px;
+  }
+  
+  .back-button {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .back-button:hover {
+    background-color: #e9ecef;
+  }
+  
+  .option-container {
+    width: 100% !important;
+  }
+  
+  .sidebar_option {
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    width: 100% !important;
+    text-align: center;
+    border-radius: 8px;
+    margin: 2px 0;
+    box-sizing: border-box;
+  }
+  
+  .sidebar_option:hover {
+    background-color: #f5f1ee !important;
+    color: #5d4037 !important;
+  }
+  
+  .sidebar_option.selected {
+    background-color: #f5f1ee !important;
+    color: #5d4037 !important;
+    font-weight: 600;
+    border-right: 4px solid #8d6e63 !important;
+  }
+  
+  .option-text {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+</style>

@@ -58,8 +58,6 @@ const productosMasRentables = json.analisis_productos
         <!-- Contenido principal dividido en dos columnas -->
         <div class="flex-grow-1 p-4">
             <div class="row">
-
-              
                 <!-- Columna izquierda: Tabla y Gráficos -->
                 <div class="col-md-9">
                   <!-- CONTENEDOR DE GRÁFICOS EN FILA -->
@@ -67,7 +65,7 @@ const productosMasRentables = json.analisis_productos
                         <!-- GRÁFICO DE PRODUCTOS RENTABLES -->
                         <div class="col-md-6">
                             <div class="card shadow-sm">
-                                <div class="card-header brown text-white text-center py-2">
+                                <div class="card-header text-white text-center py-2" style="background-color: #482E21;">
                                     <h5 class="mb-0">7 Productos Más Rentables</h5>
                                 </div>
                                 <div class="card-body p-3">
@@ -79,7 +77,7 @@ const productosMasRentables = json.analisis_productos
                         <!-- GRÁFICO DE ÁREA PARA VENTAS -->
                         <div class="col-md-6">
                             <div class="card shadow-sm">
-                                <div class="card-header brown text-white text-center py-2">
+                                <div class="card-header text-white text-center py-2" style="background-color: #482E21;">
                                     <h5 class="mb-0">Secuencia de Ventas</h5>
                                 </div>
                                 <div class="card-body p-3">
@@ -90,30 +88,35 @@ const productosMasRentables = json.analisis_productos
                     </div>
 
                     <br/>
-                    <table class="table table-bordered custom-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Producto</th>
-                                <th scope="col">Unidades Vendidas</th>
-                                <th scope="col">Ingresos Totales</th>
-                                <th scope="col">Rentabilidad</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                json.analisis_productos.map((analisis_productos: any) => (
-                                    <tr>
-                                        <th scope="row">{analisis_productos.producto}</th>
-                                        <td>{analisis_productos.unidades_vendidas}</td>
-                                        <td>{analisis_productos.ingresos_totales}</td>
-                                        <td>{analisis_productos.rentabilidad}</td>
-                                    </tr>
-                                ))
-                            }
-                        </tbody>
-                    </table>
-                    
-                    
+                    <!-- Tabla con nuevo estilo -->
+                    <div class="mt-5">
+                        <div class="card shadow-sm border-0" style="border-radius: 8px;">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead style="background-color: #482E21; color: white;">
+                                            <tr>
+                                                <th scope="col">Producto</th>
+                                                <th scope="col">Unidades Vendidas</th>
+                                                <th scope="col">Ingresos Totales</th>
+                                                <th scope="col">Rentabilidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {json.analisis_productos.map((analisis_productos: any) => (
+                                                <tr>
+                                                    <th scope="row">{analisis_productos.producto}</th>
+                                                    <td>{analisis_productos.unidades_vendidas}</td>
+                                                    <td>{analisis_productos.ingresos_totales}</td>
+                                                    <td>{analisis_productos.rentabilidad}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Elementos ocultos para pasar datos -->
                     <div 
@@ -132,25 +135,23 @@ const productosMasRentables = json.analisis_productos
                 <!-- Columna derecha: Predicciones en vertical (REDUCIDA) -->
                 <div class="col-md-3">
                     <div class="sticky-top" style="top: 20px;">
-                        <h5 class="mb-3 text-center brown-font">Predicciones</h5>
+                        <h5 class="mb-3 text-center" style="color: #482E21;">Predicciones</h5>
                         <div class="d-flex flex-column gap-3">
-                            {
-                                json.predicciones.map((prediccion: any) => (
-                                    <div class="card shadow-sm" style="max-width: 100%;">
-                                        <div class="card-header brown text-white py-1 px-2 text-center">
-                                            <strong class="fs-7">{prediccion.fecha}</strong>
-                                        </div>
-                                        <div class="card-body py-2 px-2 text-center">
-                                            <h6 class="card-title fw-bold mb-1 brown-font">
-                                                {prediccion.prediccion}<span>$</span>
-                                            </h6>
-                                            <p class="card-text mb-0 fs-8 text-muted">
-                                                {prediccion.dia_semana}
-                                            </p>
-                                        </div>
+                            {json.predicciones.map((prediccion: any) => (
+                                <div class="card shadow-sm" style="max-width: 100%;">
+                                    <div class="card-header text-white py-1 px-2 text-center" style="background-color: #482E21;">
+                                        <strong class="fs-7">{prediccion.fecha}</strong>
                                     </div>
-                                ))
-                            }
+                                    <div class="card-body py-2 px-2 text-center">
+                                        <h6 class="card-title fw-bold mb-1" style="color: #482E21;">
+                                            {prediccion.prediccion}<span>$</span>
+                                        </h6>
+                                        <p class="card-text mb-0 fs-8 text-muted">
+                                            {prediccion.dia_semana}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -163,37 +164,19 @@ const productosMasRentables = json.analisis_productos
 
 <style>
     /* Estilos específicos para la tabla que sobreescriben Bootstrap */
-    .custom-table thead tr {
-        background-color: var(--third-color) !important;
-    }
-    
-    .brown{
-        background-color: var(--third-color) !important;
-    }
-
-    .brown-font{
-      color: var(--third-color) !important;
-    }
-
-    .custom-table thead th {
-        background-color: var(--third-color) !important;
-        color: white !important;
-        border-color: var(--third-color_dark) !important;
+    .table th {
         font-weight: 600;
+        font-size: 0.875rem;
+        padding: 12px 16px;
     }
-    
-    .custom-table tbody tr {
-        background-color: var(--secondary-color) !important;
+
+    .table td {
+        padding: 12px 16px;
+        vertical-align: middle;
     }
-    
-    .custom-table tbody tr:hover {
-        background-color: var(--secondary-color_dark) !important;
-    }
-    
-    .custom-table tbody td,
-    .custom-table tbody th {
-        background-color: transparent !important;
-        border-color: var(--secondary-color_dark) !important;
+
+    .card {
+        border-radius: 8px;
     }
 
     /* Estilos para las cards de predicciones más pequeñas */
@@ -208,6 +191,15 @@ const productosMasRentables = json.analisis_productos
     /* Ajustar altura de gráficos para que quepan en las cards */
     #productos-chart, #area-chart {
         height: 300px !important;
+    }
+
+    /* Estilos para el fondo de las filas de la tabla */
+    .table tbody tr {
+        background-color: white;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
     }
 </style>
 
@@ -375,7 +367,7 @@ const productosMasRentables = json.analisis_productos
                 // Mostrar estadísticas básicas en consola
                 console.log('Estadísticas de Ventas:');
                 console.log('- Total de ventas:', montosVenta.length);
-                console.log('- Monto promedio:', (montosVenta.reduce(function(a: number, b: number) { return a + b; }, 0) / montosVenta.length).toFixed(2));
+                console.log('- Monto promedio:', (montosVenta.reduce(function(a: any, b: any) { return a + b; }, 0) / montosVenta.length).toFixed(2));
                 console.log('- Monto mínimo:', Math.min(...montosVenta));
                 console.log('- Monto máximo:', Math.max(...montosVenta));
             }

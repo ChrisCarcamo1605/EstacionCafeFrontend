@@ -1,11 +1,15 @@
 ---
+import '../styles/style.css'
+
 interface Props {
   options?: string[];
   title: string;
+  selectedOption?: string;
 }
 
-const { options = [], title } = Astro.props as Props;
+const { options = [], title, selectedOption = "" } = Astro.props;
 ---
+
 
 <div
   class="siderbar_left d-flex align-items-center flex-column border-end pt-3 px-3 z-2"
@@ -27,7 +31,7 @@ const { options = [], title } = Astro.props as Props;
   </div>
 
   <div class="mt-5 align-items-center">
-    <h2 class="text-center">{title}</h2>
+    <h2 class="text-center pattaya_title">{title}</h2>
 
     <div class="d-flex pt-4 flex-column gap-3 align-items-center">
       {

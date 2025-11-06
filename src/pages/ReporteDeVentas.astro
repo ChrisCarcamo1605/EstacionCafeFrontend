@@ -1,0 +1,201 @@
+---
+// src/pages/reportes-ventas.astro
+import Layout from "../layouts/Layout.astro";
+import LeftSidebar from "../components/LeftBar.astro";
+import Navbar from "../components/Navbar.astro";
+
+// Importar el CSS
+import "../styles/style.css";
+
+// Endpoint para obtener los datos de facturas
+const response = await fetch("http://localhost:3484/api/bills", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+let jsonData = null;
+if (response.ok) {
+    jsonData = await response.json();
+    console.log("Datos de facturas:", jsonData.data);
+} else {
+    console.error("Error fetching bills data:", response.statusText);
+}
+
+// Función para formatear fecha a formato local
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES');
+};
+
+// Función para obtener el día de la semana en español
+const getDayOfWeek = (dateString: string) => {
+    const date = new Date(dateString);
+    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    return days[date.getDay()];
+};
+
+// Función para obtener la hora formateada
+const getTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+};
+
+// Procesar los datos del endpoint
+const facturas = jsonData?.data || [];
+---
+
+<Layout title="Reportes de Ventas - Estación Café">
+    <!-- Navbar en la parte superior -->
+    <Navbar />
+    
+    <div class="d-flex">
+        <!-- Sidebar a la izquierda -->
+        <LeftSidebar 
+            title="Resumen" 
+            options={["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"]}
+            selectedOption="Reporte de Ventas"  
+        />
+        
+        <!-- Contenido principal -->
+        <div class="flex-grow-1 p-4">
+            <!-- Header de la página -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="brown-font mb-0">Reportes de Ventas</h2>
+            </div>
+
+            <!-- Filtros de fecha -->
+            <div class="row mb-4">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="fechaDesde" class="form-label brown-font fw-semibold">Fecha Desde</label>
+                        <input type="date" class="form-control" id="fechaDesde" />
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="fechaHasta" class="form-label brown-font fw-semibold">Fecha Hasta</label>
+                        <input type="date" class="form-control" id="fechaHasta" />
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn brown text-white w-100">
+                        General Reporte
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabla de reportes -->
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-bordered custom-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">ID</th>
+                                    <th scope="col" class="text-center">Cliente</th>
+                                    <th scope="col" class="text-center">Fecha</th>
+                                    <th scope="col" class="text-center">Día</th>
+                                    <th scope="col" class="text-center">Hora</th>
+                                    <th scope="col" class="text-center">Caja</th>
+                                    <th scope="col" class="text-center">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {facturas.map((factura: any) => (
+                                    <tr>
+                                        <td class="text-center">{factura.billId}</td>
+                                        <td class="text-center">{factura.customer}</td>
+                                        <td class="text-center">{formatDate(factura.date)}</td>
+                                        <td class="text-center">{getDayOfWeek(factura.date)}</td>
+                                        <td class="text-center">{getTime(factura.date)}</td>
+                                        <td class="text-center">{factura.cashRegister?.number || 'CAJA-001'}</td>
+                                        <td class="text-center">${parseFloat(factura.total).toFixed(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style is:global>
+    /* Estilos específicos para la tabla que sobreescriben Bootstrap */
+    .custom-table thead tr {
+        background-color: var(--third-color) !important;
+    }
+    
+    .brown{
+        background-color: var(--third-color) !important;
+    }
+
+    .brown-font{
+      color: var(--third-color) !important;
+    }
+
+    .custom-table thead th {
+        background-color: var(--third-color) !important;
+        color: white !important;
+        border-color: var(--third-color_dark) !important;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .custom-table tbody tr {
+        background-color: var(--secondary-color) !important;
+    }
+    
+    .custom-table tbody tr:hover {
+        background-color: var(--secondary-color_dark) !important;
+    }
+    
+    .custom-table tbody td,
+    .custom-table tbody th {
+        background-color: transparent !important;
+        border-color: var(--secondary-color_dark) !important;
+        padding: 0.6rem 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    /* Estilos para los botones y formularios */
+    .btn.brown {
+        background-color: var(--third-color) !important;
+        border-color: var(--third-color) !important;
+    }
+
+    .btn.brown:hover {
+        background-color: var(--third-color_dark) !important;
+        border-color: var(--third-color_dark) !important;
+    }
+
+    .form-control:focus {
+        border-color: var(--third-color) !important;
+        box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25) !important;
+    }
+
+    /* Paginación personalizada */
+    .page-link.brown-font {
+        color: var(--third-color) !important;
+    }
+
+    .page-link.brown-bg {
+        background-color: var(--third-color) !important;
+        border-color: var(--third-color) !important;
+    }
+
+    .page-link:hover {
+        color: var(--third-color) !important;
+    }
+
+    /* Responsive */
+    .table-responsive {
+        border-radius: 0.375rem;
+        overflow: hidden;
+    }
+</style>

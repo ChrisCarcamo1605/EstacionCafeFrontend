@@ -1,0 +1,384 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LeftSidebar from "../components/LeftBar.astro";
+import Navbar from "../components/Navbar.astro";
+import ApexCharts from "apexcharts";
+
+// Importar el CSS
+import "../styles/style.css";
+
+const response = await fetch("http://localhost:8000/api/sales-data", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+const response1 = await fetch("http://localhost:3484/api/bills",{
+    method: "GET",
+    headers:{
+      "Content-Type": "application/json",
+    },
+});
+
+let json1 = null;
+if (response1.ok) {
+    json1 = await response1.json();
+    console.log(json1.data);
+} else {
+    //console.error("Error fetching data:", response1.statusText);
+}
+
+
+let json = null;
+if (response.ok) {
+    json = await response.json();
+    //console.log(json.analisis_productos);
+} else {
+    console.error("Error fetching data:", response.statusText);
+}
+
+// Ordenar por rentabilidad y tomar los 5 más rentables
+const productosMasRentables = json.analisis_productos
+    .sort((a: any, b: any) => b.rentabilidad - a.rentabilidad)
+    .slice(0, 7);
+---
+
+<Layout>
+    <!-- Navbar en la parte superior -->
+    <Navbar />
+    
+    <div class="d-flex">
+        <!-- Sidebar a la izquierda -->
+        <LeftSidebar 
+            title="Resumen" 
+            options={["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"]}
+            selectedOption="Estadisticas de Ventas"  
+        />
+        <!-- Contenido principal dividido en dos columnas -->
+        <div class="flex-grow-1 p-4">
+            <div class="row">
+
+              
+                <!-- Columna izquierda: Tabla y Gráficos -->
+                <div class="col-md-9">
+                  <!-- CONTENEDOR DE GRÁFICOS EN FILA -->
+                    <div class="row mt-4">
+                        <!-- GRÁFICO DE PRODUCTOS RENTABLES -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header brown text-white text-center py-2">
+                                    <h5 class="mb-0">7 Productos Más Rentables</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div id="productos-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GRÁFICO DE ÁREA PARA VENTAS -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header brown text-white text-center py-2">
+                                    <h5 class="mb-0">Secuencia de Ventas</h5>
+                                </div>
+                                <div class="card-body p-3">
+                                    <div id="area-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br/>
+                    <table class="table table-bordered custom-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Unidades Vendidas</th>
+                                <th scope="col">Ingresos Totales</th>
+                                <th scope="col">Rentabilidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                json.analisis_productos.map((analisis_productos: any) => (
+                                    <tr>
+                                        <th scope="row">{analisis_productos.producto}</th>
+                                        <td>{analisis_productos.unidades_vendidas}</td>
+                                        <td>{analisis_productos.ingresos_totales}</td>
+                                        <td>{analisis_productos.rentabilidad}</td>
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                    
+                    
+                    
+                    <!-- Elementos ocultos para pasar datos -->
+                    <div 
+                        id="chart-data" 
+                        data-productos={JSON.stringify(productosMasRentables.map((p: any) => p.producto))}
+                        data-rentabilidades={JSON.stringify(productosMasRentables.map((p: any) => p.rentabilidad))}
+                        style="display: none;"
+                    ></div>
+                    <div 
+                        id="area-data" 
+                        data-ventas={JSON.stringify(json1.data.map((item: any) => parseFloat(item.total)))}
+                        style="display: none;"
+                    ></div>
+                </div>
+                
+                <!-- Columna derecha: Predicciones en vertical (REDUCIDA) -->
+                <div class="col-md-3">
+                    <div class="sticky-top" style="top: 20px;">
+                        <h5 class="mb-3 text-center brown-font">Predicciones</h5>
+                        <div class="d-flex flex-column gap-3">
+                            {
+                                json.predicciones.map((prediccion: any) => (
+                                    <div class="card shadow-sm" style="max-width: 100%;">
+                                        <div class="card-header brown text-white py-1 px-2 text-center">
+                                            <strong class="fs-7">{prediccion.fecha}</strong>
+                                        </div>
+                                        <div class="card-body py-2 px-2 text-center">
+                                            <h6 class="card-title fw-bold mb-1 brown-font">
+                                                {prediccion.prediccion}<span>$</span>
+                                            </h6>
+                                            <p class="card-text mb-0 fs-8 text-muted">
+                                                {prediccion.dia_semana}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</Layout>
+
+<style>
+    /* Estilos específicos para la tabla que sobreescriben Bootstrap */
+    .custom-table thead tr {
+        background-color: var(--third-color) !important;
+    }
+    
+    .brown{
+        background-color: var(--third-color) !important;
+    }
+
+    .brown-font{
+      color: var(--third-color) !important;
+    }
+
+    .custom-table thead th {
+        background-color: var(--third-color) !important;
+        color: white !important;
+        border-color: var(--third-color_dark) !important;
+        font-weight: 600;
+    }
+    
+    .custom-table tbody tr {
+        background-color: var(--secondary-color) !important;
+    }
+    
+    .custom-table tbody tr:hover {
+        background-color: var(--secondary-color_dark) !important;
+    }
+    
+    .custom-table tbody td,
+    .custom-table tbody th {
+        background-color: transparent !important;
+        border-color: var(--secondary-color_dark) !important;
+    }
+
+    /* Estilos para las cards de predicciones más pequeñas */
+    .fs-7 {
+        font-size: 0.8rem !important;
+    }
+    
+    .fs-8 {
+        font-size: 0.75rem !important;
+    }
+
+    /* Ajustar altura de gráficos para que quepan en las cards */
+    #productos-chart, #area-chart {
+        height: 300px !important;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // ========== GRÁFICO DE PRODUCTOS RENTABLES ==========
+        const chartDataElement = document.getElementById('chart-data');
+        
+        if (chartDataElement) {
+            const productosData = chartDataElement.dataset.productos;
+            const rentabilidadesData = chartDataElement.dataset.rentabilidades;
+
+            if (productosData && rentabilidadesData) {
+                const productos = JSON.parse(productosData);
+                const rentabilidades = JSON.parse(rentabilidadesData);
+
+                var productosOptions = {
+                  series: [{
+                  name: 'Rentabilidad',
+                  data: rentabilidades
+                }],
+                  chart: {
+                  height: 300,
+                  type: 'bar',
+                },
+                colors: ['#482E21'],
+                plotOptions: {
+                  bar: {
+                    borderRadius: 8,
+                    dataLabels: {
+                      position: 'top',
+                    },
+                  }
+                },
+                dataLabels: {
+                  enabled: true,
+                  formatter: function (val: number) {
+                    return val.toFixed(1) + "%";
+                  },
+                  offsetY: -15,
+                  style: {
+                    fontSize: '10px',
+                    colors: ['#482E21']
+                  }
+                },
+                xaxis: {
+                  categories: productos,
+                  labels: {
+                    rotate: -45,
+                    style: {
+                        fontSize: '10px',
+                        fontFamily: 'Roboto, sans-serif'
+                    }
+                  }
+                },
+                yaxis: {
+                  labels: {
+                    show: false,
+                  }
+                },
+                grid: {
+                  padding: {
+                    top: 30,
+                    bottom: 10
+                  }
+                }
+                };
+
+                var productosChart = new ApexCharts(document.querySelector("#productos-chart"), productosOptions);
+                productosChart.render();
+            }
+        }
+
+        // ========== GRÁFICO DE ÁREA PARA VENTAS INDIVIDUALES ==========
+        const areaDataElement = document.getElementById('area-data');
+        
+        if (areaDataElement) {
+            const ventasData = areaDataElement.dataset.ventas;
+
+            if (ventasData) {
+                const montosVenta = JSON.parse(ventasData);
+                
+                // Crear secuencia numérica para el eje X (venta 1, venta 2, venta 3, etc.)
+                const secuenciaVentas = montosVenta.map((monto: any, index: number) => index + 1);
+                
+                var areaOptions = {
+                  series: [{
+                    name: 'Monto de Venta',
+                    data: montosVenta
+                  }],
+                  chart: {
+                    type: 'area',
+                    stacked: false,
+                    height: 300,
+                    zoom: {
+                      enabled: false
+                    },
+                    toolbar: {
+                      show: false
+                    }
+                  },
+                  colors: ['#8B4513'],
+                  dataLabels: {
+                    enabled: false
+                  },
+                  markers: {
+                    size: 3,
+                    colors: ['#8B4513'],
+                    strokeColors: '#fff',
+                    strokeWidth: 1,
+                  },
+                  fill: {
+                    type: 'gradient',
+                    gradient: {
+                      shadeIntensity: 1,
+                      inverseColors: false,
+                      opacityFrom: 0.6,
+                      opacityTo: 0.2,
+                      stops: [0, 90, 100]
+                    },
+                  },
+                  yaxis: {
+                    labels: {
+                      formatter: function (val: number) {
+                        return '$' + val.toFixed(0);
+                      },
+                      style: {
+                        fontSize: '10px'
+                      }
+                    },
+                  },
+                  xaxis: {
+                    tickAmount: 5,
+                    labels: {
+                      style: {
+                        fontSize: '10px'
+                      }
+                    }
+                  },
+                  tooltip: {
+                    shared: false,
+                    y: {
+                      formatter: function (val: number) {
+                        return '$' + val.toFixed(2);
+                      }
+                    },
+                    x: {
+                      formatter: function (val: string) {
+                        return 'Venta #' + val;
+                      }
+                    }
+                  },
+                  grid: {
+                    borderColor: '#e7e7e7',
+                    padding: {
+                      top: 10,
+                      bottom: 10
+                    }
+                  }
+                };
+
+                var areaChart = new ApexCharts(document.querySelector("#area-chart"), areaOptions);
+                areaChart.render();
+
+                // Mostrar estadísticas básicas en consola
+                console.log('Estadísticas de Ventas:');
+                console.log('- Total de ventas:', montosVenta.length);
+                console.log('- Monto promedio:', (montosVenta.reduce(function(a: number, b: number) { return a + b; }, 0) / montosVenta.length).toFixed(2));
+                console.log('- Monto mínimo:', Math.min(...montosVenta));
+                console.log('- Monto máximo:', Math.max(...montosVenta));
+            }
+        }
+    });
+</script>

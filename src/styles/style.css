@@ -10,7 +10,7 @@
     --delete-btn-color: #930000;
 }
 
-body {
+html,body {
   font-family: "Roboto", sans-serif;
 }
 .fourth_color {

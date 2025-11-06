@@ -17,12 +17,20 @@ body {
   background-color: var(--fourth-color);
 }
 
-h2 {
+.pattaya_title {
   font-family: "Pattaya", sans-serif;
-  font-weight: 400;
+  font-weight: 200;
+  font-style: normal;
+  font-size: 3rem;
+}
+
+.pattaya_subtitle {
+  font-family: "Pattaya", sans-serif;
+  font-weight: 200;
   font-style: normal;
   font-size: 2.8rem;
 }
+
 .dropdown .btn-secondary:hover{
     background-color: #00000000;
 }

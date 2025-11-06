@@ -53,7 +53,3 @@ body {
 .sidebar_option:hover {
   background-color: var(--secondary-color) ;
 }
-
-.us_table_header{
-    background-color: var(--third-color) !important;
-}

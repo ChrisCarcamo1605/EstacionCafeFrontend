@@ -1,0 +1,215 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import LeftBar from "../components/LeftBar.astro";
+
+const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
+
+// Fetch data from the suppliers endpoint
+const response = await fetch("http://localhost:3484/api/suppliers", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+let suppliersData = null;
+if (response.ok) {
+    const result = await response.json();
+    suppliersData = result.data;
+    console.log('Datos de proveedores:', suppliersData);
+} else {
+    console.error("Error fetching suppliers data:", response.statusText);
+}
+---
+
+<Layout>
+    <div class="d-flex flex-column" style="min-height: 100vh;">
+        <!-- Navbar que cubre toda la parte superior -->
+        <Navbar />
+
+        <div class="d-flex flex-grow-1">
+            <!-- LeftBar debajo del Navbar -->
+            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" />
+
+            <!-- Contenido principal -->
+            <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
+                <div class="p-4">
+                    <!-- Título Proveedores y campos -->
+                    <div class="d-flex align-items-start gap-5">
+                        <!-- Sección izquierda con título y campos -->
+                        <div style="width: calc(100% - 300px);">
+                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Proveedores</h1>
+
+                            <!-- Primera fila de campos en horizontal -->
+                            <div class="d-flex gap-4 mb-3">
+                                <!-- Campo ID -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+
+                                <!-- Campo Nombre -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+                                
+                                <!-- Campo Teléfono -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Teléfono</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+                            </div>
+
+                            <!-- Segunda fila de campos en horizontal -->
+                            <div class="d-flex gap-4">
+                                <!-- Campo Email -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Email</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+
+                                <!-- Campo Estado (select) -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Estado</label>
+                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                        <option selected>Seleccionar</option>
+                                        <option>Activo</option>
+                                        <option>Inactivo</option>
+                                    </select>
+                                </div>
+
+                                <!-- Campo Notas -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Notas</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+                            </div>
+
+                            <!-- Tercera fila con botones Ordenar, Filtrar y Mostrar Inactivos -->
+                            <div class="d-flex gap-4 mt-3 align-items-center">
+                                <div>
+                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                                        </svg>
+                                        Ordenar
+                                    </button>
+                                </div>
+                                <div>
+                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                                        </svg>
+                                        Filtrar
+                                    </button>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 mt-4">
+                                    <span class="fw-bold" style="font-family: 'Roboto', sans-serif;">Mostrar Inactivos</span>
+                                    <input type="radio" class="form-check-input" style="border-radius: 50%;" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de datos -->
+                    <div class="mt-5">
+                        <div class="card shadow-sm border-0" style="border-radius: 8px;">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead style="background-color: #482E21; color: white;">
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Teléfono</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {suppliersData && suppliersData.map((supplier: any) => (
+                                                <tr>
+                                                    <th scope="row">{supplier.supplierId}</th>
+                                                    <td>{supplier.name}</td>
+                                                    <td>{supplier.phone}</td>
+                                                    <td>{supplier.email}</td>
+                                                    <td>
+                                                        <span class={`badge ${supplier.active ? 'bg-success' : 'bg-danger'}`}>
+                                                            {supplier.active ? 'Activo' : 'Inactivo'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones en la esquina superior derecha - Bajados y separados del borde -->
+                <div class="position-absolute" style="top: 100px; right: 40px;">
+                    <div class="d-flex flex-column gap-3">
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                            Agregar
+                        </button>
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #930000; color: white; border: 1px solid #930000; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
+    }
+
+    .form-label {
+        font-size: 1rem;
+    }
+
+    .form-check-input {
+        margin-top: 0;
+        border-radius: 50%;
+    }
+
+    .table th {
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 12px 16px;
+    }
+
+    .table td {
+        padding: 12px 16px;
+        vertical-align: middle;
+    }
+
+    .btn {
+        border-radius: 8px;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+</style>

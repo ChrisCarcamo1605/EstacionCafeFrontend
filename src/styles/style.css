@@ -1,16 +1,21 @@
-
 :root {
-    --primary-color: #FFFFFF;
-    --secondary-color: #F3DCBB;
-    --secondary-color_dark: #DBBD92;
-    --third-color: #482E21;
-    --third-color_light:#E6E6E6;
-    --third-color_dark: #2B1900;
-    --fourth-color: #000000;
-    --delete-btn-color: #930000;
+  --primary-color: #ffffff;
+  --secondary-color: #f3dcbb;
+  --secondary-color_dark: #dbbd92;
+  --third-color: #482e21;
+  --third-color_light: #e6e6e6;
+  --third-color_dark: #2b1900;
+  --fourth-color: #000000;
+  --delete-btn-color: #930000;
 }
 
-html,body {
+a{
+  color: var(--fourth-color);
+  text-decoration: none;
+}
+
+html,
+body {
   font-family: "Roboto", sans-serif;
 }
 .fourth_color {
@@ -31,8 +36,8 @@ html,body {
   font-size: 2.4rem;
 }
 
-.dropdown .btn-secondary:hover{
-    background-color: #00000000;
+.dropdown .btn-secondary:hover {
+  background-color: #00000000;
 }
 
 .siderbar_left {
@@ -46,11 +51,134 @@ html,body {
   font-family: "Roboto", sans-serif;
   width: 15.625vw;
   height: 5vh;
-  text-align: center; 
+  text-align: center;
   align-content: center;
   cursor: pointer;
 }
 
 .sidebar_option:hover {
-  background-color: var(--secondary-color) ;
+  background-color: var(--secondary-color);
 }
+
+.menu-item {
+  width: 100%;
+  height: 320px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+  border: none !important;
+}
+
+.menu-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.menu-item img {
+  transition: transform 0.5s ease;
+  background-color: #1D0E00;
+  filter: brightness(0.9);
+}
+
+.menu-item:hover img {
+  transform: scale(1.05);
+  filter: brightness(0.8);
+}
+
+.pattaya-text {
+  font-family: "Pattaya", sans-serif;
+  color: #f3dcbb;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  font-size: 2.5rem;
+  font-weight: normal;
+  font-style: normal;
+}
+
+.container-expanded {
+  max-width: 1400px;
+}
+
+.img-expanded {
+  height: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .pattaya-text {
+    font-size: 1.5rem;
+  }
+
+  .img-expanded {
+    height: 220px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .pattaya-text {
+    font-size: 1.3rem;
+  }
+
+  .img-expanded {
+    height: 180px !important;
+  }
+}
+
+
+  .admin-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .admin-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .color-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #1b0d00;
+    opacity: 0.4;
+    z-index: 1;
+  }
+
+  .card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--primary-color);
+    padding: 0.5rem;
+    z-index: 2;
+  }
+
+  .card-title-overlay {
+    font-family: "Pattaya", sans-serif;
+    font-weight: 400;
+    font-size: 2.5rem;
+    margin: 0;
+    color: var(--secondary-color);
+  }
+
+  @media (max-width: 768px) {
+    .card-title-overlay {
+      font-size: 1.8rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .card-title-overlay {
+      font-size: 1.5rem;
+    }
+  }
+
+

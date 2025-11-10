@@ -1,7 +1,12 @@
 ---
+export const prerender = false;
 import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
 import loginImage from "../../public/loginimage.jpg";
+
+// Obtener el mensaje de error de la URL
+const url = new URL(Astro.request.url);
+const errorMessage = url.searchParams.get('error');
 ---
 
 <Layout>
@@ -26,18 +31,27 @@ import loginImage from "../../public/loginimage.jpg";
             Iniciar Sesión
           </h2>
 
-          <form>
+          {errorMessage && (
+            <div class="alert alert-danger alert-dismissible fade show p-2 d-flex justify-content-center align-items-center gap-2" role="alert">
+              <p class="m-0">{errorMessage}</p>
+              <button type="button" class="btn-close align-self-center pt-1 pe-3 pe-4" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          )}
+
+          <form method="POST" action="/api/login">
             <div class="mb-3">
               <input
-                type="email"
+                type="text"
+                name="username"
                 class="form-control form-control-lg"
-                placeholder="Correo electrónico"
+                placeholder="Usuario"
                 required
               />
             </div>
             <div class="mb-4">
               <input
                 type="password"
+                name="password"
                 class="form-control form-control-lg"
                 placeholder="Contraseña"
                 required
@@ -92,4 +106,5 @@ import loginImage from "../../public/loginimage.jpg";
       </div>
     </footer>
   </div>
+
 </Layout>

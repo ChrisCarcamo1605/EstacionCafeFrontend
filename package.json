@@ -15,6 +15,10 @@
     "astro": "^5.15.3",
     "astro-bootstrap": "^0.7.2",
     "bootstrap": "^5.3.8",
+    "jsonwebtoken": "^9.0.2",
     "preact": "^10.27.2"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10"
   }
 }

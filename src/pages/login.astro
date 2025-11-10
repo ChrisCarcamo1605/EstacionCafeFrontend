@@ -4,6 +4,10 @@ import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
 import loginImage from "../../public/loginimage.jpg";
 
+
+
+
+
 // Obtener el mensaje de error de la URL
 const url = new URL(Astro.request.url);
 const errorMessage = url.searchParams.get('error');

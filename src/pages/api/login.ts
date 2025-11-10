@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({request,redirect,cookies})=>{
     }
 
     try{
-        // console.log('Haciendo fetch a:', NODE_API_URL);
+     
         const apiResponse = await fetch(NODE_API_URL,{
             method: 'POST',
             headers: {

@@ -8,6 +8,13 @@ import LeftBar from "../components/LeftBar.astro";
 ---
 
 <Layout>
-    <Navbar></Navbar>
-    <LeftBar title="Menu Principal" />
+  <Navbar />
+  <LeftBar title="Menu Principal" />
+
+  <script>
+    document.addEventListener("DOMContentLoaded", (a) => {
+        
+      window.location.href = "/home";
+    });
+  </script>
 </Layout>

@@ -1,8 +1,8 @@
 ---
 export const prerender = false;
-import Layout from "../layouts/Layout.astro";
-import Navbar from "../components/Navbar.astro";
-import LeftBar from "../components/LeftBar.astro";
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/Navbar.astro";
+import LeftBar from "../../../components/LeftBar.astro";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 ---
@@ -19,11 +19,11 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
                 <div class="p-4">
-                    <!-- Título Consumibles y campos -->
+                    <!-- Título Ingredientes y campos -->
                     <div class="d-flex align-items-start gap-5">
                         <!-- Sección izquierda con título y campos -->
                         <div style="width: calc(100% - 300px);">
-                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Consumibles</h1>
+                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Ingredientes</h1>
 
                             <!-- Primera fila de campos en horizontal -->
                             <div class="d-flex gap-4 mb-3">
@@ -39,63 +39,49 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
 
-                                <!-- Campo Tipo (select) -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Tipo</label>
-                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                        <option selected>Seleccionar</option>
-                                        <option>Crema</option>
-                                        <option>Café</option>
-                                        <option>Frutas</option>
-                                        <option>Desechables</option>
-                                        <option>Endulizantes</option>
-                                    </select>
-                                </div>
-
-                                <!-- Campo Unidad de Medida (select) -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Unidad de Medida</label>
-                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                        <option selected>Seleccionar</option>
-                                        <option>mil</option>
-                                        <option>gramos</option>
-                                        <option>litros</option>
-                                        <option>unidad</option>
-                                        <option>kg</option>
-                                    </select>
-                                </div>
-
                                 <!-- Campo Cantidad -->
                                 <div class="flex-grow-1">
                                     <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Cantidad</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+
+                                <!-- Campo Consumible ID -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Consumible ID</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+
+                                <!-- Campo Producto ID -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Producto ID</label>
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
                             </div>
 
                             <!-- Segunda fila de campos en horizontal -->
                             <div class="d-flex gap-4">
-                                <!-- Campo Precio Costos -->
+                                <!-- Campo Consumible -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Precio Costos</label>
-                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Proveedor (select) -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Proveedor</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Consumible</label>
                                     <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
                                         <option selected>Seleccionar</option>
-                                        <option>La Salud</option>
-                                        <option>Proveedor A</option>
-                                        <option>Proveedor B</option>
-                                        <option>Proveedor C</option>
+                                        <option>Crema Batida Botella</option>
+                                        <option>Café Molido</option>
+                                        <option>Azúcar</option>
+                                        <option>Leche</option>
                                     </select>
                                 </div>
 
-                                <!-- Campo Descripcion -->
+                                <!-- Campo Producto -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Descripcion</label>
-                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Producto</label>
+                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                        <option selected>Seleccionar</option>
+                                        <option>Café Americano</option>
+                                        <option>Capuchino</option>
+                                        <option>Latte</option>
+                                        <option>Expreso</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -126,35 +112,50 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
                     </div>
 
                     <!-- Tabla de datos -->
-                    <div class="mt-2  h-100">
+                    <div class="mt-2">
                         <div class="card shadow-sm border-0" style="border-radius: 8px;">
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table rem-5">
+                                    <table class="table">
                                         <thead style="background-color: #482E21; color: white;">
                                         <tr>
                                             <th scope="col">ID</th>
                                             <th scope="col">Nombre</th>
-                                            <th scope="col">Tipo</th>
-                                            <th scope="col">Unidad de Medida</th>
                                             <th scope="col">Cantidad</th>
-                                            <th scope="col">Precio Costo</th>
-                                            <th scope="col">Proveedor</th>
-                                            <th scope="col">Descripcion</th>
+                                            <th scope="col">Consumible ID</th>
+                                            <th scope="col">Producto ID</th>
+                                            <th scope="col">Consumible</th>
+                                            <th scope="col">Producto</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <th scope="row">12</th>
+                                            <th scope="row">1</th>
+                                            <td>Crema Batida</td>
+                                            <td>0.05</td>
+                                            <td>12</td>
+                                            <td>5</td>
                                             <td>Crema Batida Botella</td>
-                                            <td>crema</td>
-                                            <td>vom</td>
-                                            <td>780</td>
-                                            <td>$575</td>
-                                            <td>La Salud</td>
-                                            <td>Y Crema Batida para decoraciones</td>
+                                            <td>Capuchino</td>
                                         </tr>
-                                    
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>Café Molido</td>
+                                            <td>0.02</td>
+                                            <td>15</td>
+                                            <td>5</td>
+                                            <td>Café Molido</td>
+                                            <td>Capuchino</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">3</th>
+                                            <td>Leche</td>
+                                            <td>0.15</td>
+                                            <td>18</td>
+                                            <td>5</td>
+                                            <td>Leche Entera</td>
+                                            <td>Capuchino</td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -186,7 +187,7 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
                             </svg>
                             Subir Imagen
                         </button>
-                        <div class="text-muted text-end small" style="font-family: 'Roboto', sans-serif;">cremaBatida.jpg</div>
+                        <div class="text-muted text-end small" style="font-family: 'Roboto', sans-serif;">ingredientes.jpg</div>
                     </div>
                 </div>
             </div>

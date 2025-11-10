@@ -1,27 +1,10 @@
 ---
 export const prerender = false;
-import Layout from "../layouts/Layout.astro";
-import Navbar from "../components/Navbar.astro";
-import LeftBar from "../components/LeftBar.astro";
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/Navbar.astro";
+import LeftBar from "../../../components/LeftBar.astro";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
-
-// Fetch data from the suppliers endpoint
-const response = await fetch("http://localhost:3484/api/suppliers", {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-
-let suppliersData = null;
-if (response.ok) {
-    const result = await response.json();
-    suppliersData = result.data;
-    console.log('Datos de proveedores:', suppliersData);
-} else {
-    console.error("Error fetching suppliers data:", response.statusText);
-}
 ---
 
 <Layout>
@@ -31,16 +14,16 @@ if (response.ok) {
 
         <div class="d-flex flex-grow-1">
             <!-- LeftBar debajo del Navbar -->
-            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" />
+            <LeftBar title="Inventario" options={sidebarOptions} />
 
             <!-- Contenido principal -->
-            <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
+            <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
                 <div class="p-4">
-                    <!-- Título Proveedores y campos -->
+                    <!-- Título Consumibles y campos -->
                     <div class="d-flex align-items-start gap-5">
                         <!-- Sección izquierda con título y campos -->
                         <div style="width: calc(100% - 300px);">
-                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Proveedores</h1>
+                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Consumibles</h1>
 
                             <!-- Primera fila de campos en horizontal -->
                             <div class="d-flex gap-4 mb-3">
@@ -55,35 +38,63 @@ if (response.ok) {
                                     <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
-                                
-                                <!-- Campo Teléfono -->
+
+                                <!-- Campo Tipo (select) -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Teléfono</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Tipo</label>
+                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                        <option selected>Seleccionar</option>
+                                        <option>Crema</option>
+                                        <option>Café</option>
+                                        <option>Frutas</option>
+                                        <option>Desechables</option>
+                                        <option>Endulizantes</option>
+                                    </select>
+                                </div>
+
+                                <!-- Campo Unidad de Medida (select) -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Unidad de Medida</label>
+                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                        <option selected>Seleccionar</option>
+                                        <option>mil</option>
+                                        <option>gramos</option>
+                                        <option>litros</option>
+                                        <option>unidad</option>
+                                        <option>kg</option>
+                                    </select>
+                                </div>
+
+                                <!-- Campo Cantidad -->
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Cantidad</label>
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
                             </div>
 
                             <!-- Segunda fila de campos en horizontal -->
                             <div class="d-flex gap-4">
-                                <!-- Campo Email -->
+                                <!-- Campo Precio Costos -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Email</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Precio Costos</label>
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
 
-                                <!-- Campo Estado (select) -->
+                                <!-- Campo Proveedor (select) -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Estado</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Proveedor</label>
                                     <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
                                         <option selected>Seleccionar</option>
-                                        <option>Activo</option>
-                                        <option>Inactivo</option>
+                                        <option>La Salud</option>
+                                        <option>Proveedor A</option>
+                                        <option>Proveedor B</option>
+                                        <option>Proveedor C</option>
                                     </select>
                                 </div>
 
-                                <!-- Campo Notas -->
+                                <!-- Campo Descripcion -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Notas</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Descripcion</label>
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
                             </div>
@@ -115,34 +126,35 @@ if (response.ok) {
                     </div>
 
                     <!-- Tabla de datos -->
-                    <div class="mt-5">
+                    <div class="mt-2  h-100">
                         <div class="card shadow-sm border-0" style="border-radius: 8px;">
                             <div class="card-body p-0">
                                 <div class="table-responsive">
-                                    <table class="table">
+                                    <table class="table rem-5">
                                         <thead style="background-color: #482E21; color: white;">
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Nombre</th>
-                                                <th scope="col">Teléfono</th>
-                                                <th scope="col">Email</th>
-                                                <th scope="col">Estado</th>
-                                            </tr>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Nombre</th>
+                                            <th scope="col">Tipo</th>
+                                            <th scope="col">Unidad de Medida</th>
+                                            <th scope="col">Cantidad</th>
+                                            <th scope="col">Precio Costo</th>
+                                            <th scope="col">Proveedor</th>
+                                            <th scope="col">Descripcion</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
-                                            {suppliersData && suppliersData.map((supplier: any) => (
-                                                <tr>
-                                                    <th scope="row">{supplier.supplierId}</th>
-                                                    <td>{supplier.name}</td>
-                                                    <td>{supplier.phone}</td>
-                                                    <td>{supplier.email}</td>
-                                                    <td>
-                                                        <span class={`badge ${supplier.active ? 'bg-success' : 'bg-danger'}`}>
-                                                            {supplier.active ? 'Activo' : 'Inactivo'}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
+                                        <tr>
+                                            <th scope="row">12</th>
+                                            <td>Crema Batida Botella</td>
+                                            <td>crema</td>
+                                            <td>vom</td>
+                                            <td>780</td>
+                                            <td>$575</td>
+                                            <td>La Salud</td>
+                                            <td>Y Crema Batida para decoraciones</td>
+                                        </tr>
+                                    
                                         </tbody>
                                     </table>
                                 </div>
@@ -152,8 +164,8 @@ if (response.ok) {
                 </div>
 
                 <!-- Botones en la esquina superior derecha - Bajados y separados del borde -->
-                <div class="position-absolute" style="top: 100px; right: 40px;">
-                    <div class="d-flex flex-column gap-3">
+                <div class="position-absolute mt-5" style="top: 100px; right: 40px;">
+                    <div class="d-flex flex-column gap-1">
                         <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -167,6 +179,14 @@ if (response.ok) {
                             </svg>
                             Eliminar
                         </button>
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                            </svg>
+                            Subir Imagen
+                        </button>
+                        <div class="text-muted text-end small" style="font-family: 'Roboto', sans-serif;">cremaBatida.jpg</div>
                     </div>
                 </div>
             </div>
@@ -207,10 +227,5 @@ if (response.ok) {
 
     .card {
         border-radius: 8px;
-    }
-
-    .badge {
-        font-size: 0.75rem;
-        padding: 4px 8px;
     }
 </style>

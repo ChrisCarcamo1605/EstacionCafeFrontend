@@ -1,12 +1,9 @@
 ---
 export const prerender = false;
-import Layout from "../layouts/Layout.astro";
-import LeftSidebar from "../components/LeftBar.astro";
-import Navbar from "../components/Navbar.astro";
+import Layout from "../../../layouts/Layout.astro";
+import LeftSidebar from "../../../components/LeftBar.astro";
+import Navbar from "../../../components/Navbar.astro";
 import ApexCharts from "apexcharts";
-
-// Importar el CSS
-import "../styles/style.css";
 
 const response = await fetch("http://localhost:8000/api/sales-data", {
     method: "GET",

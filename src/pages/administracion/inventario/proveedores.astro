@@ -1,10 +1,27 @@
 ---
 export const prerender = false;
-import Layout from "../layouts/Layout.astro";
-import Navbar from "../components/Navbar.astro";
-import LeftBar from "../components/LeftBar.astro";
+import Layout from "../../../layouts/Layout.astro";
+import Navbar from "../../../components/Navbar.astro";
+import LeftBar from "../../../components/LeftBar.astro";
 
-const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores", "Planilla"];
+const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
+
+// Fetch data from the suppliers endpoint
+const response = await fetch("http://localhost:3484/api/suppliers", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+let suppliersData = null;
+if (response.ok) {
+    const result = await response.json();
+    suppliersData = result.data;
+    console.log('Datos de proveedores:', suppliersData);
+} else {
+    console.error("Error fetching suppliers data:", response.statusText);
+}
 ---
 
 <Layout>
@@ -14,80 +31,60 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
 
         <div class="d-flex flex-grow-1">
             <!-- LeftBar debajo del Navbar -->
-            <LeftBar title="Administración" options={sidebarOptions} />
+            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" />
 
             <!-- Contenido principal -->
-            <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
+            <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
                 <div class="p-4">
-                    <!-- Título Planilla y campos -->
+                    <!-- Título Proveedores y campos -->
                     <div class="d-flex align-items-start gap-5">
                         <!-- Sección izquierda con título y campos -->
                         <div style="width: calc(100% - 300px);">
-                            <h1 class="h3 fw-bold mb-4">Planilla</h1>
+                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Proveedores</h1>
 
                             <!-- Primera fila de campos en horizontal -->
                             <div class="d-flex gap-4 mb-3">
                                 <!-- Campo ID -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2">ID</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
 
-                                <!-- Campo Usuario -->
+                                <!-- Campo Nombre -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Usuario</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
                                     <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
-
-                                <!-- Campo Fecha -->
+                                
+                                <!-- Campo Teléfono -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Fecha</label>
-                                    <input type="date" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Días -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Días</label>
-                                    <input type="number" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Hora -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Hora</label>
-                                    <input type="time" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Teléfono</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
                             </div>
 
                             <!-- Segunda fila de campos en horizontal -->
                             <div class="d-flex gap-4">
-                                <!-- Campo Correo Electrónico -->
+                                <!-- Campo Email -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Correo Electrónico</label>
-                                    <input type="email" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Email</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
 
-                                <!-- Campo Rol -->
+                                <!-- Campo Estado (select) -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Rol</label>
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Estado</label>
                                     <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
                                         <option selected>Seleccionar</option>
-                                        <option>Administrador</option>
-                                        <option>Empleado</option>
-                                        <option>Supervisor</option>
-                                        <option>Gerente</option>
+                                        <option>Activo</option>
+                                        <option>Inactivo</option>
                                     </select>
                                 </div>
 
-                                <!-- Campo Inicio -->
+                                <!-- Campo Notas -->
                                 <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Inicio</label>
-                                    <input type="date" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Finalización -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Finalización</label>
-                                    <input type="date" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Notas</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
                             </div>
 
@@ -118,58 +115,34 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
                     </div>
 
                     <!-- Tabla de datos -->
-                    <div class="mt-2">
+                    <div class="mt-5">
                         <div class="card shadow-sm border-0" style="border-radius: 8px;">
                             <div class="card-body p-0">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead style="background-color: #482E21; color: white;">
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Usuario</th>
-                                            <th scope="col">Fecha</th>
-                                            <th scope="col">Días</th>
-                                            <th scope="col">Hora</th>
-                                            <th scope="col">Correo Electrónico</th>
-                                            <th scope="col">Rol</th>
-                                            <th scope="col">Inicio</th>
-                                            <th scope="col">Finalización</th>
-                                        </tr>
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Nombre</th>
+                                                <th scope="col">Teléfono</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Estado</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>Juan Pérez</td>
-                                            <td>2024-01-15</td>
-                                            <td>5</td>
-                                            <td>08:00</td>
-                                            <td>juan.perez@estacioncafe.com</td>
-                                            <td>Administrador</td>
-                                            <td>2024-01-01</td>
-                                            <td>2024-01-31</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">2</th>
-                                            <td>María García</td>
-                                            <td>2024-01-15</td>
-                                            <td>6</td>
-                                            <td>09:30</td>
-                                            <td>maria.garcia@estacioncafe.com</td>
-                                            <td>Empleado</td>
-                                            <td>2024-01-01</td>
-                                            <td>2024-01-31</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">3</th>
-                                            <td>Carlos López</td>
-                                            <td>2024-01-14</td>
-                                            <td>4</td>
-                                            <td>14:00</td>
-                                            <td>carlos.lopez@estacioncafe.com</td>
-                                            <td>Supervisor</td>
-                                            <td>2024-01-01</td>
-                                            <td>2024-01-31</td>
-                                        </tr>
+                                            {suppliersData && suppliersData.map((supplier: any) => (
+                                                <tr>
+                                                    <th scope="row">{supplier.supplierId}</th>
+                                                    <td>{supplier.name}</td>
+                                                    <td>{supplier.phone}</td>
+                                                    <td>{supplier.email}</td>
+                                                    <td>
+                                                        <span class={`badge ${supplier.active ? 'bg-success' : 'bg-danger'}`}>
+                                                            {supplier.active ? 'Activo' : 'Inactivo'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                 </div>
@@ -179,8 +152,8 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
                 </div>
 
                 <!-- Botones en la esquina superior derecha - Bajados y separados del borde -->
-                <div class="position-absolute mt-5" style="top: 100px; right: 40px;">
-                    <div class="d-flex flex-column gap-1">
+                <div class="position-absolute" style="top: 100px; right: 40px;">
+                    <div class="d-flex flex-column gap-3">
                         <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                                 <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -194,14 +167,6 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
                             </svg>
                             Eliminar
                         </button>
-                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                                <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
-                            </svg>
-                            Generar Reporte
-                        </button>
-                        <div class="text-muted text-end small" style="font-family: 'Roboto', sans-serif;">planilla.pdf</div>
                     </div>
                 </div>
             </div>
@@ -242,5 +207,10 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
 
     .card {
         border-radius: 8px;
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
     }
 </style>

@@ -1,12 +1,11 @@
 ---
 export const prerender = false;
-import Layout from "../layouts/Layout.astro";
-import LeftSidebar from "../components/LeftBar.astro";
-import Navbar from "../components/Navbar.astro";
+import Layout from "../../../layouts/Layout.astro";
+import LeftSidebar from "../../../components/LeftBar.astro";
+import Navbar from "../../../components/Navbar.astro";
 import ApexCharts from "apexcharts";
 
-// Importar el CSS
-import "../styles/style.css";
+
 
 const response1 = await fetch("http://localhost:3484/api/purchases",{
     method: "GET",

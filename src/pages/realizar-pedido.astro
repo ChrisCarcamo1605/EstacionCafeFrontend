@@ -15,17 +15,20 @@ const options = [
 ];
 const details: any[] = [];
 const user = (Astro.locals as any).user;
+console.log('EL USER ES: ');
+console.log(user);
+
 ---
 
 <Layout title="Realizar Pedido">
   <div
     class="container-fluid p-0 vh-100 overflow-hidden d-flex flex-column"
-    data-user={JSON.stringify(user)}
+    data-user={JSON.stringify(user.userId)}
   >
     <div class="w-100 m-0"><Navbar /></div>
 
     <div class="d-flex flex-row flex-grow-1 overflow-hidden">
-      <LeftBar options={options} title="Pedido" />
+      <LeftBar options={options} title="Pedido" returnPath="/home" />
       <div
         class="w-100 d-flex flex-wrap gap-2 p-2 overflow-y-auto align-content-start"
         id="products_container"
@@ -37,8 +40,4 @@ const user = (Astro.locals as any).user;
   </div>
   <script src="../js/realizar-pedido.ts"></script>
 
-  <script>
-    const finishOrderBtn = document.querySelector("#finishOrder");
-
-  </script>
 </Layout>

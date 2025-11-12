@@ -22,18 +22,19 @@ interface Detail{
       const finishOrderBtn = document.querySelector("#finishOrder");
       finishOrderBtn?.addEventListener("click",async (e:any) => {
         try{  
-          let totalAmount = details.reduce((acc,det) => acc+det.subTotal,0).toString();
-          console.log(totalAmount)
 
-        const response = await fetch("http://localhost:3484/api/bills",{
+          const aperture = document.querySelector("#aperturaGroup")?.getAttribute("data-aperture");
+          const totalAmount = details.reduce((acc,det) => acc+det.subTotal,0);
+
+          const response = await fetch("http://localhost:3484/api/bills",{
           method: "POST",
           headers:{
             "Content-Type":"application/json"
           },
-          body: JSON.stringify({
-            cashRegister:"1",
+          body:JSON.stringify({
+            cashRegister:1,
             customer: userDataStr,
-            date: new Date().toISOString().split('T')[0],
+            date: aperture,
             total: totalAmount
           })
         });
@@ -41,10 +42,13 @@ interface Detail{
         if(response.ok) {
           const data = await response.json();
           console.log("Orden creada:", data);
+          window.location.href ='/home'
+
         }else{
-          console.log(response);
+          console.log(await response.json());
         }
-      
+        
+
         }catch(error:any){
           console.log(error.message);
         }
@@ -166,7 +170,7 @@ interface Detail{
         card.classList.add("prod-card");
         card.classList.add("fourth_color");
         card.classList.add("card");
-        card.setAttribute("style", "width: 19rem; height:10rem; user-select: none !important;");
+        card.setAttribute("style", "width: 18.7rem; height:10rem; user-select: none !important;");
         card.setAttribute("prodName", x.name);
         card.setAttribute("prodPrice", x.price);
         card.setAttribute("prodQuantity", "1");

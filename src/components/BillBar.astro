@@ -16,19 +16,28 @@ const total = details.reduce((acc: number, val: any) => acc + val.subtotal, 0);
 console.log(total);
 const mesa = "N/A";
 const cliente = "N/A";
-const apertura = "28/09/2025 15:10";
+
+const now = new Date();
+let aperturaISO = now.toISOString();
+
+const day = String(now.getDate()).padStart(2, '0');
+const month = String(now.getMonth() + 1).padStart(2, '0');
+const year = now.getFullYear();
+const hours = String(now.getHours()).padStart(2, '0');
+const minutes = String(now.getMinutes()).padStart(2, '0');
+const apertura = `${day}/${month}/${year} ${hours}:${minutes}`;
 ---
 
 <div class="bill-bar d-flex flex-column p-2 m-0 p-0">
-  <div class="d-flex flex-row gap-4 ms-2 align-items-center">
-    <div class="data-group">
+  <div class="d-flex flex-row gap-4 ms-2 align-items-center" style="font-size: 15px;">
+    <div id="mesaGroup" class="data-group">
       <p><strong>Mesa:</strong> {mesa}</p>
     </div>
-    <div class="data-group">
+    <div id="clienteGroup" class="data-group">
       <p><strong>Cliente:</strong> {cliente}</p>
     </div>
-    <div class="data-group">
-      <p><strong>Apertura:</strong> {apertura}</p>
+    <div id="aperturaGroup" data-aperture=`${aperturaISO}` class="data-group">
+      <p ><strong>Apertura:</strong> {apertura}</p>
     </div>
   </div>
 

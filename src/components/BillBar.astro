@@ -1,0 +1,72 @@
+---
+export interface Product {
+  detail_id: string;
+  name: string;
+  quantity: number;
+  price: number;
+  subtotal: number;
+}
+
+interface Props {
+  details: Product[];
+}
+
+const { details = [] } = Astro.props;
+const total = details.reduce((acc: number, val: any) => acc + val.subtotal, 0);
+console.log(total);
+const mesa = "N/A";
+const cliente = "N/A";
+const apertura = "28/09/2025 15:10";
+---
+
+<div class="bill-bar d-flex flex-column p-2 m-0 p-0">
+  <div class="d-flex flex-row gap-4 ms-2 align-items-center">
+    <div class="data-group">
+      <p><strong>Mesa:</strong> {mesa}</p>
+    </div>
+    <div class="data-group">
+      <p><strong>Cliente:</strong> {cliente}</p>
+    </div>
+    <div class="data-group">
+      <p><strong>Apertura:</strong> {apertura}</p>
+    </div>
+  </div>
+
+  <table class="table rounded-top-2 m-0">
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Cantidad</th>
+        <th scope="col">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        details.map((detail) => (
+          <tr>
+            <th class="fw-normal" scope="col">
+              {detail.name}
+            </th>
+            <th class="fw-normal" scope="col">
+              {detail.quantity}
+            </th>
+            <th class="fw-normal" scope="col">
+              ${detail.price * detail.quantity}
+            </th>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+
+  <div class="total text-end ms-auto m-0 rounded-bottom-2 w-100">
+    <hr class="mb-1 mt-0" />
+    <h5 class="">Total ${total}</h5>
+  </div>
+
+  <div class="d-flex flex-row gap-2">
+    <button class="bill-btn w-100 fourth_color">Finalizar Pedido</button>
+    <button class="bill-btn w-100 third_color_light">Cerrar Cuenta</button>
+    <button class="bill-btn w-100 delete_color"> Eliminar Cuenta</button>
+  </div>
+</div>

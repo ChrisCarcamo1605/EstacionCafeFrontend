@@ -9,7 +9,7 @@
   --delete-btn-color: #930000;
 }
 
-a{
+a {
   color: var(--fourth-color);
   text-decoration: none;
 }
@@ -20,8 +20,20 @@ body {
 }
 .fourth_color {
   background-color: var(--fourth-color);
+  color: var(--primary-color);
 }
 
+.secondary_color {
+  background-color: var(--secondary-color) !important;
+}
+.third_color_light {
+  background-color: var(--third-color_light);
+}
+
+.delete_color {
+  background-color: var(--delete-btn-color);
+  color: var(--primary-color);
+}
 .pattaya_title {
   font-family: "Pattaya", sans-serif;
   font-weight: 200;
@@ -43,8 +55,8 @@ body {
 .siderbar_left {
   align-content: flex-start;
   width: 15.625vw;
-  box-shadow: 4px 0 6px -3px rgba(0, 0, 0, 0.3);
-  height: 93.77vh;
+  box-shadow: 2px 0 10px -3px rgba(0, 0, 0, 0.3);
+  height: 100%;
 }
 
 .sidebar_option {
@@ -76,7 +88,7 @@ body {
 
 .menu-item img {
   transition: transform 0.5s ease;
-  background-color: #1D0E00;
+  background-color: #1d0e00;
   filter: brightness(0.9);
 }
 
@@ -122,63 +134,123 @@ body {
   }
 }
 
+.admin-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+  overflow: hidden;
+  border-radius: 8px;
+}
 
-  .admin-card {
-    cursor: pointer;
-    transition: transform 0.2s;
-    overflow: hidden;
-    border-radius: 8px;
-  }
+.admin-card:hover {
+  transform: translateY(-3px);
+}
 
-  .admin-card:hover {
-    transform: translateY(-3px);
-  }
+.color-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #1b0d00;
+  opacity: 0.4;
+  z-index: 1;
+}
 
-  .color-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #1b0d00;
-    opacity: 0.4;
-    z-index: 1;
-  }
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--primary-color);
+  padding: 0.5rem;
+  z-index: 2;
+}
 
-  .card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: var(--primary-color);
-    padding: 0.5rem;
-    z-index: 2;
-  }
+.card-title-overlay {
+  font-family: "Pattaya", sans-serif;
+  font-weight: 400;
+  font-size: 2.5rem;
+  margin: 0;
+  color: var(--secondary-color);
+}
 
+@media (max-width: 768px) {
   .card-title-overlay {
-    font-family: "Pattaya", sans-serif;
-    font-weight: 400;
-    font-size: 2.5rem;
-    margin: 0;
-    color: var(--secondary-color);
+    font-size: 1.8rem;
   }
+}
 
-  @media (max-width: 768px) {
-    .card-title-overlay {
-      font-size: 1.8rem;
-    }
+@media (max-width: 576px) {
+  .card-title-overlay {
+    font-size: 1.5rem;
   }
+}
 
-  @media (max-width: 576px) {
-    .card-title-overlay {
-      font-size: 1.5rem;
-    }
-  }
+.bill-bar {
+  width: 50vw;
+  box-shadow: -2px 0 10px -3px rgba(0, 0, 0, 0.2);
+  max-height: 100vh;
+  overflow: hidden;
+}
 
+.bill-bar .table thead tr th {
+  background-color: rgba(0, 0, 0, 0);
+}
 
+.bill-bar .table thead {
+  background-color: rgba(0, 0, 0, 0) !important;
+  border-radius: 6px 6px 0 0;
+}
+.bill-bar .table thead {
+  background-color: var(--secondary-color) !important;
+  border-radius: 5px 5px 0 0;
+}
+
+.bill-bar .table {
+  display: flex;
+  flex-direction: column;
+  height: 75%;
+}
+
+.bill-bar .table thead {
+  flex-shrink: 0;
+}
+
+.bill-bar .table tbody {
+  display: block;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.bill-bar .table thead,
+.bill-bar .table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.bill-bar .table tbody tr {
+ margin-left: 10px;
+}
+.bill-bar .table thead {
+  font-size: 14px;
+}
+.bill-bar .table tbody {
+  font-size: 13px;
+}
+
+.bill-btn {
+  height: 3rem;
+  border-radius: 8px;
+  border: 0;
+}
+
+.prod-card {
+  cursor: pointer
+}

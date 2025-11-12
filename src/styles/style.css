@@ -215,7 +215,7 @@ body {
 .bill-bar .table {
   display: flex;
   flex-direction: column;
-  height: 75%;
+  height: 82%;
 }
 
 .bill-bar .table thead {

@@ -235,14 +235,15 @@ body {
   table-layout: fixed;
 }
 
-.bill-bar .table tbody tr {
- margin-left: 10px;
+.quantity-btn{
+  cursor: pointer;
 }
+
 .bill-bar .table thead {
-  font-size: 14px;
+  font-size: 15px;
 }
 .bill-bar .table tbody {
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .bill-btn {

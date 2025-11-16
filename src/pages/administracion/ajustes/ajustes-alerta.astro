@@ -5,6 +5,29 @@ import Layout from "../../../layouts/Layout.astro";
 import LeftBar from "../../../components/LeftBar.astro";
 
 const options: string[] = ["General", "Alertas"];
+
+// Estado inicial del correo (podrías cargarlo desde localStorage o una API)
+let email = "correoparareportes@gmail.com";
+
+// Función para guardar el correo
+const saveEmail = () => {
+  const emailInput = document.getElementById('email-input') as HTMLInputElement;
+  if (emailInput) {
+    localStorage.setItem('reportEmail', emailInput.value);
+    alert('Correo guardado correctamente');
+  }
+};
+
+// Función para cargar el correo guardado
+const loadEmail = () => {
+  const savedEmail = localStorage.getItem('reportEmail');
+  if (savedEmail) {
+    const emailInput = document.getElementById('email-input') as HTMLInputElement;
+    if (emailInput) {
+      emailInput.value = savedEmail;
+    }
+  }
+};
 ---
 
 <!-- Importar fuente Roboto -->
@@ -37,11 +60,12 @@ const options: string[] = ["General", "Alertas"];
                 >Correo para alertas y reportes</label
               >
               <input
+                id="email-input"
                 type="email"
                 class="form-control form-control-sm shadow-sm border-light"
                 placeholder="correo@ejemplo.com"
                 style="max-width: 300px;"
-                value="correoparareportes@gmail.com"
+                value={email}
               />
             </div>
 
@@ -111,6 +135,7 @@ const options: string[] = ["General", "Alertas"];
             </div>
 
             <button
+              onclick="saveEmail()"
               class="btn btn-sm mt-2 fw-bold shadow-sm rounded-3 px-3 py-1"
               style="background-color: #E6E6E6; border-color: #E6E6E6; color: #000; font-size: 0.8rem;"
             >
@@ -122,3 +147,39 @@ const options: string[] = ["General", "Alertas"];
     </div>
   </div>
 </Layout>
+
+<script>
+  // Declarar el tipo en Window
+  declare global {
+    interface Window {
+      saveEmail: () => void;
+    }
+  }
+
+  // Cargar el correo cuando la página se carga
+  document.addEventListener('DOMContentLoaded', function() {
+    const loadEmail = () => {
+      const savedEmail = localStorage.getItem('reportEmail');
+      if (savedEmail) {
+        const emailInput = document.getElementById('email-input') as HTMLInputElement;
+        if (emailInput) {
+          emailInput.value = savedEmail;
+        }
+      }
+    };
+
+    const saveEmail = () => {
+      const emailInput = document.getElementById('email-input') as HTMLInputElement;
+      if (emailInput) {
+        localStorage.setItem('reportEmail', emailInput.value);
+        alert('Correo guardado correctamente');
+      }
+    };
+
+    // Hacer las funciones globales
+    window.saveEmail = saveEmail;
+    
+    // Cargar email al iniciar
+    loadEmail();
+  });
+</script>

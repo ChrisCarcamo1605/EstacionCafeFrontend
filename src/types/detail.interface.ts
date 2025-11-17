@@ -11,7 +11,13 @@ export interface Detail {
 export interface Product {
   productId: number;
   name: string;
+  productTypeId: number;
   price: number;
+}
+
+export interface ProductType {
+  productTypeId: number;
+  name: string;
 }
 
 export interface BillDetail {

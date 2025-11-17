@@ -7,12 +7,14 @@ import { BillFormatter } from "../utils/bill-formatter";
 import { BillBarManager } from "../components/bill-bar-manager";
 import { ProductsGrid } from "../components/products-grid";
 import { OrderManager } from "../managers/order-manager";
+import { ProductTypeFilter } from "../components/product-type-filter";
 
 document.addEventListener("DOMContentLoaded", async () => {
   // ELEMENTOS DEL DOM
   const cardContainer = document.querySelector("#products_container") as HTMLElement;
   const billBar = document.querySelector(".bill-bar tbody") as HTMLElement;
   const total = document.querySelector(".total h5") as HTMLElement;
+  const sidebarOptions = document.querySelectorAll(".sidebar_option");
 
   if (!cardContainer || !billBar || !total) {
     console.error("Elementos del DOM no encontrados");
@@ -86,14 +88,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     orderManager.saveAndGoBack();
   });
 
-  // CARGAR Y RENDERIZAR PRODUCTOS
+  // CARGAR TIPOS DE PRODUCTOS Y PRODUCTOS
   try {
+    console.log("Iniciando carga de tipos de productos...");
+    // Cargar tipos de productos primero
+    const productTypes = await BillApiService.getProductTypes();
+    console.log("Tipos de productos cargados:", productTypes);
+    productsGrid.setProductTypes(productTypes);
+
+    console.log("Iniciando carga de productos...");
+    // Luego cargar y renderizar productos
     const products = await BillApiService.getProducts();
+    console.log("Productos cargados:", products);
+    console.log("Número de productos:", products.length);
+    
     productsGrid.render(products, (product) => {
       orderManager.addProduct(product);
     });
+    console.log("Productos renderizados");
   } catch (error) {
     console.error("Error al cargar productos:", error);
-    alert("Error al cargar los productos");
+    alert("Error al cargar los productos: " + error);
+  }
+
+  // INICIALIZAR FILTRO DE TIPOS DE PRODUCTO
+  if (sidebarOptions.length > 0) {
+    new ProductTypeFilter(sidebarOptions);
   }
 });

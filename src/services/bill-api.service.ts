@@ -82,4 +82,26 @@ export class BillApiService {
       throw error;
     }
   }
+
+  /**
+   * Obtener tipos de productos disponibles
+   */
+  static async getProductTypes(): Promise<any[]> {
+    try {
+      const response = await fetch(`${this.BASE_URL}/product-type`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al obtener tipos de productos");
+      }
+
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      console.error("Error en getProductTypes:", error);
+      throw error;
+    }
+  }
 }

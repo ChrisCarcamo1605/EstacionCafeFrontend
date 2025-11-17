@@ -6,15 +6,19 @@ import LeftBar from "../../components/LeftBar.astro";
 import Navbar from "../../components/Navbar.astro";
 import BillBar from "../../components/BillBar.astro";
 
-const options = [
-  "Platos Principales",
-  "Postres",
-  "Café",
-  "Combos",
-  "Servicios",
-];
 const details: any[] = [];
 const user = (Astro.locals as any).user;
+
+// Obtener tipos de productos desde la API
+let options: string[] = [];
+try {
+  const response = await fetch("http://localhost:3484/api/product-type");
+  const data = await response.json();
+  options = data.data?.map((type: any) => type.name) || [];
+} catch (error) {
+  console.error("Error al cargar tipos de productos:", error);
+  options = []; // Fallback a array vacío si falla
+}
 
 // Aquí se recibirán los datos de la mesa y cuenta desde sessionStorage en el cliente
 ---

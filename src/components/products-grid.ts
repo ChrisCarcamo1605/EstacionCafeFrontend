@@ -97,7 +97,7 @@ export class ProductsGrid {
     card.classList.add("prod-card", "fourth_color", "card");
     card.setAttribute(
       "style",
-      "width: 18.7rem; height:10rem; user-select: none !important;"
+      "width: 18.4rem; height:10rem; user-select: none !important;"
     );
 
     // Guardar datos del producto en atributos

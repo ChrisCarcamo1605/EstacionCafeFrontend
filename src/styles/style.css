@@ -82,15 +82,16 @@ body {
 
 .menu-item {
   width: 100%;
-  height: 320px;
+  background: linear-gradient(135deg, var(--third-color) 90%, var(--third-color_light) 100%) !important;
+  height:41rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
   cursor: pointer;
   border: none !important;
+  z-index: 2 ;
 }
 
 .menu-item:hover {
-  transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
@@ -144,13 +145,14 @@ body {
 
 .admin-card {
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
   border-radius: 8px;
 }
 
 .admin-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
 .color-overlay {

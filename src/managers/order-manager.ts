@@ -4,6 +4,7 @@ import { DetailsCollection } from "../client-js/details-collection";
 import { BillApiService } from "../services/bill-api.service";
 import { StorageService } from "../services/storage.service";
 import { BillFormatter } from "../utils/bill-formatter";
+import { MesaApiService } from "../services/mesa-api.service";
 
 export class OrderManager {
   private details: Detail[];
@@ -11,6 +12,9 @@ export class OrderManager {
   private cuenta: Cuenta | null;
   private mesa: Mesa | null;
   private onDetailsChange: (() => void) | null = null;
+  private userId = document
+    .querySelector("#products-container")
+    ?.getAttribute("data-user");
 
   constructor(
     initialDetails: Detail[],
@@ -96,7 +100,20 @@ export class OrderManager {
   async finishOrder(): Promise<void> {
     try {
       if (!this.cuenta) {
-        throw new Error("No hay cuenta seleccionada");
+        const nuevaCuenta: Cuenta = {
+          billId: 1,
+          tableId: "A1",
+          cashRegister: parseInt(this.userId || "0"),
+          customer: "Para Llevar",
+          date: new Date().toISOString(),
+          ultimaModificacion: new Date().toISOString(),
+          status: "closed" as const,
+          detalles: [],
+          total: 0,
+          numeroCuenta: 1,
+        };
+
+        this.cuenta = await MesaApiService.createBill(nuevaCuenta);
       }
 
       if (this.details.length === 0) {
@@ -131,18 +148,19 @@ export class OrderManager {
     }
   }
 
- async closeOrder():Promise<void>{
-    const shouldClose= confirm("Esta seguro de cerrar la cuenta?");
+  async closeOrder(): Promise<void> {
+    const shouldClose = confirm("Esta seguro de cerrar la cuenta?");
 
-
-    if(shouldClose && this.cuenta){
-        const totalAmount = BillFormatter.calculateTotal(this.details);
-        const cuentaActualizada = {
-            status: "closed" as const,
-            total: totalAmount
-            
-        }
-     const response =  await  BillApiService.updateBill(this.cuenta.billId,cuentaActualizada);
+    if (shouldClose && this.cuenta) {
+      const totalAmount = BillFormatter.calculateTotal(this.details);
+      const cuentaActualizada = {
+        status: "closed" as const,
+        total: totalAmount,
+      };
+      const response = await BillApiService.updateBill(
+        this.cuenta.billId,
+        cuentaActualizada
+      );
     }
 
     StorageService.clearSession();
@@ -153,34 +171,6 @@ export class OrderManager {
    * Guardar cambios y volver a mesas
    */
   saveAndGoBack(): void {
-    const shouldSave = confirm(
-      "¿Desea guardar los cambios antes de volver a las mesas?"
-    );
-
-    if (shouldSave && this.cuenta && this.details.length > 0) {
-      const totalAmount = BillFormatter.calculateTotal(this.details);
-
-      // Cambiar a 'open' si tiene productos y estaba en 'draft'
-      const nuevoStatus =
-        this.cuenta.status === "draft" && this.details.length > 0
-          ? "open"
-          : this.cuenta.status;
-
-      const cuentaActualizada = {
-        ...this.cuenta,
-        status: nuevoStatus,
-        detalles: BillFormatter.mapDetailsToBillDetails(
-          this.details,
-          this.cuenta.billId
-        ),
-        total: totalAmount,
-        ultimaModificacion: new Date().toISOString(),
-      };
-
-      // Guardar en sessionStorage (temporal hasta que se implemente guardado en backend)
-      StorageService.setCuenta(cuentaActualizada);
-    }
-
     StorageService.clearSession();
     window.location.href = "/realizar-pedido/mesas";
   }

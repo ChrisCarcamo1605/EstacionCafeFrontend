@@ -1,72 +1,153 @@
 ---
 export const prerender = false;
-// src/pages/reportes-ventas.astro
 import Layout from "../../../layouts/Layout.astro";
 import LeftSidebar from "../../../components/LeftBar.astro";
 import Navbar from "../../../components/Navbar.astro";
-
-// Importar el CSS
-import "../styles/style.css";
-
-// Endpoint para obtener los datos de facturas
-const response = await fetch("http://localhost:3484/api/bills", {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+import "../../../styles/style.css";
 
 let jsonData = null;
-if (response.ok) {
-    jsonData = await response.json();
-    console.log("Datos de facturas:", jsonData.data);
-} else {
-    console.error("Error fetching bills data:", response.statusText);
+let facturas = [];
+let apiError = null;
+
+try {
+    console.log('🔍 Iniciando fetch a la API...');
+    const response = await fetch("http://localhost:3484/api/bills", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    console.log('📡 Response status:', response.status, response.statusText);
+    
+    if (response.ok) {
+        jsonData = await response.json();
+        console.log("✅ Datos crudos de la API:", jsonData);
+        
+        if (jsonData && jsonData.data) {
+            facturas = jsonData.data.map((factura: any) => {
+                let fechaValida = factura.date;
+                
+                if (!fechaValida || fechaValida.includes('#') || fechaValida.includes('A#') || isNaN(new Date(fechaValida).getTime())) {
+                    console.warn('Fecha inválida encontrada:', fechaValida);
+                    
+                    if (factura.customer && /\d{1,2}\/\d{1,2}\/\d{4}/.test(factura.customer)) {
+                        const fechaMatch = factura.customer.match(/(\d{1,2}\/\d{1,2}\/\d{4})/);
+                        if (fechaMatch) {
+                            const [dia, mes, año] = fechaMatch[0].split('/');
+                            fechaValida = `${año}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+                        }
+                    }
+                    
+                    if (!fechaValida || isNaN(new Date(fechaValida).getTime())) {
+                        fechaValida = new Date().toISOString();
+                    }
+                }
+                
+                let clienteLimpio = factura.customer || 'Cliente';
+                clienteLimpio = clienteLimpio.replace(/\d{1,2}\/\d{1,2}\/\d{2,4}/g, '').trim();
+                clienteLimpio = clienteLimpio.replace(/^[\s\-_]+|[\s\-_]+$/g, '');
+                if (!clienteLimpio) clienteLimpio = 'Cliente';
+                
+                let totalValido = factura.total;
+                if (typeof totalValido === 'string') {
+                    totalValido = totalValido.replace(/[^\d,.]/g, '');
+                    totalValido = totalValido.replace(',', '.');
+                }
+                
+                return {
+                    ...factura,
+                    date: fechaValida,
+                    customer: clienteLimpio,
+                    total: parseFloat(totalValido) || 0
+                };
+            });
+            
+            console.log("✅ Datos procesados:", facturas);
+        } else {
+            console.warn("⚠️ La API respondió pero sin datos válidos:", jsonData);
+            apiError = "La API no retornó datos válidos";
+        }
+    } else {
+        console.error("❌ Error HTTP:", response.status, response.statusText);
+        apiError = `Error ${response.status}: ${response.statusText}`;
+    }
+} catch (error) {
+    console.error("❌ Error en la petición a la API:", error);
+    apiError = `Error de conexión: ${error instanceof Error ? error.message : String(error)}`;
 }
 
-// Función para formatear fecha a formato local
 const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES');
+    try {
+        if (typeof dateString === 'string' && dateString.includes('/')) {
+            const [part1, part2, part3] = dateString.split('/');
+            if (part3 && part3.length === 4) {
+                dateString = `${part3}-${part2.padStart(2, '0')}-${part1.padStart(2, '0')}`;
+            }
+        }
+        
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Fecha inválida';
+        }
+        return date.toLocaleDateString('es-ES');
+    } catch (error) {
+        return 'Error fecha';
+    }
 };
 
-// Función para obtener el día de la semana en español
 const getDayOfWeek = (dateString: string) => {
-    const date = new Date(dateString);
-    const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    return days[date.getDay()];
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Día inválido';
+        }
+        const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        return days[date.getDay()];
+    } catch (error) {
+        return 'Error día';
+    }
 };
 
-// Función para obtener la hora formateada
 const getTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            return 'Hora inválida';
+        }
+        return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } catch (error) {
+        return 'Error hora';
+    }
 };
-
-// Procesar los datos del endpoint
-const facturas = jsonData?.data || [];
 ---
 
-<Layout title="Reportes de Ventas">
-    <!-- Navbar en la parte superior -->
+<Layout title="Reportes de Ventas - Estación Café">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
     <Navbar />
     
     <div class="d-flex">
-        <!-- Sidebar a la izquierda -->
         <LeftSidebar 
             title="Resumen" 
             options={["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"]}
             selectedOption="Reporte de Ventas"  
         />
         
-        <!-- Contenido principal -->
         <div class="flex-grow-1 p-4">
-            <!-- Header de la página -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0" style="color: #482E21;">Reportes de Ventas</h2>
+                <div class="text-muted small">
+                    Total de ventas: {facturas.length}
+                </div>
             </div>
 
-            <!-- Filtros de fecha -->
+            {apiError && (
+                <div class="alert alert-warning mb-4">
+                    <strong>⚠️ Advertencia:</strong> {apiError}
+                </div>
+            )}
+
             <div class="row mb-4">
                 <div class="col-md-5">
                     <div class="form-group">
@@ -81,18 +162,26 @@ const facturas = jsonData?.data || [];
                     </div>
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                    <button class="btn text-white w-100" style="background-color: #482E21; border-color: #482E21;">
-                        General Reporte
+                    <button id="generarReporte" class="btn text-white w-100" style="background-color: #482E21; border-color: #482E21;">
+                        Generar Reporte
                     </button>
                 </div>
             </div>
 
-            <!-- Tabla de reportes con nuevo estilo -->
+            <div id="email-info" class="alert alert-info mb-4">
+                <small>
+                    <strong>📧 Correo destino:</strong> 
+                    <span id="current-email">correoparareportes@gmail.com</span>
+                    <br>
+                    <em>El reporte se descargará y enviará automáticamente por correo</em>
+                </small>
+            </div>
+
             <div class="mt-5">
                 <div class="card shadow-sm border-0" style="border-radius: 8px;">
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="tablaReportes">
                                 <thead style="background-color: #482E21; color: white;">
                                     <tr>
                                         <th scope="col">ID</th>
@@ -102,20 +191,43 @@ const facturas = jsonData?.data || [];
                                         <th scope="col">Hora</th>
                                         <th scope="col">Caja</th>
                                         <th scope="col">Total</th>
+                                        <th scope="col">Estado</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {facturas.map((factura: any) => (
+                                    {facturas.length > 0 ? (
+                                        facturas.map((factura: any) => {
+                                            const fechaFormateada = formatDate(factura.date);
+                                            const diaSemana = getDayOfWeek(factura.date);
+                                            const hora = getTime(factura.date);
+                                            const tieneError = fechaFormateada.includes('inválida') || fechaFormateada.includes('Error');
+                                            
+                                            return (
+                                                <tr data-fecha={factura.date} class={tieneError ? 'table-warning' : ''}>
+                                                    <th scope="row">{factura.billId}</th>
+                                                    <td>{factura.customer}</td>
+                                                    <td>{fechaFormateada}</td>
+                                                    <td>{diaSemana}</td>
+                                                    <td>{hora}</td>
+                                                    <td>{factura.cashRegister?.number || 'CAJA-001'}</td>
+                                                    <td>${factura.total.toFixed(2)}</td>
+                                                    <td>
+                                                        {tieneError && (
+                                                            <span class="badge bg-danger" title="Fecha corrupta en datos originales">
+                                                                ⚠️ Revisar
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
                                         <tr>
-                                            <th scope="row">{factura.billId}</th>
-                                            <td>{factura.customer}</td>
-                                            <td>{formatDate(factura.date)}</td>
-                                            <td>{getDayOfWeek(factura.date)}</td>
-                                            <td>{getTime(factura.date)}</td>
-                                            <td>{factura.cashRegister?.number || 'CAJA-001'}</td>
-                                            <td>${parseFloat(factura.total).toFixed(2)}</td>
+                                            <td colspan="8" class="text-center py-4 text-muted">
+                                                No hay datos disponibles para mostrar
+                                            </td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -124,10 +236,365 @@ const facturas = jsonData?.data || [];
             </div>
         </div>
     </div>
+
+    <script>
+    declare const XLSX: any;
+    
+    const EMAIL_SERVICE_URL = 'http://localhost:3003/api/send-report';
+
+    const routeMap = {
+        "Estadisticas de Ventas": "http://localhost:4321/administracion/estadisticas/estadisticas-ventas",
+        "Estadisticas de Gastos": "http://localhost:4321/administracion/estadisticas/estadisticas-gastos", 
+        "Reporte de Ventas": "http://localhost:4321/administracion/estadisticas/reporte-ventas"
+    };
+
+    function setupLeftBarNavigation() {
+        setTimeout(() => {
+            const sidebarItems = document.querySelectorAll('.sidebar-item, .nav-link, .list-group-item, [class*="option"], [class*="item"]');
+            sidebarItems.forEach(item => {
+                const text = item.textContent?.trim();
+                if (text && text in routeMap) {
+                    (item as HTMLElement).style.cursor = 'pointer';
+                    item.addEventListener('click', () => {
+                        window.location.href = routeMap[text as keyof typeof routeMap];
+                    });
+                }
+            });
+        }, 100);
+    }
+
+    function getSavedEmail() {
+        const savedEmail = localStorage.getItem('reportEmail');
+        return savedEmail || 'vanspsschristopher1@gmail.com';
+    }
+
+    function showStatus(message: string, isSuccess = true) {
+        let statusElement = document.getElementById('report-status');
+        if (!statusElement) {
+            statusElement = document.createElement('div');
+            statusElement.id = 'report-status';
+            statusElement.className = `alert ${isSuccess ? 'alert-success' : 'alert-danger'} mt-3`;
+            statusElement.style.display = 'none';
+            const emailInfo = document.getElementById('email-info');
+            if (emailInfo && emailInfo.parentNode) {
+                emailInfo.parentNode.insertBefore(statusElement, emailInfo.nextSibling);
+            }
+        }
+        
+        statusElement.textContent = message;
+        statusElement.style.display = 'block';
+        
+        setTimeout(() => {
+            statusElement.style.display = 'none';
+        }, 5000);
+    }
+
+    function generateExcelFile() {
+        try {
+            const filasVisibles = Array.from(document.querySelectorAll('#tablaReportes tbody tr'))
+                .filter((fila): fila is HTMLElement => (fila as HTMLElement).style.display !== 'none');
+            
+            if (filasVisibles.length === 0) {
+                throw new Error('No hay datos para exportar');
+            }
+
+            const datosExcel = [];
+            datosExcel.push(['ID Factura', 'Cliente', 'Fecha', 'Día', 'Hora', 'Caja', 'Total ($)']);
+            
+            filasVisibles.forEach((fila: HTMLElement) => {
+                const celdas = fila.querySelectorAll('td, th');
+                const filaDatos = [];
+                
+                filaDatos.push(celdas[0]?.textContent?.trim() || '');
+                filaDatos.push(celdas[1]?.textContent?.trim() || '');
+                filaDatos.push(celdas[2]?.textContent?.trim() || '');
+                filaDatos.push(celdas[3]?.textContent?.trim() || '');
+                filaDatos.push(celdas[4]?.textContent?.trim() || '');
+                filaDatos.push(celdas[5]?.textContent?.trim() || '');
+                const totalTexto = celdas[6]?.textContent?.trim() || '0';
+                const totalLimpio = totalTexto.replace('$', '').trim();
+                filaDatos.push(parseFloat(totalLimpio) || 0);
+                
+                datosExcel.push(filaDatos);
+            });
+
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+            
+            if (!worksheet['!cols']) worksheet['!cols'] = [];
+            worksheet['!cols'][0] = { width: 12 };
+            worksheet['!cols'][1] = { width: 25 };
+            worksheet['!cols'][2] = { width: 12 };
+            worksheet['!cols'][3] = { width: 12 };
+            worksheet['!cols'][4] = { width: 10 };
+            worksheet['!cols'][5] = { width: 10 };
+            worksheet['!cols'][6] = { width: 12 };
+            
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Ventas');
+            
+            const fecha = new Date().toISOString().split('T')[0];
+            const fechaDesdeInput = document.getElementById('fechaDesde') as HTMLInputElement;
+            const fechaHastaInput = document.getElementById('fechaHasta') as HTMLInputElement;
+            
+            const fechaDesde = fechaDesdeInput?.value || '';
+            const fechaHasta = fechaHastaInput?.value || '';
+            
+            let nombreArchivo = `reporte_ventas_${fecha}.xlsx`;
+            if (fechaDesde && fechaHasta) {
+                nombreArchivo = `reporte_ventas_${fechaDesde}_a_${fechaHasta}.xlsx`;
+            }
+            
+            const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const excelBlob = new Blob([excelBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            
+            return {
+                blob: excelBlob,
+                filename: nombreArchivo,
+                rowCount: filasVisibles.length
+            };
+            
+        } catch (error) {
+            console.error('Error generando Excel:', error);
+            throw new Error(`Error al generar el archivo Excel: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }
+
+    async function sendReportWithBackend(excelBlob: Blob, filename: string, rowCount: number): Promise<{ success: boolean; message?: string; error?: string }> {
+        try {
+            const savedEmail = getSavedEmail();
+            
+            const fechaDesdeValue = (document.getElementById('fechaDesde') as HTMLInputElement)?.value || 'Inicio';
+            const fechaHastaValue = (document.getElementById('fechaHasta') as HTMLInputElement)?.value || 'Fin';
+
+            const subject = `📊 Reporte de Ventas - ${new Date().toLocaleDateString('es-ES')}`;
+            const message = `Se adjunta el reporte de ventas "${filename}" generado automáticamente.
+
+📅 Fecha de generación: ${new Date().toLocaleString('es-ES')}
+📋 Total de registros: ${rowCount} ventas
+💰 Período: ${fechaDesdeValue} a ${fechaHastaValue}
+
+Este es un reporte automático del sistema de ventas.
+
+Saludos,
+Sistema de Reportes Automatizado - Estación Café`;
+
+            const excelData = await new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result as string;
+                    const base64Data = base64.split(',')[1];
+                    resolve(base64Data);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(excelBlob);
+            });
+
+            console.log('📤 Enviando correo mediante backend...', {
+                to: savedEmail,
+                filename: filename,
+                excelDataSize: excelData.length,
+                url: EMAIL_SERVICE_URL
+            });
+
+            const response = await fetch(EMAIL_SERVICE_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    toEmail: savedEmail,
+                    subject: subject,
+                    message: message,
+                    filename: filename,
+                    excelData: excelData
+                })
+            });
+
+            console.log('📡 Response status:', response.status, response.statusText);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ Error response:', errorText);
+                throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('📨 Respuesta del servidor:', result);
+
+            if (result.success) {
+                console.log('✅ Correo enviado exitosamente:', result);
+                return { 
+                    success: true, 
+                    message: `📧 Reporte enviado automáticamente a ${savedEmail}` 
+                };
+            } else {
+                console.error('❌ Error del backend:', result.error);
+                return { 
+                    success: false, 
+                    error: `Error del servidor: ${result.error}` 
+                };
+            }
+
+        } catch (error) {
+            console.error('❌ Error enviando correo:', error);
+            return { 
+                success: false, 
+                error: `Error de conexión: ${error instanceof Error ? error.message : String(error)}. El archivo se descargó correctamente.` 
+            };
+        }
+    }
+
+    async function generarReporteCompleto() {
+        try {
+            showStatus('🔄 Iniciando generación de reporte...', true);
+
+            showStatus('📊 Generando archivo Excel...', true);
+            
+            const { blob: excelBlob, filename: nombreArchivo, rowCount } = generateExcelFile();
+            
+            console.log('✅ Excel generado:', nombreArchivo, 'Registros:', rowCount);
+
+            showStatus('📥 Descargando reporte localmente...', true);
+            
+            const downloadUrl = URL.createObjectURL(excelBlob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = downloadUrl;
+            downloadLink.download = nombreArchivo;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            console.log('✅ Descarga iniciada:', nombreArchivo);
+
+            showStatus('📧 Enviando reporte por correo electrónico...', true);
+
+            const emailResult = await sendReportWithBackend(excelBlob, nombreArchivo, rowCount);
+
+            if (emailResult.success) {
+                showStatus(`✅ ${emailResult.message}`, true);
+                
+                setTimeout(() => {
+                    showStatus(`🎉 ¡Proceso completado! Reporte "${nombreArchivo}" generado, descargado y enviado automáticamente`, true);
+                }, 1000);
+            } else {
+                showStatus(`⚠️ ${emailResult.error}`, false);
+            }
+            
+            setTimeout(() => {
+                URL.revokeObjectURL(downloadUrl);
+            }, 1000);
+            
+        } catch (error) {
+            console.error('❌ Error en el proceso:', error);
+            const errorMessage = (error instanceof Error) ? error.message : String(error);
+            showStatus(`❌ Error: ${errorMessage}`, false);
+        }
+    }
+
+    function filtrarPorFecha() {
+        const fechaDesdeInput = document.getElementById('fechaDesde') as HTMLInputElement;
+        const fechaHastaInput = document.getElementById('fechaHasta') as HTMLInputElement;
+        
+        const fechaDesde = fechaDesdeInput?.value || '';
+        const fechaHasta = fechaHastaInput?.value || '';
+        
+        const filas = document.querySelectorAll('#tablaReportes tbody tr');
+        
+        filas.forEach((fila: Element) => {
+            const fechaFactura = fila.getAttribute('data-fecha');
+            if (!fechaFactura) {
+                (fila as HTMLElement).style.display = 'none';
+                return;
+            }
+            
+            const fechaFacturaDate = new Date(fechaFactura);
+            let mostrar = true;
+            
+            if (fechaDesde) {
+                const desdeDate = new Date(fechaDesde);
+                if (fechaFacturaDate < desdeDate) {
+                    mostrar = false;
+                }
+            }
+            
+            if (fechaHasta) {
+                const hastaDate = new Date(fechaHasta);
+                hastaDate.setHours(23, 59, 59, 999);
+                if (fechaFacturaDate > hastaDate) {
+                    mostrar = false;
+                }
+            }
+            
+            (fila as HTMLElement).style.display = mostrar ? '' : 'none';
+        });
+    }
+
+    function initializeEventListeners() {
+        const generarReporteBtn = document.getElementById('generarReporte');
+        const fechaDesdeInput = document.getElementById('fechaDesde');
+        const fechaHastaInput = document.getElementById('fechaHasta');
+        
+        if (generarReporteBtn) {
+            generarReporteBtn.addEventListener('click', generarReporteCompleto);
+        }
+        
+        if (fechaDesdeInput) {
+            fechaDesdeInput.addEventListener('change', filtrarPorFecha);
+        }
+        
+        if (fechaHastaInput) {
+            fechaHastaInput.addEventListener('change', filtrarPorFecha);
+        }
+    }
+
+    function setDefaultDates() {
+        const fechaDesdeInput = document.getElementById('fechaDesde') as HTMLInputElement;
+        const fechaHastaInput = document.getElementById('fechaHasta') as HTMLInputElement;
+        
+        if (fechaDesdeInput && fechaHastaInput) {
+            const hoy = new Date();
+            const hace30Dias = new Date();
+            hace30Dias.setDate(hoy.getDate() - 30);
+            
+            fechaDesdeInput.value = hace30Dias.toISOString().split('T')[0];
+            fechaHastaInput.value = hoy.toISOString().split('T')[0];
+        }
+    }
+
+    function showEmailInfo() {
+        const emailInfo = document.getElementById('email-info');
+        const currentEmail = document.getElementById('current-email');
+        if (emailInfo && currentEmail) {
+            const savedEmail = getSavedEmail();
+            currentEmail.textContent = savedEmail;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeEventListeners();
+        setDefaultDates();
+        showEmailInfo();
+        setupLeftBarNavigation();
+        setTimeout(filtrarPorFecha, 100);
+        
+        console.log('✅ Sistema de reportes inicializado correctamente');
+        console.log('📧 Servicio de correo configurado en:', EMAIL_SERVICE_URL);
+    });
+    </script>
 </Layout>
 
 <style is:global>
-    /* Estilos para la tabla */
+    .table-warning {
+        background-color: #fff3cd !important;
+    }
+    
+    .badge {
+        font-size: 0.7em;
+        cursor: help;
+    }
+    
     .table th {
         font-weight: 600;
         font-size: 0.875rem;
@@ -143,7 +610,6 @@ const facturas = jsonData?.data || [];
         border-radius: 8px;
     }
 
-    /* Estilos para los botones y formularios */
     .btn {
         border-radius: 8px;
     }
@@ -153,7 +619,6 @@ const facturas = jsonData?.data || [];
         box-shadow: 0 0 0 0.2rem rgba(72, 46, 33, 0.25) !important;
     }
 
-    /* Estilos para el fondo de las filas de la tabla */
     .table tbody tr {
         background-color: white;
     }
@@ -162,9 +627,19 @@ const facturas = jsonData?.data || [];
         background-color: #f8f9fa;
     }
 
-    /* Responsive */
     .table-responsive {
         border-radius: 8px;
         overflow: hidden;
+    }
+
+    [class*="sidebar"] [class*="item"],
+    [class*="nav"] [class*="link"],
+    [class*="list"] [class*="item"] {
+        transition: background-color 0.2s ease;
+    }
+
+    #report-status {
+        border-radius: 8px;
+        margin-top: 1rem;
     }
 </style>

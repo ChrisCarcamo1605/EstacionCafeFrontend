@@ -5,6 +5,12 @@ import LeftSidebar from "../../../components/LeftBar.astro";
 import Navbar from "../../../components/Navbar.astro";
 import ApexCharts from "apexcharts";
 
+const estadisticasRouteMap: Record<string, string> = {
+    "Estadisticas de Ventas": "/administracion/estadisticas/estadisticas-ventas",
+    "Estadisticas de Gastos": "/administracion/estadisticas/estadisticas-gastos",
+    "Reporte de Ventas": "/administracion/estadisticas/reporte-ventas"
+};
+
 const response = await fetch("http://localhost:8000/api/sales-data", {
     method: "GET",
     headers: {
@@ -39,14 +45,16 @@ const productosMasRentables = json.analisis_productos
     .slice(0, 7);
 ---
 
-<Layout>
+<Layout title="Estadisticas de Ventas">
+    <!-- Navbar en la parte superior -->
     <Navbar />
     
     <div class="d-flex">
         <LeftSidebar 
             title="Resumen" 
             options={["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"]}
-            selectedOption="Estadisticas de Ventas"  
+            selectedOption="Estadisticas de Ventas"
+            routeMap={estadisticasRouteMap}
         />
         <div class="flex-grow-1 p-4">
             <div class="row">
@@ -145,104 +153,6 @@ const productosMasRentables = json.analisis_productos
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
-    <script>
-    const routeMap: Record<string, string> = {
-        "Estadisticas de Ventas": "http://localhost:4321/administracion/estadisticas/estadisticas-ventas",
-        "Estadisticas de Gastos": "http://localhost:4321/administracion/estadisticas/estadisticas-gastos", 
-        "Reporte de Ventas": "http://localhost:4321/administracion/estadisticas/reporte-ventas"
-    };
-
-    function setupLeftBarNavigation() {
-        console.log('Configurando navegación del LeftBar...');
-        
-        setTimeout(() => {
-            const options = ["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"];
-            
-            options.forEach(optionText => {
-                const elements = document.querySelectorAll('*');
-                elements.forEach(element => {
-                    if (element.textContent?.trim() === optionText && routeMap[optionText]) {
-                        if (!element.hasAttribute('data-nav-configured')) {
-                            (element as HTMLElement).style.cursor = 'pointer';
-                            element.setAttribute('data-nav-configured', 'true');
-                            
-                            element.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('Navegando a:', routeMap[optionText]);
-                                window.location.href = routeMap[optionText];
-                            });
-                            
-                            element.addEventListener('mouseenter', () => {
-                                (element as HTMLElement).style.backgroundColor = '#f8f9fa';
-                                (element as HTMLElement).style.transition = 'background-color 0.2s';
-                            });
-                            element.addEventListener('mouseleave', () => {
-                                (element as HTMLElement).style.backgroundColor = '';
-                            });
-                            
-                            console.log('Configurado elemento para:', optionText);
-                        }
-                    }
-                });
-            });
-        }, 100);
-
-        setTimeout(() => {
-            const sidebarSelectors = [
-                '.sidebar-item',
-                '.nav-link', 
-                '.list-group-item',
-                '[class*="option"]',
-                '[class*="item"]',
-                'a',
-                'button',
-                'div'
-            ];
-            
-            sidebarSelectors.forEach(selector => {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(element => {
-                    const text = element.textContent?.trim();
-                    if (text && routeMap[text]) {
-                        if (!element.hasAttribute('data-nav-configured')) {
-                            (element as HTMLElement).style.cursor = 'pointer';
-                            element.setAttribute('data-nav-configured', 'true');
-                            
-                            element.addEventListener('click', () => {
-                                console.log('Navegando a:', routeMap[text]);
-                                window.location.href = routeMap[text];
-                            });
-                            
-                            element.addEventListener('mouseenter', () => {
-                                (element as HTMLElement).style.backgroundColor = '#f8f9fa';
-                            });
-                            element.addEventListener('mouseleave', () => {
-                                (element as HTMLElement).style.backgroundColor = '';
-                            });
-                        }
-                    }
-                });
-            });
-        }, 200);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM cargado, inicializando navegación...');
-        
-        setupLeftBarNavigation();
-        
-        setTimeout(setupLeftBarNavigation, 500);
-        setTimeout(setupLeftBarNavigation, 1000);
-        setTimeout(setupLeftBarNavigation, 2000);
-    });
-
-    window.addEventListener('load', function() {
-        console.log('Ventana cargada, verificando navegación...');
-        setTimeout(setupLeftBarNavigation, 300);
-    });
-    </script>
 </Layout>
 
 <style>

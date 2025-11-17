@@ -6,6 +6,13 @@ import LeftBar from "../../../components/LeftBar.astro";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
+const inventoryRouteMap: Record<string, string> = {
+    "Consumibles": "/administracion/inventario/consumibles",
+    "Productos": "/administracion/inventario/productos",
+    "Ingredientes": "/administracion/inventario/ingredientes",
+    "Proveedores": "/administracion/inventario/proveedores"
+};
+
 const response = await fetch("http://localhost:3484/api/suppliers", {
     method: "GET",
     headers: {
@@ -25,17 +32,18 @@ if (response.ok) {
 const initialSuppliers = suppliersData || [];
 ---
 
-<Layout>
+<Layout title="Proveedores">
     <div class="d-flex flex-column" style="min-height: 100vh;">
         <Navbar />
 
         <div class="d-flex flex-grow-1">
-            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" />
+            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" routeMap={inventoryRouteMap} />
 
             <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif; position: relative;">
                 <div class="p-4">
-                    <div class="position-fixed" style="top: 100px; right: 40px; z-index: 1000;">
-                        <div class="d-flex flex-column gap-3">
+                    <!-- BOTONES EN LA ESQUINA SUPERIOR DERECHA (no fijos) -->
+                    <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
+                        <div class="d-flex flex-column gap-1">
                             <button 
                                 class="btn d-flex align-items-center justify-content-center gap-2" 
                                 style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
@@ -47,8 +55,9 @@ const initialSuppliers = suppliersData || [];
                                 Agregar
                             </button>
                             <button 
+
                                 class="btn d-flex align-items-center justify-content-center gap-2" 
-                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #007bff; color: white; border: 1px solid #007bff; width: 257px; height: 50px; font-size: 1.1rem;"
+                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; color: rgb(0, 0, 0); border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
                                 id="updateSupplierBtn"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
@@ -70,11 +79,13 @@ const initialSuppliers = suppliersData || [];
                         </div>
                     </div>
 
+                    <!-- CONTENIDO PRINCIPAL CON MARGEN PARA LOS BOTONES -->
                     <div style="margin-right: 300px;">
                         <div class="d-flex align-items-start">
                             <div style="width: 100%;">
                                 <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Proveedores</h1>
 
+                                <!-- FORMULARIO DE BÚSQUEDA -->
                                 <div class="d-flex gap-4 mb-3">
                                     <div class="flex-grow-1">
                                         <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
@@ -109,6 +120,7 @@ const initialSuppliers = suppliersData || [];
 
                                 <div id="message" class="mt-3" style="display: none;"></div>
 
+                                <!-- BOTONES ORDENAR Y FILTRAR -->
                                 <div class="d-flex gap-4 mt-3 align-items-center">
                                     <div class="position-relative">
                                         <button 
@@ -171,6 +183,7 @@ const initialSuppliers = suppliersData || [];
                                     </div>
                                 </div>
 
+                                <!-- FILTROS AVANZADOS -->
                                 <div class="mt-3" id="filtersAccordion" style="display: none;">
                                     <div class="card card-body border-0 shadow-sm">
                                         <h6 class="fw-bold mb-3">Filtros Avanzados</h6>
@@ -246,6 +259,7 @@ const initialSuppliers = suppliersData || [];
                             </div>
                         </div>
 
+                        <!-- TABLA -->
                         <div class="mt-5">
                             <div class="card shadow-sm border-0" style="border-radius: 8px;">
                                 <div class="card-body p-0">
@@ -302,6 +316,8 @@ const initialSuppliers = suppliersData || [];
         </div>
     </div>
 
+    <!-- El resto del código permanece igual -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <div 
@@ -311,98 +327,7 @@ const initialSuppliers = suppliersData || [];
     ></div>
 
     <script>
-        const routeMap = {
-            "Consumibles": "http://localhost:4321/administracion/inventario/consumibles",
-            "Productos": "http://localhost:4321/administracion/inventario/productos", 
-            "Ingredientes": "http://localhost:4321/administracion/inventario/ingredientes",
-            "Proveedores": "http://localhost:4321/administracion/inventario/proveedores"
-        };
-
-        function setupLeftBarNavigation() {
-            console.log('Configurando navegación del LeftBar para Inventario...');
-            
-            setTimeout(() => {
-                const options = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
-                
-                options.forEach(optionText => {
-                    const elements = document.querySelectorAll('*');
-                    elements.forEach(element => {
-                        if (element.textContent?.trim() === optionText && routeMap[optionText as keyof typeof routeMap]) {
-                            if (!element.hasAttribute('data-nav-configured')) {
-                                (element as HTMLElement).style.cursor = 'pointer';
-                                element.setAttribute('data-nav-configured', 'true');
-                                
-                                element.addEventListener('click', (e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    const route = routeMap[optionText as keyof typeof routeMap];
-                                    console.log('Navegando a:', route);
-                                    window.location.href = route;
-                                });
-                                
-                                element.addEventListener('mouseenter', () => {
-                                    (element as HTMLElement).style.backgroundColor = '#f8f9fa';
-                                    (element as HTMLElement).style.transition = 'background-color 0.2s';
-                                });
-                                element.addEventListener('mouseleave', () => {
-                                    (element as HTMLElement).style.backgroundColor = '';
-                                });
-                                
-                                console.log('Configurado elemento para:', optionText);
-                            }
-                        }
-                    });
-                });
-            }, 100);
-
-            setTimeout(() => {
-                const sidebarSelectors = [
-                    '.sidebar-item',
-                    '.nav-link', 
-                    '.list-group-item',
-                    '[class*="option"]',
-                    '[class*="item"]',
-                    'a',
-                    'button',
-                    'div'
-                ];
-                
-                sidebarSelectors.forEach(selector => {
-                    const elements = document.querySelectorAll(selector);
-                    elements.forEach(element => {
-                        const text = element.textContent?.trim();
-                        if (text && text in routeMap) {
-                            if (!element.hasAttribute('data-nav-configured')) {
-                                (element as HTMLElement).style.cursor = 'pointer';
-                                element.setAttribute('data-nav-configured', 'true');
-                                element.addEventListener('click', () => {
-                                    const route = routeMap[text as keyof typeof routeMap];
-                                    console.log('Navegando a:', route);
-                                    window.location.href = route;
-                                });
-                                
-                                element.addEventListener('mouseenter', () => {
-                                    (element as HTMLElement).style.backgroundColor = '#f8f9fa';
-                                });
-                                element.addEventListener('mouseleave', () => {
-                                    (element as HTMLElement).style.backgroundColor = '';
-                                });
-                            }
-                        }
-                    });
-                });
-            }, 200);
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM cargado, inicializando navegación de inventario...');
-            
-            setupLeftBarNavigation();
-            
-            setTimeout(setupLeftBarNavigation, 500);
-            setTimeout(setupLeftBarNavigation, 1000);
-            setTimeout(setupLeftBarNavigation, 2000);
-
             console.log('Inicializando funcionalidad de proveedores...');
             
             let selectedSupplierId: string | null = null;
@@ -1054,11 +979,6 @@ const initialSuppliers = suppliersData || [];
 
             updateTable();
             console.log('Sistema de proveedores inicializado correctamente');
-        });
-
-        window.addEventListener('load', function() {
-            console.log('Ventana cargada, verificando navegación de inventario...');
-            setTimeout(setupLeftBarNavigation, 300);
         });
     </script>
 </Layout>

@@ -3,84 +3,62 @@ export const prerender = false;
 import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
 import loginImage from "../../public/loginimage.jpg";
+
+const user = (Astro.locals as any)?.user;
 ---
 
-<Layout>
+<Layout title="Home">
   <Navbar />
   <div class="container-fluid py-4 p-0">
-    <div class="d-flex flex-wrap  justify-content-center gap-2 h-100 py-3 ">
+    <div class="d-flex flex-row justify-content-center gap-3 h-100 py-3">
       <!-- Realizar Pedido -->
 
-      <div class="col-md-5">
-        <a href="/realizar-pedido">
-          <div class="menu-item position-relative shadow-lg rounded">
-            <img
-              src="home1.png"
-              alt="Pedidos"
-              class=" w-100 img-expanded"
-              style="object-fit: cover;"
-            />
-            <div
-              class="position-absolute top-50 start-50 translate-middle text-center w-100"
-            >
-              <h3 class="mb-0 pattaya-text">Realizar Pedido</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Mesa -->
-      <div class="col-md-5">
-        <a href="/Cuentas">
+      <!-- Para llevar -->
+      <div class="col-3">
+        <a href="/realizar-pedido/pedido">
           <div class="menu-item position-relative shadow-lg rounded">
             <img
               src="home2.png"
-              alt="Mesa"
-              class="img-fluid w-100 img-expanded"
-              style="object-fit: cover;"
-            />
-            <div
-              class="position-absolute top-50 start-50 translate-middle text-center w-100"
-            >
-              <h3 class="mb-0 pattaya-text">Mesas</h3>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- Para llevar -->
-      <div class="col-md-5">
-        <a href="/para-llevar">
-          <div class="menu-item position-relative shadow-lg rounded">
-            <img
-              src="home3.png"
               alt="Para llevar"
               class="img-fluid w-100 img-expanded"
               style="object-fit: cover;"
             />
-            <div
-              class="position-absolute top-50 start-50 translate-middle text-center w-100"
-            >
-              <h3 class="mb-0 pattaya-text">Para llevar</h3>
+            <div class="color-overlay"></div>
+            <div class="card-overlay">
+              <h3 class="card-title-overlay">Para Llevar</h3>
             </div>
           </div>
         </a>
       </div>
 
+      <div class="col-5">
+        <a href="/realizar-pedido/mesas">
+          <div class="menu-item position-relative shadow-lg rounded">
+            <img
+              src="home1.jpg"
+              alt="Pedidos"
+              class="w-100 h-100 img-expanded"
+              style="object-fit: cover;"
+            />
+            <div class="color-overlay"></div>
+            <div class="card-overlay">
+              <h3 class="card-title-overlay">Realizar Pedido</h3>
+            </div>
+          </div>
+        </a>
+      </div>
       <!-- Administración -->
-      <div class="col-md-5">
+      <div class="col-3">
         <a href="/administracion">
           <div class="menu-item position-relative shadow-lg rounded">
             <img
-              src="home4.png"
+              src="home4.jpg"
               alt="Administración"
               class="img-fluid w-100 img-expanded"
               style="object-fit: cover;"
-            />
-            <div
-              class="position-absolute top-50 start-50 translate-middle text-center w-100"
-            >
-              <h3 class="mb-0 pattaya-text">Administración</h3>
+            /><div class="color-overlay"></div>
+            <div class="card-overlay">
+              <h3 class="card-title-overlay">Administración</h3>
             </div>
           </div>
         </a>

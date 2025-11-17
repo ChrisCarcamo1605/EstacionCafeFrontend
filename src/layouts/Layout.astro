@@ -1,6 +1,7 @@
 ---
 import "bootstrap/dist/css/bootstrap.css";
 import '../styles/style.css'
+const {title} = Astro.props ;
 ---
 
 <!doctype html>
@@ -17,7 +18,7 @@ import '../styles/style.css'
       href="https://fonts.googleapis.com/css2?family=Pattaya&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
-    <title>Astro Basics</title>
+    <title>{title}</title>
   </head>
   <body>
     <slot />

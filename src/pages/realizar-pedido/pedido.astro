@@ -1,0 +1,46 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import LeftBar from "../../components/LeftBar.astro";
+import Navbar from "../../components/Navbar.astro";
+import BillBar from "../../components/BillBar.astro";
+
+const details: any[] = [];
+const user = (Astro.locals as any).user;
+
+// Obtener tipos de productos desde la API
+let options: string[] = [];
+try {
+  const response = await fetch("http://localhost:3484/api/product-type");
+  const data = await response.json();
+  options = data.data?.map((type: any) => type.name) || [];
+} catch (error) {
+  console.error("Error al cargar tipos de productos:", error);
+  options = []; // Fallback a array vacío si falla
+}
+
+// Aquí se recibirán los datos de la mesa y cuenta desde sessionStorage en el cliente
+---
+
+<Layout title="Realizar Pedido">
+  <div
+    class="container-fluid p-0 vh-100 overflow-hidden d-flex flex-column"
+    data-user={JSON.stringify(user.userId)}
+  >
+    <div class="w-100 m-0"><Navbar /></div>
+
+    <div class="d-flex flex-row flex-grow-1 overflow-hidden">
+      <LeftBar options={options} title="Pedido" returnPath="/home" />
+      <div
+        class="w-100 d-flex flex-wrap gap-2 p-2 overflow-y-auto align-content-start"
+        id="products_container"
+        style="min-height: 0; max-height: 100%;"
+      >
+      </div>
+      <BillBar details={details} />
+    </div>
+  </div>
+  <script src="../../client-js/realizar-pedido.ts"></script>
+
+</Layout>

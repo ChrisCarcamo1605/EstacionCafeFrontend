@@ -4,7 +4,7 @@ import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
 
-const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores", "Planilla"];
+const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
 // Fetch de datos de consumibles
 const response = await fetch("http://localhost:3484/api/consumable", {
@@ -59,6 +59,21 @@ if (suppliersResponse.ok) {
 }
 
 const initialConsumables = consumablesData || [];
+
+// Mapeo de unidades de medida para mostrar nombres amigables
+const unitMeasurementOptions = [
+    { value: "g", label: "Gramos" },
+    { value: "kg", label: "Kilogramos" },
+    { value: "l", label: "Litros" },
+    { value: "ml", label: "Mililitros" },
+    { value: "oz", label: "Onzas" },
+    { value: "lb", label: "Libras" },
+    { value: "unit", label: "Unidad" },
+    { value: "tbsp", label: "Cucharada" },
+    { value: "tsp", label: "Cucharadita" },
+    { value: "cup", label: "Taza" },
+    { value: "piece", label: "Pieza" }
+];
 ---
 
 <Layout>
@@ -70,8 +85,9 @@ const initialConsumables = consumablesData || [];
 
             <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif; position: relative;">
                 <div class="p-4">
-                    <div class="position-fixed" style="top: 100px; right: 40px; z-index: 1000;">
-                        <div class="d-flex flex-column gap-3">
+                    <!-- BOTONES EN LA ESQUINA SUPERIOR DERECHA (no fijos) -->
+                    <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
+                        <div class="d-flex flex-column gap-1">
                             <button
                                     class="btn d-flex align-items-center justify-content-center gap-2"
                                     style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
@@ -84,7 +100,7 @@ const initialConsumables = consumablesData || [];
                             </button>
                             <button
                                     class="btn d-flex align-items-center justify-content-center gap-2"
-                                    style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #007bff; color: white; border: 1px solid #007bff; width: 257px; height: 50px; font-size: 1.1rem;"
+                                    style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; color: rgb(0, 0, 0); border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
                                     id="updateConsumableBtn"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
@@ -106,6 +122,7 @@ const initialConsumables = consumablesData || [];
                         </div>
                     </div>
 
+                    <!-- CONTENIDO PRINCIPAL CON MARGEN PARA LOS BOTONES -->
                     <div style="margin-right: 300px;">
                         <div class="d-flex align-items-start">
                             <div style="width: 100%;">
@@ -136,11 +153,9 @@ const initialConsumables = consumablesData || [];
                                         <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Unidad de Medida</label>
                                         <select class="form-select search-input" id="searchUnitMeasurement" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
                                             <option value="">Seleccionar</option>
-                                            <option value="mil">mil</option>
-                                            <option value="gramos">gramos</option>
-                                            <option value="litros">litros</option>
-                                            <option value="unidad">unidad</option>
-                                            <option value="kg">kg</option>
+                                            {unitMeasurementOptions.map((unit) => (
+                                                    <option value={unit.value}>{unit.label}</option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
@@ -284,11 +299,9 @@ const initialConsumables = consumablesData || [];
                                                 <label class="form-label fw-semibold">Unidad de Medida</label>
                                                 <select class="form-select filter-input" id="filterUnitMeasurement">
                                                     <option value="">Todas las unidades</option>
-                                                    <option value="mil">mil</option>
-                                                    <option value="gramos">gramos</option>
-                                                    <option value="litros">litros</option>
-                                                    <option value="unidad">unidad</option>
-                                                    <option value="kg">kg</option>
+                                                    {unitMeasurementOptions.map((unit) => (
+                                                            <option value={unit.value}>{unit.label}</option>
+                                                    ))}
                                                 </select>
                                             </div>
 
@@ -380,7 +393,12 @@ const initialConsumables = consumablesData || [];
                                                                 <th scope="row">{consumable.consumableId || consumable.id || 'N/A'}</th>
                                                                 <td>{consumable.name || ''}</td>
                                                                 <td>{consumable.consumableType?.name || ''}</td>
-                                                                <td>{consumable.unitMeasurement || ''}</td>
+                                                                <td>
+                                                                    {(() => {
+                                                                        const unit = unitMeasurementOptions.find(u => u.value === consumable.unitMeasurement);
+                                                                        return unit ? unit.label : consumable.unitMeasurement || '';
+                                                                    })()}
+                                                                </td>
                                                                 <td>{consumable.quantity || ''}</td>
                                                                 <td>${consumable.cost || ''}</td>
                                                                 <td>{consumable.supplier?.name || ''}</td>
@@ -431,7 +449,6 @@ const initialConsumables = consumablesData || [];
             Productos: string;
             Ingredientes: string;
             Proveedores: string;
-            Planilla: string;
         }
 
         interface Consumable {
@@ -452,15 +469,29 @@ const initialConsumables = consumablesData || [];
             "Consumibles": "/administracion/inventario/consumibles",
             "Productos": "/administracion/inventario/productos",
             "Ingredientes": "/administracion/inventario/ingredientes",
-            "Proveedores": "/administracion/inventario/proveedores",
-            "Planilla": "/administracion/planilla"
+            "Proveedores": "/administracion/inventario/proveedores"
+        };
+
+        // Mapeo de unidades de medida para el frontend
+        const unitMeasurementMap = {
+            "g": "Gramos",
+            "kg": "Kilogramos",
+            "l": "Litros",
+            "ml": "Mililitros",
+            "oz": "Onzas",
+            "lb": "Libras",
+            "unit": "Unidad",
+            "tbsp": "Cucharada",
+            "tsp": "Cucharadita",
+            "cup": "Taza",
+            "piece": "Pieza"
         };
 
         function setupLeftBarNavigation() {
             console.log('Configurando navegación del LeftBar para Inventario...');
 
             setTimeout(() => {
-                const options = ["Consumibles", "Productos", "Ingredientes", "Proveedores", "Planilla"];
+                const options = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
                 options.forEach(optionText => {
                     const elements = document.querySelectorAll('*');
@@ -549,13 +580,14 @@ const initialConsumables = consumablesData || [];
                 }
 
                 try {
+                    // CORRECCIÓN: Enviar los IDs como strings para que Zod los pueda transformar
                     const consumableData = {
                         name: name,
-                        cosumableTypeId: parseInt(consumableTypeId),
-                        unitMeasurement: unitMeasurement,
-                        quantity: parseFloat(quantity),
-                        cost: parseFloat(cost),
-                        supplierId: parseInt(supplierId),
+                        cosumableTypeId: consumableTypeId, // Enviar como string
+                        unitMeasurement: unitMeasurement, // Ya usa los valores correctos del enum
+                        quantity: quantity, // Enviar como string para que Zod lo transforme
+                        cost: cost, // Enviar como string para que Zod lo transforme
+                        supplierId: supplierId, // Enviar como string
                         active: status === 'active'
                     };
 
@@ -618,13 +650,14 @@ const initialConsumables = consumablesData || [];
                 }
 
                 try {
+                    // CORRECCIÓN: Enviar los IDs como strings para que Zod los pueda transformar
                     const consumableData = {
                         name: name,
-                        cosumableTypeId: parseInt(consumableTypeId),
-                        unitMeasurement: unitMeasurement,
-                        quantity: parseFloat(quantity),
-                        cost: parseFloat(cost),
-                        supplierId: parseInt(supplierId),
+                        cosumableTypeId: consumableTypeId, // Enviar como string
+                        unitMeasurement: unitMeasurement, // Ya usa los valores correctos del enum
+                        quantity: quantity, // Enviar como string
+                        cost: cost, // Enviar como string
+                        supplierId: supplierId, // Enviar como string
                         active: status === 'active'
                     };
 
@@ -1126,12 +1159,15 @@ const initialConsumables = consumablesData || [];
                         </tr>
                     `;
                 } else {
-                    tableBody.innerHTML = filteredConsumables.map(consumable => `
+                    tableBody.innerHTML = filteredConsumables.map(consumable => {
+                        const unitLabel = unitMeasurementMap[consumable.unitMeasurement as keyof typeof unitMeasurementMap] || consumable.unitMeasurement;
+
+                        return `
                         <tr data-consumable-id="${consumable.consumableId || consumable.id || 'N/A'}">
                             <th scope="row">${consumable.consumableId || consumable.id || 'N/A'}</th>
                             <td>${consumable.name || ''}</td>
                             <td>${consumable.consumableType?.name || ''}</td>
-                            <td>${consumable.unitMeasurement || ''}</td>
+                            <td>${unitLabel}</td>
                             <td>${consumable.quantity || ''}</td>
                             <td>$${consumable.cost || ''}</td>
                             <td>${consumable.supplier?.name || ''}</td>
@@ -1141,7 +1177,7 @@ const initialConsumables = consumablesData || [];
                                 </span>
                             </td>
                         </tr>
-                    `).join('');
+                    `}).join('');
                 }
             }
 

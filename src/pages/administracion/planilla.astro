@@ -4,7 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
 import LeftBar from "../../components/LeftBar.astro";
 
-const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores", "Planilla"];
+const sidebarOptions = ["Planilla"];
 
 // Fetch de datos de usuarios (planilla)
 const response = await fetch("http://localhost:3484/api/users", {
@@ -44,7 +44,7 @@ if (userTypesResponse.ok) {
 const initialUsers = usersData || [];
 ---
 
-<Layout title="Planilla">
+<Layout>
     <div class="d-flex flex-column" style="min-height: 100vh;">
         <Navbar />
 
@@ -53,8 +53,9 @@ const initialUsers = usersData || [];
 
             <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif; position: relative;">
                 <div class="p-4">
-                    <div class="position-fixed" style="top: 100px; right: 40px; z-index: 1000;">
-                        <div class="d-flex flex-column gap-3">
+                    <!-- BOTONES EN LA ESQUINA SUPERIOR DERECHA (no fijos) -->
+                    <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
+                        <div class="d-flex flex-column gap-1">
                             <button
                                     class="btn d-flex align-items-center justify-content-center gap-2"
                                     style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
@@ -67,7 +68,7 @@ const initialUsers = usersData || [];
                             </button>
                             <button
                                     class="btn d-flex align-items-center justify-content-center gap-2"
-                                    style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #007bff; color: white; border: 1px solid #007bff; width: 257px; height: 50px; font-size: 1.1rem;"
+                                    style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; color: rgb(0, 0, 0); border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
                                     id="updateUserBtn"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
@@ -89,6 +90,7 @@ const initialUsers = usersData || [];
                         </div>
                     </div>
 
+                    <!-- CONTENIDO PRINCIPAL CON MARGEN PARA LOS BOTONES -->
                     <div style="margin-right: 300px;">
                         <div class="d-flex align-items-start">
                             <div style="width: 100%;">
@@ -111,7 +113,12 @@ const initialUsers = usersData || [];
                                     </div>
                                 </div>
 
-                                <div class="d-flex gap-4">
+                                <div class="d-flex gap-4 mb-3">
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Contraseña</label>
+                                        <input type="password" class="form-control search-input" id="searchPassword" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" placeholder="Ingrese la contraseña" />
+                                    </div>
+
                                     <div class="flex-grow-1">
                                         <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Rol</label>
                                         <select class="form-select search-input" id="searchRole" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
@@ -237,6 +244,16 @@ const initialUsers = usersData || [];
                                             </div>
 
                                             <div class="col-md-4">
+                                                <label class="form-label fw-semibold">Contraseña</label>
+                                                <input
+                                                        type="text"
+                                                        class="form-control filter-input"
+                                                        id="filterPassword"
+                                                        placeholder="Buscar por contraseña"
+                                                />
+                                            </div>
+
+                                            <div class="col-md-4">
                                                 <label class="form-label fw-semibold">Rol</label>
                                                 <select class="form-select filter-input" id="filterRole">
                                                     <option value="">Todos los roles</option>
@@ -283,33 +300,41 @@ const initialUsers = usersData || [];
                                         <table class="table table-hover mb-0">
                                             <thead style="background-color: #482E21; color: white;">
                                             <tr>
-                                                <th scope="col" style="width: 10%;">ID</th>
-                                                <th scope="col" style="width: 20%;">Usuario</th>
-                                                <th scope="col" style="width: 25%;">Correo Electrónico</th>
-                                                <th scope="col" style="width: 20%;">Rol</th>
-                                                <th scope="col" style="width: 15%;">Estado</th>
+                                                <th scope="col" style="width: 8%;">ID</th>
+                                                <th scope="col" style="width: 15%;">Usuario</th>
+                                                <th scope="col" style="width: 20%;">Correo Electrónico</th>
+                                                <th scope="col" style="width: 15%;">Rol</th>
+                                                <th scope="col" style="width: 10%;">Tipo ID</th>
+                                                <th scope="col" style="width: 10%;">Estado</th>
+                                                <th scope="col" style="width: 12%;">Contraseña</th>
+                                                <th scope="col" style="width: 10%;">User ID</th>
                                             </tr>
                                             </thead>
                                             <tbody id="usersTableBody">
                                             {initialUsers.length > 0 ? (
-                                                initialUsers
-                                                    .filter((user: any) => user.active !== false)
-                                                    .map((user: any) => (
-                                                            <tr data-user-id={user.userId || user.id}>
-                                                                <th scope="row">{user.userId || user.id || 'N/A'}</th>
-                                                                <td>{user.username || user.name || ''}</td>
-                                                                <td>{user.email || ''}</td>
-                                                                <td>{user.userType?.name || user.role || ''}</td>
-                                                                <td>
-                                                                    <span class={`badge ${(user.active !== false) ? 'bg-success' : 'bg-danger'}`}>
-                                                                        {(user.active !== false) ? 'Activo' : 'Inactivo'}
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                    ))
+                                                initialUsers.map((user: any) => (
+                                                        <tr data-user-id={user.userId || user.id}>
+                                                            <th scope="row">{user.userId || user.id || 'N/A'}</th>
+                                                            <td>{user.username || user.name || ''}</td>
+                                                            <td>{user.email || ''}</td>
+                                                            <td>{user.userType?.name || user.role || ''}</td>
+                                                            <td>{user.userTypeId || user.typeId || 'N/A'}</td>
+                                                            <td>
+                                                            <span class={`badge ${(user.active !== false) ? 'bg-success' : 'bg-danger'}`}>
+                                                                {(user.active !== false) ? 'Activo' : 'Inactivo'}
+                                                            </span>
+                                                            </td>
+                                                            <td>
+                                                            <span class="text-muted">
+                                                                {user.password ? '••••••••' : 'Sin contraseña'}
+                                                            </span>
+                                                            </td>
+                                                            <td>{user.userId || 'N/A'}</td>
+                                                        </tr>
+                                                ))
                                             ) : (
                                                     <tr>
-                                                        <td colspan="5" class="text-center py-4">
+                                                        <td colspan="8" class="text-center py-4">
                                                             <div class="text-muted">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-inbox" viewBox="0 0 16 16">
                                                                     <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm-1.17-.437A1.5 1.5 0 0 1 4.98 3h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1 .106.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z"/>
@@ -343,10 +368,6 @@ const initialUsers = usersData || [];
     <script>
         // Definir tipos para TypeScript
         interface RouteMap {
-            Consumibles: string;
-            Productos: string;
-            Ingredientes: string;
-            Proveedores: string;
             Planilla: string;
         }
 
@@ -356,17 +377,15 @@ const initialUsers = usersData || [];
             username?: string;
             name?: string;
             email?: string;
+            password?: string;
             role?: string;
             userType?: any;
             userTypeId?: string;
+            typeId?: string;
             active?: boolean;
         }
 
         const routeMap: RouteMap = {
-            "Consumibles": "/administracion/inventario/consumibles",
-            "Productos": "/administracion/inventario/productos",
-            "Ingredientes": "/administracion/inventario/ingredientes",
-            "Proveedores": "/administracion/inventario/proveedores",
             "Planilla": "/administracion/planilla"
         };
 
@@ -374,7 +393,7 @@ const initialUsers = usersData || [];
             console.log('Configurando navegación del LeftBar para Administración...');
 
             setTimeout(() => {
-                const options = ["Consumibles", "Productos", "Ingredientes", "Proveedores", "Planilla"];
+                const options = ["Planilla"];
 
                 options.forEach(optionText => {
                     const elements = document.querySelectorAll('*');
@@ -432,17 +451,19 @@ const initialUsers = usersData || [];
             const searchId = document.getElementById('searchId') as HTMLInputElement | null;
             const searchUsername = document.getElementById('searchUsername') as HTMLInputElement | null;
             const searchEmail = document.getElementById('searchEmail') as HTMLInputElement | null;
+            const searchPassword = document.getElementById('searchPassword') as HTMLInputElement | null;
             const searchRole = document.getElementById('searchRole') as HTMLSelectElement | null;
             const searchStatus = document.getElementById('searchStatus') as HTMLSelectElement | null;
 
             async function addNewUser() {
                 const username = searchUsername?.value.trim();
                 const email = searchEmail?.value.trim();
+                const password = searchPassword?.value.trim();
                 const userTypeId = searchRole?.value;
                 const status = searchStatus?.value;
 
-                if (!username || !email || !userTypeId) {
-                    showMessage('Por favor complete los campos Usuario, Correo Electrónico y Rol', 'error');
+                if (!username || !email || !password || !userTypeId) {
+                    showMessage('Por favor complete los campos Usuario, Correo Electrónico, Contraseña y Rol', 'error');
                     return;
                 }
 
@@ -450,9 +471,9 @@ const initialUsers = usersData || [];
                     const userData = {
                         username: username,
                         email: email,
-                        userTypeId: userTypeId,
-                        active: status === 'active',
-                        password: "default123" // Contraseña por defecto
+                        password: password,
+                        typeId: parseInt(userTypeId),  // Cambiado aquí
+                        active: status === 'active'
                     };
 
                     console.log('Enviando datos para agregar:', userData);
@@ -476,7 +497,13 @@ const initialUsers = usersData || [];
                     } else {
                         const errorData = await response.json();
                         console.error('Error al agregar usuario:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo agregar el usuario'}`, 'error');
+
+                        // Manejo mejorado de errores
+                        if (errorData.campo) {
+                            showMessage(`Error en ${errorData.campo}: ${errorData.message}`, 'error');
+                        } else {
+                            showMessage(`Error: ${errorData.message || 'No se pudo agregar el usuario'}`, 'error');
+                        }
                     }
                 } catch (error) {
                     console.error('Error de red:', error);
@@ -492,6 +519,7 @@ const initialUsers = usersData || [];
 
                 const username = searchUsername?.value.trim();
                 const email = searchEmail?.value.trim();
+                const password = searchPassword?.value.trim();
                 const userTypeId = searchRole?.value;
                 const status = searchStatus?.value;
 
@@ -501,12 +529,18 @@ const initialUsers = usersData || [];
                 }
 
                 try {
-                    const userData = {
+                    // ✅ CORREGIDO - Usa typeId en lugar de userTypeId
+                    const userData: any = {
                         username: username,
                         email: email,
-                        userTypeId: userTypeId,
+                        typeId: parseInt(userTypeId),  // Cambiado aquí
                         active: status === 'active'
                     };
+
+                    // Solo incluir la contraseña si se proporcionó una nueva
+                    if (password && password.trim() !== '') {
+                        userData.password = password;
+                    }
 
                     console.log('Enviando datos para actualizar:', userData, 'ID:', selectedUserId);
 
@@ -530,7 +564,13 @@ const initialUsers = usersData || [];
                     } else {
                         const errorData = await response.json();
                         console.error('Error al actualizar usuario:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo actualizar el usuario'}`, 'error');
+
+                        // Manejo mejorado de errores
+                        if (errorData.campo) {
+                            showMessage(`Error en ${errorData.campo}: ${errorData.message}`, 'error');
+                        } else {
+                            showMessage(`Error: ${errorData.message || 'No se pudo actualizar el usuario'}`, 'error');
+                        }
                     }
                 } catch (error) {
                     console.error('Error de red:', error);
@@ -593,6 +633,7 @@ const initialUsers = usersData || [];
                 if (searchId) searchId.value = '';
                 if (searchUsername) searchUsername.value = '';
                 if (searchEmail) searchEmail.value = '';
+                if (searchPassword) searchPassword.value = '';
                 if (searchRole) searchRole.value = '';
                 if (searchStatus) searchStatus.value = 'active';
             }
@@ -625,7 +666,13 @@ const initialUsers = usersData || [];
                 if (searchId) searchId.value = user.userId || user.id || '';
                 if (searchUsername) searchUsername.value = user.username || user.name || '';
                 if (searchEmail) searchEmail.value = user.email || '';
-                if (searchRole) searchRole.value = user.userTypeId || '';
+                // No cargamos la contraseña por seguridad, dejamos el campo vacío
+                if (searchPassword) searchPassword.value = '';
+
+                // Usar userTypeId o typeId para el select
+                const typeId = user.userTypeId || user.typeId;
+                if (searchRole && typeId) searchRole.value = typeId.toString();
+
                 if (searchStatus) searchStatus.value = (user.active !== false) ? 'active' : 'inactive';
 
                 console.log('Formulario llenado exitosamente para usuario:', userId);
@@ -709,6 +756,7 @@ const initialUsers = usersData || [];
             const filterId = document.getElementById('filterId') as HTMLInputElement | null;
             const filterUsername = document.getElementById('filterUsername') as HTMLInputElement | null;
             const filterEmail = document.getElementById('filterEmail') as HTMLInputElement | null;
+            const filterPassword = document.getElementById('filterPassword') as HTMLInputElement | null;
             const filterRole = document.getElementById('filterRole') as HTMLSelectElement | null;
             const filterStatus = document.getElementById('filterStatus') as HTMLSelectElement | null;
 
@@ -717,6 +765,7 @@ const initialUsers = usersData || [];
             if (initialDataElement && initialDataElement.dataset.users) {
                 allUsers = JSON.parse(initialDataElement.dataset.users);
                 console.log('Datos iniciales cargados:', allUsers.length, 'usuarios');
+                console.log('Ejemplo de usuario:', allUsers[0]);
             } else {
                 console.error('No se pudieron cargar los datos iniciales');
                 allUsers = [];
@@ -726,6 +775,7 @@ const initialUsers = usersData || [];
                 id: '',
                 username: '',
                 email: '',
+                password: '',
                 role: '',
                 status: 'active',
             };
@@ -787,6 +837,7 @@ const initialUsers = usersData || [];
                     id: searchId ? searchId.value.toLowerCase() : '',
                     username: searchUsername ? searchUsername.value.toLowerCase() : '',
                     email: searchEmail ? searchEmail.value.toLowerCase() : '',
+                    password: searchPassword ? searchPassword.value.toLowerCase() : '',
                     role: searchRole ? searchRole.value : '',
                     status: searchStatus ? searchStatus.value : 'active',
                 };
@@ -799,6 +850,7 @@ const initialUsers = usersData || [];
                     id: filterId ? filterId.value.toLowerCase() : '',
                     username: filterUsername ? filterUsername.value.toLowerCase() : '',
                     email: filterEmail ? filterEmail.value.toLowerCase() : '',
+                    password: filterPassword ? filterPassword.value.toLowerCase() : '',
                     role: filterRole ? filterRole.value : '',
                     status: filterStatus ? filterStatus.value : 'active',
                 };
@@ -815,12 +867,14 @@ const initialUsers = usersData || [];
                 if (searchId) searchId.value = '';
                 if (searchUsername) searchUsername.value = '';
                 if (searchEmail) searchEmail.value = '';
+                if (searchPassword) searchPassword.value = '';
                 if (searchRole) searchRole.value = '';
                 if (searchStatus) searchStatus.value = 'active';
 
                 if (filterId) filterId.value = '';
                 if (filterUsername) filterUsername.value = '';
                 if (filterEmail) filterEmail.value = '';
+                if (filterPassword) filterPassword.value = '';
                 if (filterRole) filterRole.value = '';
                 if (filterStatus) filterStatus.value = 'active';
 
@@ -828,6 +882,7 @@ const initialUsers = usersData || [];
                     id: '',
                     username: '',
                     email: '',
+                    password: '',
                     role: '',
                     status: 'active',
                 };
@@ -891,20 +946,16 @@ const initialUsers = usersData || [];
 
                 if (!allUsers.length) {
                     console.log('No hay datos de usuarios para mostrar');
-                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No hay datos disponibles</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay datos disponibles</td></tr>';
                     return;
                 }
 
                 console.log('Filtros aplicados:', currentFilters);
                 console.log('Ordenamiento aplicado:', currentSort);
-                console.log('Mostrar inactivos:', showInactive);
+                console.log('Total de usuarios:', allUsers.length);
 
                 let filteredUsers = allUsers.filter(user => {
                     // Filtro por estado (activo/inactivo)
-                    if (!showInactive && user.active === false) {
-                        return false;
-                    }
-
                     if (currentFilters.status === 'active' && user.active === false) {
                         return false;
                     }
@@ -936,9 +987,18 @@ const initialUsers = usersData || [];
                         }
                     }
 
+                    // Filtro por contraseña
+                    if (currentFilters.password && user.password) {
+                        const userPassword = user.password.toLowerCase();
+                        if (!userPassword.includes(currentFilters.password)) {
+                            return false;
+                        }
+                    }
+
                     // Filtro por rol
-                    if (currentFilters.role && user.userTypeId) {
-                        if (user.userTypeId !== currentFilters.role) {
+                    if (currentFilters.role) {
+                        const userTypeId = (user.userTypeId || user.typeId || '').toString();
+                        if (userTypeId !== currentFilters.role) {
                             return false;
                         }
                     }
@@ -954,7 +1014,7 @@ const initialUsers = usersData || [];
                 if (filteredUsers.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="5" class="text-center py-4">
+                            <td colspan="8" class="text-center py-4">
                                 <div class="text-muted">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
@@ -972,11 +1032,18 @@ const initialUsers = usersData || [];
                             <td>${user.username || user.name || ''}</td>
                             <td>${user.email || ''}</td>
                             <td>${user.userType?.name || user.role || ''}</td>
+                            <td>${user.userTypeId || user.typeId || 'N/A'}</td>
                             <td>
                                 <span class="badge ${(user.active !== false) ? 'bg-success' : 'bg-danger'}">
                                     ${(user.active !== false) ? 'Activo' : 'Inactivo'}
                                 </span>
                             </td>
+                            <td>
+                                <span class="text-muted">
+                                    ${user.password ? '••••••••' : 'Sin contraseña'}
+                                </span>
+                            </td>
+                            <td>${user.userId || 'N/A'}</td>
                         </tr>
                     `).join('');
                 }
@@ -1011,7 +1078,7 @@ const initialUsers = usersData || [];
             });
 
             const quickSearchInputs = [
-                searchId, searchUsername, searchEmail, searchRole, searchStatus
+                searchId, searchUsername, searchEmail, searchPassword, searchRole, searchStatus
             ];
             quickSearchInputs.forEach(input => {
                 if (input) {
@@ -1021,7 +1088,7 @@ const initialUsers = usersData || [];
             });
 
             const advancedFilterInputs = [
-                filterId, filterUsername, filterEmail, filterRole, filterStatus
+                filterId, filterUsername, filterEmail, filterPassword, filterRole, filterStatus
             ];
             advancedFilterInputs.forEach(input => {
                 if (input) {

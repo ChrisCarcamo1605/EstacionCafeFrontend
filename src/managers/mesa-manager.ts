@@ -109,6 +109,8 @@ export class MesaManager {
       cuenta.detalles = details;
 
       this.billSeleccionada = cuenta;
+      console.log(this.billSeleccionada);
+      
       this.goToRealizarPedido();
     } catch (error) {
       console.error("Error al cargar detalles de la cuenta:", error);

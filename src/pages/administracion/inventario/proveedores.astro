@@ -6,6 +6,13 @@ import LeftBar from "../../../components/LeftBar.astro";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
+const inventoryRouteMap: Record<string, string> = {
+    "Consumibles": "/administracion/inventario/consumibles",
+    "Productos": "/administracion/inventario/productos",
+    "Ingredientes": "/administracion/inventario/ingredientes",
+    "Proveedores": "/administracion/inventario/proveedores"
+};
+
 const response = await fetch("http://localhost:3484/api/suppliers", {
     method: "GET",
     headers: {
@@ -30,7 +37,7 @@ const initialSuppliers = suppliersData || [];
         <Navbar />
 
         <div class="d-flex flex-grow-1">
-            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" />
+            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" routeMap={inventoryRouteMap} />
 
             <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif; position: relative;">
                 <div class="p-4">
@@ -311,98 +318,7 @@ const initialSuppliers = suppliersData || [];
     ></div>
 
     <script>
-        const routeMap = {
-            "Consumibles": "http://localhost:4321/administracion/inventario/consumibles",
-            "Productos": "http://localhost:4321/administracion/inventario/productos", 
-            "Ingredientes": "http://localhost:4321/administracion/inventario/ingredientes",
-            "Proveedores": "http://localhost:4321/administracion/inventario/proveedores"
-        };
-
-        function setupLeftBarNavigation() {
-            console.log('Configurando navegación del LeftBar para Inventario...');
-            
-            setTimeout(() => {
-                const options = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
-                
-                options.forEach(optionText => {
-                    const elements = document.querySelectorAll('*');
-                    elements.forEach(element => {
-                        if (element.textContent?.trim() === optionText && routeMap[optionText as keyof typeof routeMap]) {
-                            if (!element.hasAttribute('data-nav-configured')) {
-                                (element as HTMLElement).style.cursor = 'pointer';
-                                element.setAttribute('data-nav-configured', 'true');
-                                
-                                element.addEventListener('click', (e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    const route = routeMap[optionText as keyof typeof routeMap];
-                                    console.log('Navegando a:', route);
-                                    window.location.href = route;
-                                });
-                                
-                                element.addEventListener('mouseenter', () => {
-                                    (element as HTMLElement).style.backgroundColor = '#f8f9fa';
-                                    (element as HTMLElement).style.transition = 'background-color 0.2s';
-                                });
-                                element.addEventListener('mouseleave', () => {
-                                    (element as HTMLElement).style.backgroundColor = '';
-                                });
-                                
-                                console.log('Configurado elemento para:', optionText);
-                            }
-                        }
-                    });
-                });
-            }, 100);
-
-            setTimeout(() => {
-                const sidebarSelectors = [
-                    '.sidebar-item',
-                    '.nav-link', 
-                    '.list-group-item',
-                    '[class*="option"]',
-                    '[class*="item"]',
-                    'a',
-                    'button',
-                    'div'
-                ];
-                
-                sidebarSelectors.forEach(selector => {
-                    const elements = document.querySelectorAll(selector);
-                    elements.forEach(element => {
-                        const text = element.textContent?.trim();
-                        if (text && text in routeMap) {
-                            if (!element.hasAttribute('data-nav-configured')) {
-                                (element as HTMLElement).style.cursor = 'pointer';
-                                element.setAttribute('data-nav-configured', 'true');
-                                element.addEventListener('click', () => {
-                                    const route = routeMap[text as keyof typeof routeMap];
-                                    console.log('Navegando a:', route);
-                                    window.location.href = route;
-                                });
-                                
-                                element.addEventListener('mouseenter', () => {
-                                    (element as HTMLElement).style.backgroundColor = '#f8f9fa';
-                                });
-                                element.addEventListener('mouseleave', () => {
-                                    (element as HTMLElement).style.backgroundColor = '';
-                                });
-                            }
-                        }
-                    });
-                });
-            }, 200);
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM cargado, inicializando navegación de inventario...');
-            
-            setupLeftBarNavigation();
-            
-            setTimeout(setupLeftBarNavigation, 500);
-            setTimeout(setupLeftBarNavigation, 1000);
-            setTimeout(setupLeftBarNavigation, 2000);
-
             console.log('Inicializando funcionalidad de proveedores...');
             
             let selectedSupplierId: string | null = null;
@@ -1054,11 +970,6 @@ const initialSuppliers = suppliersData || [];
 
             updateTable();
             console.log('Sistema de proveedores inicializado correctamente');
-        });
-
-        window.addEventListener('load', function() {
-            console.log('Ventana cargada, verificando navegación de inventario...');
-            setTimeout(setupLeftBarNavigation, 300);
         });
     </script>
 </Layout>

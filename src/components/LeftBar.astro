@@ -6,9 +6,10 @@ interface Props {
   title: string;
   selectedOption?: string;
   returnPath?: string;
+  routeMap?: Record<string, string>;
 }
 
-const { options = [], title, selectedOption = "" , returnPath="/administracion" } = Astro.props;
+const { options = [], title, selectedOption = "" , returnPath="/administracion", routeMap = {} } = Astro.props;
 ---
 
 <div
@@ -40,11 +41,15 @@ const { options = [], title, selectedOption = "" , returnPath="/administracion" 
   <div class="mt-5 align-items-center">
     <h2 class="text-center pattaya_subtitle">{title}</h2>
 
-    <div class="d-flex pt-4 flex-column gap-3 align-items-center">
+    <div class="d-flex pt-4 flex-column gap-3 align-items-center" id="leftbar-options">
       {
         options && options.length > 0 ? (
           options.map((option: string) => (
-            <div class="sidebar_option">
+            <div 
+              class={`sidebar_option ${selectedOption === option ? 'sidebar_option_selected' : ''}`}
+              data-option={option}
+              data-route={routeMap[option] || ''}
+            >
               <span>{option}</span>
             </div>
           ))
@@ -55,3 +60,50 @@ const { options = [], title, selectedOption = "" , returnPath="/administracion" 
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const options = document.querySelectorAll<HTMLElement>('.sidebar_option[data-route]');
+    
+    options.forEach(option => {
+      const route = option.getAttribute('data-route');
+      
+      if (route && route !== '') {
+        option.style.cursor = 'pointer';
+        
+        option.addEventListener('click', () => {
+          window.location.href = route;
+        });
+        
+        option.addEventListener('mouseenter', () => {
+          if (!option.classList.contains('sidebar_option_selected')) {
+            option.style.transform = 'scale(1.02)';
+          }
+        });
+        
+        option.addEventListener('mouseleave', () => {
+          option.style.transform = 'scale(1)';
+        });
+      }
+    });
+  });
+</script>
+
+<style>
+  .sidebar_option {
+    transition: all 0.2s ease;
+  }
+  
+  .sidebar_option[data-route]:not(.sidebar_option_selected):hover {
+    background-color: rgba(72, 46, 33, 0.1);
+  }
+  
+  .sidebar_option_selected {
+    background-color: #482E21;
+    color: white;
+  }
+  
+  .sidebar_option_selected span {
+    color: white;
+  }
+</style>

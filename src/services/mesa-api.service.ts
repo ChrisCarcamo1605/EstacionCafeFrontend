@@ -70,7 +70,6 @@ export class MesaApiService {
       if (!response.ok) {
         throw new Error("Error al obtener detalles de la cuenta");
       }
-
       const details = await response.json();
       return details.data || [];
     } catch (error) {

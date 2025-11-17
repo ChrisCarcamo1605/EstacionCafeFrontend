@@ -5,7 +5,11 @@ import LeftSidebar from "../../../components/LeftBar.astro";
 import Navbar from "../../../components/Navbar.astro";
 import ApexCharts from "apexcharts";
 
-
+const estadisticasRouteMap: Record<string, string> = {
+    "Estadisticas de Ventas": "/administracion/estadisticas/estadisticas-ventas",
+    "Estadisticas de Gastos": "/administracion/estadisticas/estadisticas-gastos",
+    "Reporte de Ventas": "/administracion/estadisticas/reporte-ventas"
+};
 
 const response1 = await fetch("http://localhost:3484/api/purchases",{
     method: "GET",
@@ -41,7 +45,8 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
         <LeftSidebar 
             title="Resumen" 
             options={["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"]}
-            selectedOption="Estadisticas de Gastos"  
+            selectedOption="Estadisticas de Gastos"
+            routeMap={estadisticasRouteMap}
         />
         <div class="main-content-with-navbar-sidebar flex-grow-1 p-4">
             <div class="row">

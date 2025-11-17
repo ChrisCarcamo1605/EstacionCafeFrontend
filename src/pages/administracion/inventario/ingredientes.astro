@@ -5,6 +5,13 @@ import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
+
+const inventoryRouteMap: Record<string, string> = {
+    "Consumibles": "/administracion/inventario/consumibles",
+    "Productos": "/administracion/inventario/productos",
+    "Ingredientes": "/administracion/inventario/ingredientes",
+    "Proveedores": "/administracion/inventario/proveedores"
+};
 ---
 
 <Layout title="Ingredientes">
@@ -14,7 +21,7 @@ const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores
 
         <div class="d-flex flex-grow-1">
             <!-- LeftBar debajo del Navbar -->
-            <LeftBar title="Inventario" options={sidebarOptions} />
+            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Ingredientes" routeMap={inventoryRouteMap} />
 
             <!-- Contenido principal -->
             <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">

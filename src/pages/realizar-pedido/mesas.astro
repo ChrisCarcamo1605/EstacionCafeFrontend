@@ -17,11 +17,10 @@ try {
       const zona = m.zone?.split(" ")[1];
       return zona || m.zone;
     }))];
-    options = zonasUnicas.filter((z: any) => z) as string[]; // Filtrar valores vacíos
+    options = zonasUnicas.filter((z: any) => z) as string[]; 
   }
 } catch (error) {
   console.error("Error al cargar zonas:", error);
-  // Fallback a zonas por defecto
   options = ["A", "B", "C", "D", "E"];
 }
 ---

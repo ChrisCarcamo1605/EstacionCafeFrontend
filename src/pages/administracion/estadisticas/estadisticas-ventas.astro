@@ -24,43 +24,34 @@ if (response1.ok) {
     json1 = await response1.json();
     console.log(json1.data);
 } else {
-    //console.error("Error fetching data:", response1.statusText);
 }
 
 
 let json = null;
 if (response.ok) {
     json = await response.json();
-    //console.log(json.analisis_productos);
 } else {
     console.error("Error fetching data:", response.statusText);
 }
 
-// Ordenar por rentabilidad y tomar los 5 más rentables
 const productosMasRentables = json.analisis_productos
     .sort((a: any, b: any) => b.rentabilidad - a.rentabilidad)
     .slice(0, 7);
 ---
 
 <Layout>
-    <!-- Navbar en la parte superior -->
     <Navbar />
     
     <div class="d-flex">
-        <!-- Sidebar a la izquierda -->
         <LeftSidebar 
             title="Resumen" 
             options={["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"]}
             selectedOption="Estadisticas de Ventas"  
         />
-        <!-- Contenido principal dividido en dos columnas -->
         <div class="flex-grow-1 p-4">
             <div class="row">
-                <!-- Columna izquierda: Tabla y Gráficos -->
                 <div class="col-md-9">
-                  <!-- CONTENEDOR DE GRÁFICOS EN FILA -->
                     <div class="row mt-4">
-                        <!-- GRÁFICO DE PRODUCTOS RENTABLES -->
                         <div class="col-md-6">
                             <div class="card shadow-sm">
                                 <div class="card-header text-white text-center py-2" style="background-color: #482E21;">
@@ -72,7 +63,6 @@ const productosMasRentables = json.analisis_productos
                             </div>
                         </div>
 
-                        <!-- GRÁFICO DE ÁREA PARA VENTAS -->
                         <div class="col-md-6">
                             <div class="card shadow-sm">
                                 <div class="card-header text-white text-center py-2" style="background-color: #482E21;">
@@ -86,7 +76,6 @@ const productosMasRentables = json.analisis_productos
                     </div>
 
                     <br/>
-                    <!-- Tabla con nuevo estilo -->
                     <div class="mt-5">
                         <div class="card shadow-sm border-0" style="border-radius: 8px;">
                             <div class="card-body p-0">
@@ -116,7 +105,6 @@ const productosMasRentables = json.analisis_productos
                         </div>
                     </div>
                     
-                    <!-- Elementos ocultos para pasar datos -->
                     <div 
                         id="chart-data" 
                         data-productos={JSON.stringify(productosMasRentables.map((p: any) => p.producto))}
@@ -130,7 +118,6 @@ const productosMasRentables = json.analisis_productos
                     ></div>
                 </div>
                 
-                <!-- Columna derecha: Predicciones en vertical (REDUCIDA) -->
                 <div class="col-md-3">
                     <div class="sticky-top" style="top: 20px;">
                         <h5 class="mb-3 text-center" style="color: #482E21;">Predicciones</h5>
@@ -158,10 +145,107 @@ const productosMasRentables = json.analisis_productos
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+    const routeMap: Record<string, string> = {
+        "Estadisticas de Ventas": "http://localhost:4321/administracion/estadisticas/estadisticas-ventas",
+        "Estadisticas de Gastos": "http://localhost:4321/administracion/estadisticas/estadisticas-gastos", 
+        "Reporte de Ventas": "http://localhost:4321/administracion/estadisticas/reporte-ventas"
+    };
+
+    function setupLeftBarNavigation() {
+        console.log('Configurando navegación del LeftBar...');
+        
+        setTimeout(() => {
+            const options = ["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"];
+            
+            options.forEach(optionText => {
+                const elements = document.querySelectorAll('*');
+                elements.forEach(element => {
+                    if (element.textContent?.trim() === optionText && routeMap[optionText]) {
+                        if (!element.hasAttribute('data-nav-configured')) {
+                            (element as HTMLElement).style.cursor = 'pointer';
+                            element.setAttribute('data-nav-configured', 'true');
+                            
+                            element.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log('Navegando a:', routeMap[optionText]);
+                                window.location.href = routeMap[optionText];
+                            });
+                            
+                            element.addEventListener('mouseenter', () => {
+                                (element as HTMLElement).style.backgroundColor = '#f8f9fa';
+                                (element as HTMLElement).style.transition = 'background-color 0.2s';
+                            });
+                            element.addEventListener('mouseleave', () => {
+                                (element as HTMLElement).style.backgroundColor = '';
+                            });
+                            
+                            console.log('Configurado elemento para:', optionText);
+                        }
+                    }
+                });
+            });
+        }, 100);
+
+        setTimeout(() => {
+            const sidebarSelectors = [
+                '.sidebar-item',
+                '.nav-link', 
+                '.list-group-item',
+                '[class*="option"]',
+                '[class*="item"]',
+                'a',
+                'button',
+                'div'
+            ];
+            
+            sidebarSelectors.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                    const text = element.textContent?.trim();
+                    if (text && routeMap[text]) {
+                        if (!element.hasAttribute('data-nav-configured')) {
+                            (element as HTMLElement).style.cursor = 'pointer';
+                            element.setAttribute('data-nav-configured', 'true');
+                            
+                            element.addEventListener('click', () => {
+                                console.log('Navegando a:', routeMap[text]);
+                                window.location.href = routeMap[text];
+                            });
+                            
+                            element.addEventListener('mouseenter', () => {
+                                (element as HTMLElement).style.backgroundColor = '#f8f9fa';
+                            });
+                            element.addEventListener('mouseleave', () => {
+                                (element as HTMLElement).style.backgroundColor = '';
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado, inicializando navegación...');
+        
+        setupLeftBarNavigation();
+        
+        setTimeout(setupLeftBarNavigation, 500);
+        setTimeout(setupLeftBarNavigation, 1000);
+        setTimeout(setupLeftBarNavigation, 2000);
+    });
+
+    window.addEventListener('load', function() {
+        console.log('Ventana cargada, verificando navegación...');
+        setTimeout(setupLeftBarNavigation, 300);
+    });
+    </script>
 </Layout>
 
 <style>
-    /* Estilos específicos para la tabla que sobreescriben Bootstrap */
     .table th {
         font-weight: 600;
         font-size: 0.875rem;
@@ -177,7 +261,6 @@ const productosMasRentables = json.analisis_productos
         border-radius: 8px;
     }
 
-    /* Estilos para las cards de predicciones más pequeñas */
     .fs-7 {
         font-size: 0.8rem !important;
     }
@@ -186,12 +269,10 @@ const productosMasRentables = json.analisis_productos
         font-size: 0.75rem !important;
     }
 
-    /* Ajustar altura de gráficos para que quepan en las cards */
     #productos-chart, #area-chart {
         height: 300px !important;
     }
 
-    /* Estilos para el fondo de las filas de la tabla */
     .table tbody tr {
         background-color: white;
     }
@@ -199,11 +280,24 @@ const productosMasRentables = json.analisis_productos
     .table tbody tr:hover {
         background-color: #f8f9fa;
     }
+
+    [class*="sidebar"] [class*="item"],
+    [class*="nav"] [class*="link"],
+    [class*="list"] [class*="item"] {
+        transition: background-color 0.2s ease;
+    }
+
+    [data-nav-configured="true"] {
+        cursor: pointer !important;
+    }
+
+    [data-nav-configured="true"]:hover {
+        background-color: #f8f9fa !important;
+    }
 </style>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // ========== GRÁFICO DE PRODUCTOS RENTABLES ==========
         const chartDataElement = document.getElementById('chart-data');
         
         if (chartDataElement) {
@@ -271,7 +365,6 @@ const productosMasRentables = json.analisis_productos
             }
         }
 
-        // ========== GRÁFICO DE ÁREA PARA VENTAS INDIVIDUALES ==========
         const areaDataElement = document.getElementById('area-data');
         
         if (areaDataElement) {
@@ -280,7 +373,6 @@ const productosMasRentables = json.analisis_productos
             if (ventasData) {
                 const montosVenta = JSON.parse(ventasData);
                 
-                // Crear secuencia numérica para el eje X (venta 1, venta 2, venta 3, etc.)
                 const secuenciaVentas = montosVenta.map((monto: any, index: number) => index + 1);
                 
                 var areaOptions = {
@@ -362,7 +454,6 @@ const productosMasRentables = json.analisis_productos
                 var areaChart = new ApexCharts(document.querySelector("#area-chart"), areaOptions);
                 areaChart.render();
 
-                // Mostrar estadísticas básicas en consola
                 console.log('Estadísticas de Ventas:');
                 console.log('- Total de ventas:', montosVenta.length);
                 console.log('- Monto promedio:', (montosVenta.reduce(function(a: any, b: any) { return a + b; }, 0) / montosVenta.length).toFixed(2));

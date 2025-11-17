@@ -3,10 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "concurrently \"astro dev\" \"npm run server\"",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "server": "node server/server.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -16,9 +17,15 @@
     "astro-bootstrap": "^0.7.2",
     "bootstrap": "^5.3.8",
     "jsonwebtoken": "^9.0.2",
-    "preact": "^10.27.2"
+    "preact": "^10.27.2",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.15",
+    "multer": "^1.4.5-lts.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.10"
+    "@types/jsonwebtoken": "^9.0.10",
+    "concurrently": "^8.2.2"
   }
 }

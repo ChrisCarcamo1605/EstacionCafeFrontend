@@ -49,7 +49,7 @@ export class MesaSidebar {
         
         <div class="bills-list">
           ${mesa.bills
-            .filter((cuenta) => cuenta.status === "open")
+            .filter((cuenta) => cuenta.status === "open" || cuenta.status === "draft")
             .map(
               (cuenta, index) => `
             <div class="cuenta-item" data-cuenta-id="${cuenta.billId}">

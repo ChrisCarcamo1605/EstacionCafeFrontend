@@ -5,6 +5,12 @@ import LeftSidebar from "../../../components/LeftBar.astro";
 import Navbar from "../../../components/Navbar.astro";
 import "../../../styles/style.css";
 
+const estadisticasRouteMap: Record<string, string> = {
+    "Estadisticas de Ventas": "/administracion/estadisticas/estadisticas-ventas",
+    "Estadisticas de Gastos": "/administracion/estadisticas/estadisticas-gastos",
+    "Reporte de Ventas": "/administracion/estadisticas/reporte-ventas"
+};
+
 let jsonData = null;
 let facturas = [];
 let apiError = null;
@@ -131,7 +137,8 @@ const getTime = (dateString: string) => {
         <LeftSidebar 
             title="Resumen" 
             options={["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"]}
-            selectedOption="Reporte de Ventas"  
+            selectedOption="Reporte de Ventas"
+            routeMap={estadisticasRouteMap}
         />
         
         <div class="flex-grow-1 p-4">

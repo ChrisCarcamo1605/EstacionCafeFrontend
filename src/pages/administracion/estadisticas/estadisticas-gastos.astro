@@ -33,7 +33,8 @@ const fechasCompras = compras.map((compra: any) => new Date(compra.date).toLocal
 const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
 ---
 
-<Layout>
+<Layout title="Estadisticas de Gastos">
+    <!-- Navbar en la parte superior -->
     <Navbar />
     
     <div class="d-flex">

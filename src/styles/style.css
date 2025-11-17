@@ -1,27 +1,41 @@
 :root {
   --primary-color: #ffffff;
+  --primary-color-dark: #e5e1e1;
   --secondary-color: #f3dcbb;
   --secondary-color_dark: #dbbd92;
   --third-color: #482e21;
   --third-color_light: #e6e6e6;
   --third-color_dark: #2b1900;
   --fourth-color: #000000;
+  --fourth-color-gradient : rgba(0, 0, 0, 0.1);
   --delete-btn-color: #930000;
 }
 
-a{
+a {
   color: var(--fourth-color);
-  text-decoration: none;
+  text-decoration: none !important;
 }
 
 html,
 body {
-  font-family: "Roboto", sans-serif;
+  font-family: "Roboto", sans-serif !important;
 }
 .fourth_color {
   background-color: var(--fourth-color);
+  color: var(--primary-color);
 }
 
+.secondary_color {
+  background-color: var(--secondary-color) !important;
+}
+.third_color_light {
+  background-color: var(--third-color_light);
+}
+
+.delete_color {
+  background-color: var(--delete-btn-color);
+  color: var(--primary-color);
+}
 .pattaya_title {
   font-family: "Pattaya", sans-serif;
   font-weight: 200;
@@ -43,8 +57,8 @@ body {
 .siderbar_left {
   align-content: flex-start;
   width: 15.625vw;
-  box-shadow: 4px 0 6px -3px rgba(0, 0, 0, 0.3);
-  height: 93.77vh;
+  box-shadow: 2px 0 10px -3px rgba(0, 0, 0, 0.3);
+  height: 100%;
 }
 
 .sidebar_option {
@@ -58,6 +72,12 @@ body {
 
 .sidebar_option:hover {
   background-color: var(--secondary-color);
+}
+
+.sidebar_option_active {
+  background-color: var(--secondary-color);
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .menu-item {
@@ -76,7 +96,7 @@ body {
 
 .menu-item img {
   transition: transform 0.5s ease;
-  background-color: #1D0E00;
+  background-color: #1d0e00;
   filter: brightness(0.9);
 }
 
@@ -122,63 +142,408 @@ body {
   }
 }
 
+.admin-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+  overflow: hidden;
+  border-radius: 8px;
+}
 
-  .admin-card {
-    cursor: pointer;
-    transition: transform 0.2s;
-    overflow: hidden;
-    border-radius: 8px;
-  }
+.admin-card:hover {
+  transform: translateY(-3px);
+}
 
-  .admin-card:hover {
-    transform: translateY(-3px);
-  }
+.color-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #1b0d00;
+  opacity: 0.4;
+  z-index: 1;
+}
 
-  .color-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #1b0d00;
-    opacity: 0.4;
-    z-index: 1;
-  }
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: var(--primary-color);
+  padding: 0.5rem;
+  z-index: 2;
+}
 
-  .card-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: var(--primary-color);
-    padding: 0.5rem;
-    z-index: 2;
-  }
+.card-title-overlay {
+  font-family: "Pattaya", sans-serif;
+  font-weight: 400;
+  font-size: 2.5rem;
+  margin: 0;
+  color: var(--secondary-color);
+}
 
+@media (max-width: 768px) {
   .card-title-overlay {
-    font-family: "Pattaya", sans-serif;
-    font-weight: 400;
-    font-size: 2.5rem;
-    margin: 0;
-    color: var(--secondary-color);
+    font-size: 1.8rem;
   }
+}
 
-  @media (max-width: 768px) {
-    .card-title-overlay {
-      font-size: 1.8rem;
-    }
+@media (max-width: 576px) {
+  .card-title-overlay {
+    font-size: 1.5rem;
   }
+}
 
-  @media (max-width: 576px) {
-    .card-title-overlay {
-      font-size: 1.5rem;
-    }
+.bill-bar {
+  width: 50vw;
+  box-shadow: -2px 0 10px -3px rgba(0, 0, 0, 0.2);
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.bill-bar .table thead tr th {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.bill-bar .table thead {
+  background-color: rgba(0, 0, 0, 0) !important;
+  border-radius: 6px 6px 0 0;
+}
+.bill-bar .table thead {
+  background-color: var(--secondary-color) !important;
+  border-radius: 5px 5px 0 0;
+}
+
+.bill-bar .table {
+  display: flex;
+  flex-direction: column;
+  height: 67%;
+  max-height: 67%;
+}
+
+.bill-bar .table thead {
+  flex-shrink: 0;
+}
+
+.bill-bar .table tbody {
+  display: block;
+  overflow-y:scroll;
+  flex-grow: 1;
+}
+
+.bill-bar .table thead,
+.bill-bar .table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.quantity-btn {
+  cursor: pointer;
+}
+
+.bill-bar .table thead {
+  font-size: 15px;
+}
+.bill-bar .table tbody {
+  font-size: 14px;
+}
+
+.bill-btn {
+  height: 3rem;
+  border-radius: 8px;
+  border: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prod-card {
+  cursor: pointer;
+}
+
+.table-bar {
+  width: 50vw;
+  box-shadow: -2px 0 10px -3px rgba(0, 0, 0, 0.2);
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.input {
+  box-shadow: 0px 2px 8px -5px black;
+  font-size: 18px;
+  padding-left: 9px;
+  transition: ease 3ms;
+}
+
+.bill-btn:hover {
+  transform: scale(1.01);
+}
+
+/* ========== ESTILOS PARA SISTEMA DE MESAS ========== */
+
+/* Grid de mesas */
+.zona-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Card de mesa */
+.mesa-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mesa-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.mesa-card.mesa-selected {
+  box-shadow: 0 0 0 3px #f3dcbb;
+  transform: translateY(-2px);
+}
+
+.mesa-content {
+  padding: 1.5rem;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+}
+
+/* Estados de mesa */
+.mesa-disponible {
+  background: linear-gradient(135deg, #2c3e50 0%, var(--fourth-color) 100%);
+  color: white;
+}
+
+.mesa-ocupada {
+  background: linear-gradient(135deg, #482e21 0%, var(--third-color) 100%);
+  color: white;
+}
+
+.mesa-reservada {
+  background: linear-gradient(135deg, var(--secondary-color) 40%, #C5A880 90%);
+  color: white;
+}
+
+/* Header de mesa */
+.mesa-header {
+  text-align: center;
+}
+
+.mesa-nombre {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.mesa-id {
+  font-size: 1.1rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Footer de mesa con badge de cuentas */
+.mesa-footer {
+  text-align: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.cuentas-badge {
+  background-color: rgba(255, 255, 255, 0.25);
+  padding: 0.35rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: inline-block;
+}
+
+/* ========== LISTA DE CUENTAS ========== */
+
+.cuentas-list-container {
+  padding: 1rem 0;
+}
+
+.cuentas-list {
+  max-height: 450px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.bills-list{
+  cursor: pointer;
+  user-select: none;
+}
+
+.cuenta-item {
+  background-color: var(--primary-color);
+  border: solid var(--primary-color-dark) 1px;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cuenta-item:hover {
+  border-color: #482e21;
+  transform: translateX(5px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cuenta-info h6 {
+  color: #482e21;
+  margin-bottom: 0.5rem;
+}
+
+.cuenta-info p {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.select-cuenta-btn {
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
+  border: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.select-cuenta-btn:hover {
+  transform: scale(1.05);
+}
+
+/* ========== FORMULARIO NUEVA CUENTA ========== */
+
+.nueva-cuenta-form {
+  padding: 1rem 0;
+}
+
+.nueva-cuenta-form .form-control {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.nueva-cuenta-form .form-control:focus {
+  border-color: #482e21;
+  box-shadow: 0 0 0 0.2rem rgba(72, 46, 33, 0.15);
+}
+
+.nueva-cuenta-form label {
+  color: #482e21;
+  font-size: 0.95rem;
+}
+
+.crear-cuenta-btn {
+  padding: 0.875rem;
+  font-weight: 600;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.crear-cuenta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cancelar-btn {
+  padding: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cancelar-btn:hover {
+  background-color: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.nueva-cuenta-btn {
+  background-color: var(--third-color) !important;
+ color: var(--primary-color)!important;
+}
+
+.nueva-cuenta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== SCROLLBAR PERSONALIZADO ========== */
+
+.cuentas-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cuentas-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.cuentas-list::-webkit-scrollbar-thumb {
+  background: #482e21;
+  border-radius: 10px;
+}
+
+.cuentas-list::-webkit-scrollbar-thumb:hover {
+  background: #6d4a36;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+@media (max-width: 1200px) {
+  .zona-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
+  
+  .mesa-content {
+    height: 120px;
+    padding: 1rem;
+  }
+  
+  .mesa-nombre {
+    font-size: 1.25rem;
+  }
+}
 
-
+@media (max-width: 768px) {
+  .zona-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+  
+  .mesa-content {
+    height: 100px;
+    padding: 0.75rem;
+  }
+  
+  .mesa-nombre {
+    font-size: 1.1rem;
+  }
+  
+  .mesa-id {
+    font-size: 0.95rem;
+  }
+  
+  .table-bar {
+    width: 100%;
+  }
+}

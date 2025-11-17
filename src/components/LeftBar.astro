@@ -5,16 +5,17 @@ interface Props {
   options?: string[];
   title: string;
   selectedOption?: string;
+  returnPath?: string;
 }
 
-const { options = [], title, selectedOption = "" } = Astro.props;
+const { options = [], title, selectedOption = "" , returnPath="/administracion" } = Astro.props;
 ---
 
 <div
-  class="siderbar_left d-flex align-items-center flex-column border-end pt-3 px-3 z-2"
+  class="siderbar_left d-flex align-items-center flex-column border-end pt-3 px-3 z-2 vh-100"
 >
   <div class="w-100 d-flex flex-row align-items-left">
-    <a href="/administracion">
+    <a href={returnPath}>
       <button
         class="btn btn-link text-dark text-decoration-none p-0 align-items-center d-flex flex-row"
       >

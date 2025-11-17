@@ -3,12 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "concurrently \"npm run dev\" \"npm run server\"",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "server": "node server/server.js",
-    "dev:full": "concurrently \"npm run dev\" \"npm run server\""
+    "server": "node server/server.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

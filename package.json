@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "server": "node server/server.js",
+    "server": "node server/server.js"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",

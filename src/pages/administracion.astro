@@ -5,7 +5,7 @@ import Layout from "../layouts/Layout.astro";
 const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"];
 ---
 
-<Layout>
+<Layout title="Administración">
   <Navbar />
 
   <!-- PADDING AJUSTADO: menos padding arriba para subir el botón -->
@@ -42,7 +42,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
       <!-- Redirige a consumibles -->
       <div class="col-md-4" style="height: 100%;">
         <a href="/administracion/inventario/consumibles" class="text-decoration-none">
-          <div class="card shadow border-0 admin-card h-100">
+          <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
                 src="/inventario.jpg"
@@ -62,7 +62,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
       <!-- Redirige a estadisticas-ventas -->
       <div class="col-md-4" style="height: 100%;">
         <a href="/administracion/estadisticas/estadisticas-ventas" class="text-decoration-none">
-          <div class="card shadow border-0 admin-card h-100">
+          <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
                 src="/estadisticas.jpg"
@@ -84,7 +84,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
         <div class="row g-2 h-100">
           <div class="col-12" style="height: calc(33.33% - 5px);">
             <a href="/administracion/planilla" class="text-decoration-none">
-              <div class="card shadow border-0 admin-card h-100">
+              <div class="card shadow border-0 menu-item h-100">
                 <div style="position: relative; height: 100%;">
                   <img
                     src="/usuarios.jpg"
@@ -104,7 +104,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
           <!-- Redirige a estadisticas-gastos -->
           <div class="col-12" style="height: calc(33.33% - 5px);">
             <a href="/administracion/estadisticas/estadisticas-gastos" class="text-decoration-none">
-              <div class="card shadow border-0 admin-card h-100">
+              <div class="card shadow border-0 menu-item h-100">
                 <div style="position: relative; height: 100%;">
                   <img
                     src="/gastos.jpg"
@@ -125,7 +125,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
           <div class="col-12" style="height: calc(33.33% - 5px);">
             <a href="/administracion/ajustes/ajustes-general" class="text-decoration-none">
               <div
-                class="card shadow border-0 admin-card h-100"
+                class="card shadow border-0 menu-item h-100"
                 style="background-color: #000;"
               >
                 <div

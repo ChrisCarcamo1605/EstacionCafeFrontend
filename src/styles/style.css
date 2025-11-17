@@ -1,6 +1,6 @@
 :root {
   --primary-color: #ffffff;
-  --primary-color-dark: #f1efef;
+  --primary-color-dark: #e5e1e1;
   --secondary-color: #f3dcbb;
   --secondary-color_dark: #dbbd92;
   --third-color: #482e21;
@@ -72,6 +72,12 @@ body {
 
 .sidebar_option:hover {
   background-color: var(--secondary-color);
+}
+
+.sidebar_option_active {
+  background-color: var(--secondary-color);
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .menu-item {
@@ -377,9 +383,14 @@ body {
   padding-right: 0.5rem;
 }
 
+.bills-list{
+  cursor: pointer;
+  user-select: none;
+}
+
 .cuenta-item {
   background-color: var(--primary-color);
-  border: solid #e5e1e1 1px;
+  border: solid var(--primary-color-dark) 1px;
   border-radius: 10px;
   padding: 1rem;
   margin-bottom: 0.75rem;
@@ -387,6 +398,8 @@ body {
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
 }
 
 .cuenta-item:hover {
@@ -465,13 +478,8 @@ body {
 }
 
 .nueva-cuenta-btn {
-  padding: 0.875rem;
-  font-weight: 600;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+  background-color: var(--third-color) !important;
+ color: var(--primary-color)!important;
 }
 
 .nueva-cuenta-btn:hover {

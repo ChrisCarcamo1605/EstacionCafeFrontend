@@ -3,8 +3,27 @@ export const prerender = false;
 import LeftBar from "../../components/LeftBar.astro";
 import Layout from "../../layouts/Layout.astro";
 
-const options = ["A", "B", "C", "D", "E"];
- const user = (Astro.locals as any).user;
+const user = (Astro.locals as any).user;
+
+// Obtener zonas desde la API
+let options: string[] = [];
+try {
+  const response = await fetch("http://localhost:3484/api/tables");
+  if (response.ok) {
+    const data = await response.json();
+    const mesas = data.data;
+    // Extraer zonas únicas (ej: "ZONA A" -> "A")
+    const zonasUnicas = [...new Set(mesas.map((m: any) => {
+      const zona = m.zone?.split(" ")[1];
+      return zona || m.zone;
+    }))];
+    options = zonasUnicas.filter((z: any) => z) as string[]; // Filtrar valores vacíos
+  }
+} catch (error) {
+  console.error("Error al cargar zonas:", error);
+  // Fallback a zonas por defecto
+  options = ["A", "B", "C", "D", "E"];
+}
 ---
 
 <Layout>

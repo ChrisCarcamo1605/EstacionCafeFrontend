@@ -4,6 +4,7 @@ import Layout from "../../../layouts/Layout.astro";
 import LeftSidebar from "../../../components/LeftBar.astro";
 import Navbar from "../../../components/Navbar.astro";
 import "../../../styles/style.css";
+import { BACKEND_API_URL, EMAIL_SERVICE_URL } from "../../../config/api";
 
 const estadisticasRouteMap: Record<string, string> = {
     "Estadisticas de Ventas": "/administracion/estadisticas/estadisticas-ventas",
@@ -16,19 +17,15 @@ let facturas = [];
 let apiError = null;
 
 try {
-    console.log('🔍 Iniciando fetch a la API...');
-    const response = await fetch("http://localhost:3484/api/bills", {
+    const response = await fetch(`${BACKEND_API_URL}/bills`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
         },
     });
-
-    console.log('📡 Response status:', response.status, response.statusText);
     
     if (response.ok) {
         jsonData = await response.json();
-        console.log("✅ Datos crudos de la API:", jsonData);
         
         if (jsonData && jsonData.data) {
             facturas = jsonData.data.map((factura: any) => {
@@ -68,18 +65,13 @@ try {
                     total: parseFloat(totalValido) || 0
                 };
             });
-            
-            console.log("✅ Datos procesados:", facturas);
         } else {
-            console.warn("⚠️ La API respondió pero sin datos válidos:", jsonData);
             apiError = "La API no retornó datos válidos";
         }
     } else {
-        console.error("❌ Error HTTP:", response.status, response.statusText);
         apiError = `Error ${response.status}: ${response.statusText}`;
     }
 } catch (error) {
-    console.error("❌ Error en la petición a la API:", error);
     apiError = `Error de conexión: ${error instanceof Error ? error.message : String(error)}`;
 }
 
@@ -247,7 +239,8 @@ const getTime = (dateString: string) => {
     <script>
     declare const XLSX: any;
     
-    const EMAIL_SERVICE_URL = 'http://localhost:3003/api/send-report';
+    // URL del servicio de email - siempre usa localhost porque el navegador no puede acceder a nombres de servicios Docker
+    const EMAIL_SERVICE_URL = 'http://localhost:3004/api/send-report';
 
     const routeMap = {
         "Estadisticas de Ventas": "http://localhost:4321/administracion/estadisticas/estadisticas-ventas",
@@ -398,13 +391,9 @@ Sistema de Reportes Automatizado - Estación Café`;
                 reader.readAsDataURL(excelBlob);
             });
 
-            console.log('📤 Enviando correo mediante backend...', {
-                to: savedEmail,
-                filename: filename,
-                excelDataSize: excelData.length,
-                url: EMAIL_SERVICE_URL
-            });
-
+            console.log('🌐 Enviando email a URL:', EMAIL_SERVICE_URL);
+            console.log('📧 Email destino:', savedEmail);
+            
             const response = await fetch(EMAIL_SERVICE_URL, {
                 method: 'POST',
                 headers: {
@@ -418,26 +407,22 @@ Sistema de Reportes Automatizado - Estación Café`;
                     excelData: excelData
                 })
             });
-
-            console.log('📡 Response status:', response.status, response.statusText);
+            
+            console.log('📡 Respuesta recibida:', response.status, response.statusText);
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error('❌ Error response:', errorText);
                 throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
             }
 
             const result = await response.json();
-            console.log('📨 Respuesta del servidor:', result);
 
             if (result.success) {
-                console.log('✅ Correo enviado exitosamente:', result);
                 return { 
                     success: true, 
                     message: `📧 Reporte enviado automáticamente a ${savedEmail}` 
                 };
             } else {
-                console.error('❌ Error del backend:', result.error);
                 return { 
                     success: false, 
                     error: `Error del servidor: ${result.error}` 
@@ -445,7 +430,6 @@ Sistema de Reportes Automatizado - Estación Café`;
             }
 
         } catch (error) {
-            console.error('❌ Error enviando correo:', error);
             return { 
                 success: false, 
                 error: `Error de conexión: ${error instanceof Error ? error.message : String(error)}. El archivo se descargó correctamente.` 
@@ -460,8 +444,6 @@ Sistema de Reportes Automatizado - Estación Café`;
             showStatus('📊 Generando archivo Excel...', true);
             
             const { blob: excelBlob, filename: nombreArchivo, rowCount } = generateExcelFile();
-            
-            console.log('✅ Excel generado:', nombreArchivo, 'Registros:', rowCount);
 
             showStatus('📥 Descargando reporte localmente...', true);
             
@@ -472,8 +454,6 @@ Sistema de Reportes Automatizado - Estación Café`;
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
-            
-            console.log('✅ Descarga iniciada:', nombreArchivo);
 
             showStatus('📧 Enviando reporte por correo electrónico...', true);
 
@@ -494,7 +474,6 @@ Sistema de Reportes Automatizado - Estación Café`;
             }, 1000);
             
         } catch (error) {
-            console.error('❌ Error en el proceso:', error);
             const errorMessage = (error instanceof Error) ? error.message : String(error);
             showStatus(`❌ Error: ${errorMessage}`, false);
         }
@@ -585,9 +564,6 @@ Sistema de Reportes Automatizado - Estación Café`;
         showEmailInfo();
         setupLeftBarNavigation();
         setTimeout(filtrarPorFecha, 100);
-        
-        console.log('✅ Sistema de reportes inicializado correctamente');
-        console.log('📧 Servicio de correo configurado en:', EMAIL_SERVICE_URL);
     });
     </script>
 </Layout>

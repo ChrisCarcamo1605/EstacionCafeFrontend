@@ -73,7 +73,7 @@ const username = user?.username;
     const signOutBtn = document.getElementById("signOutBtn");
     signOutBtn?.addEventListener("click", async (e) => {
       e.preventDefault();
-      const response = await fetch("http://localhost:3484/api/users/logout", {
+      const response = await fetch("`${API_URL}`/users/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

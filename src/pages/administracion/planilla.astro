@@ -3,11 +3,11 @@ export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
 import LeftBar from "../../components/LeftBar.astro";
-
+import {BACKEND_API_URL} from '../../config/api'
 const sidebarOptions = ["Planilla"];
 
 // Fetch de datos de usuarios (planilla)
-const response = await fetch("http://localhost:3484/api/users", {
+const response = await fetch(`${BACKEND_API_URL}/users`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -15,7 +15,7 @@ const response = await fetch("http://localhost:3484/api/users", {
 });
 
 // Fetch de tipos de usuario para los selects
-const userTypesResponse = await fetch("http://localhost:3484/api/user-types", {
+const userTypesResponse = await fetch(`${BACKEND_API_URL}/user-types`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -362,6 +362,7 @@ const initialUsers = usersData || [];
     <div
             id="initial-users-data"
             data-users={JSON.stringify(initialUsers)}
+            data-api-url={BACKEND_API_URL}
             style="display: none;"
     ></div>
 
@@ -478,7 +479,7 @@ const initialUsers = usersData || [];
 
                     console.log('Enviando datos para agregar:', userData);
 
-                    const response = await fetch('http://localhost:3484/api/users', {
+                    const response = await fetch(`${BACKEND_API_URL}/users`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -544,7 +545,7 @@ const initialUsers = usersData || [];
 
                     console.log('Enviando datos para actualizar:', userData, 'ID:', selectedUserId);
 
-                    const response = await fetch(`http://localhost:3484/api/users/${selectedUserId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/users/${selectedUserId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -591,7 +592,7 @@ const initialUsers = usersData || [];
                 try {
                     console.log('Eliminando usuario ID:', selectedUserId);
 
-                    const response = await fetch(`http://localhost:3484/api/users/${selectedUserId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/users/${selectedUserId}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
@@ -761,6 +762,9 @@ const initialUsers = usersData || [];
             const filterStatus = document.getElementById('filterStatus') as HTMLSelectElement | null;
 
             const initialDataElement = document.getElementById('initial-users-data');
+            
+            // Obtener la URL de la API desde el data attribute
+            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
 
             if (initialDataElement && initialDataElement.dataset.users) {
                 allUsers = JSON.parse(initialDataElement.dataset.users);

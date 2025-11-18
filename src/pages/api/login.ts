@@ -1,8 +1,10 @@
 import type { APIRoute } from "astro";
+import { BACKEND_API_URL } from '../../config/api';
 
 export const prerender = false;
 
-const NODE_API_URL = 'http://localhost:3484/api/users/login';
+// URL de tu API Node.js (ajusta según tu configuración)
+const NODE_API_URL = `${BACKEND_API_URL}/users/login`; 
 
 export const POST: APIRoute = async ({request,redirect,cookies})=>{
     const data = await request.formData();

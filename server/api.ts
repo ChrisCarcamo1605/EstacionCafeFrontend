@@ -1,0 +1,1 @@
+export const  BACKEND_API_URL = import.meta.env.PUBLIC_BACKEND_API_URL|| 'http://localhost:8000/api'

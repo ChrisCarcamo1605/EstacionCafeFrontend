@@ -10,21 +10,25 @@ import cron from 'node-cron';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+// Cargar variables de entorno desde archivo .env SOLO si no existen en el entorno
+// Esto permite que Docker sobrescriba con env_file o environment
 const envPath = path.join(__dirname, '.env');
 console.log('Buscando .env en:', envPath);
 
 if (fs.existsSync(envPath)) {
     console.log('Archivo .env encontrado');
     const envContent = fs.readFileSync(envPath, 'utf8');
-    console.log('Contenido de .env:');
-    console.log(envContent);
     
     const envConfig = dotenv.parse(envContent);
+    // Solo establecer variables que NO existen en process.env (las de Docker tienen prioridad)
     for (const key in envConfig) {
-        process.env[key] = envConfig[key];
+        if (!process.env[key]) {
+            process.env[key] = envConfig[key];
+        }
     }
 } else {
-    console.log('Archivo .env NO encontrado');
+    console.log('Archivo .env NO encontrado, usando variables de entorno del sistema');
 }
 
 console.log('Variables cargadas:');
@@ -34,13 +38,18 @@ console.log('   EMAIL_PORT:', process.env.EMAIL_PORT || '3002');
 console.log('   ALERT_EMAIL:', process.env.ALERT_EMAIL || 'NO CONFIGURADO');
 console.log('   ALERT_THRESHOLD:', process.env.ALERT_THRESHOLD_PERCENTAGE || '25%');
 
+// Configurar URL del backend desde variable de entorno
+const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:3484/api';
+console.log('   BACKEND_API_URL:', BACKEND_API_URL);
+console.log('   (Fuente:', process.env.BACKEND_API_URL ? 'Variable de entorno Docker' : 'Valor por defecto', ')');
+
 const app = express();
 const PORT = process.env.EMAIL_PORT || 3003;
 
 app.use(cors({
-    origin: ['http://localhost:4321', 'http://localhost:3000', 'http://localhost:3002', 'http://127.0.0.1:4321'],
+    origin: '*', // Permitir todos los orígenes temporalmente para debug
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
@@ -211,7 +220,7 @@ app.use((error, req, res, next) => {
 // Función para verificar inventario bajo
 async function checkLowInventory() {
     try {
-        const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:3484/api';
+        const backendUrl = BACKEND_API_URL;
         const threshold = parseFloat(process.env.ALERT_THRESHOLD_PERCENTAGE || '25');
         const alertEmail = process.env.ALERT_EMAIL;
 

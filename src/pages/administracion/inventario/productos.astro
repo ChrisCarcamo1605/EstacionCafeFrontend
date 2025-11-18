@@ -3,6 +3,7 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
+import {BACKEND_API_URL} from '../../../config/api';
 
 const sidebarOptions = [
   "Consumibles",
@@ -18,7 +19,7 @@ const inventoryRouteMap: Record<string, string> = {
   Proveedores: "/administracion/inventario/proveedores",
 };
 
-const productsResponse = await fetch("http://localhost:3484/api/products", {
+const productsResponse = await fetch(`${BACKEND_API_URL}/products`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -34,7 +35,7 @@ if (productsResponse.ok) {
     console.error("Error fetching products data:", productsResponse.statusText);
 }
 
-const typesResponse = await fetch("http://localhost:3484/api/product-type", {
+const typesResponse = await fetch(`${BACKEND_API_URL}/product-type`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -389,6 +390,7 @@ const productTypes = productTypesData || [];
     <div 
         id="initial-products-data" 
         data-products={JSON.stringify(initialProducts)}
+        data-api-url={BACKEND_API_URL}
         style="display: none;"
     ></div>
     <div 
@@ -412,6 +414,10 @@ const productTypes = productTypesData || [];
             const message = document.getElementById('message');
 
             const initialDataElement = document.getElementById('initial-products-data');
+            
+            // Obtener la URL de la API desde el data attribute
+            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
+            
             if (initialDataElement && initialDataElement.dataset.products) {
                 allProducts = JSON.parse(initialDataElement.dataset.products);
                 console.log('Datos iniciales cargados:', allProducts.length, 'productos');
@@ -459,7 +465,7 @@ const productTypes = productTypesData || [];
 
                     console.log('Enviando datos para agregar:', productData);
 
-                    const response = await fetch('http://localhost:3484/api/products', {
+                    const response = await fetch(`${BACKEND_API_URL}/products`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -520,7 +526,7 @@ const productTypes = productTypesData || [];
 
                     console.log('Enviando datos para actualizar:', productData, 'ID:', selectedProductId);
 
-                    const response = await fetch(`http://localhost:3484/api/products/${selectedProductId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/products/${selectedProductId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -561,7 +567,7 @@ const productTypes = productTypesData || [];
                 try {
                     console.log('Eliminando producto ID:', selectedProductId);
 
-                    const response = await fetch(`http://localhost:3484/api/products/${selectedProductId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/products/${selectedProductId}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',

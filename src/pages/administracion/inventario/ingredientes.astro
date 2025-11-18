@@ -3,11 +3,12 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
+import { BACKEND_API_URL } from "../../../config/api";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
 // Fetch de datos de ingredientes
-const response = await fetch("http://localhost:3484/api/ingredient", {
+const response = await fetch(`${BACKEND_API_URL}/ingredient`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -15,7 +16,7 @@ const response = await fetch("http://localhost:3484/api/ingredient", {
 });
 
 // Fetch de datos de consumibles para los selects
-const consumablesResponse = await fetch("http://localhost:3484/api/consumable", {
+const consumablesResponse = await fetch(`${BACKEND_API_URL}/consumable`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -23,7 +24,7 @@ const consumablesResponse = await fetch("http://localhost:3484/api/consumable", 
 });
 
 // Fetch de datos de productos para los selects
-const productsResponse = await fetch("http://localhost:3484/api/products", {
+const productsResponse = await fetch(`${BACKEND_API_URL}/products`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -354,6 +355,7 @@ const initialIngredients = ingredientsData || [];
     <div
             id="initial-ingredients-data"
             data-ingredients={JSON.stringify(initialIngredients)}
+            data-api-url={BACKEND_API_URL}
             style="display: none;"
     ></div>
 
@@ -474,7 +476,7 @@ const initialIngredients = ingredientsData || [];
 
                     console.log('Enviando datos para agregar:', ingredientData);
 
-                    const response = await fetch('http://localhost:3484/api/ingredient', {
+                    const response = await fetch(`${BACKEND_API_URL}/ingredient`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -532,7 +534,7 @@ const initialIngredients = ingredientsData || [];
 
                     console.log('Enviando datos para actualizar:', ingredientData, 'ID:', selectedIngredientId);
 
-                    const response = await fetch(`http://localhost:3484/api/ingredient/${selectedIngredientId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/ingredient/${selectedIngredientId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -573,7 +575,7 @@ const initialIngredients = ingredientsData || [];
                 try {
                     console.log('Eliminando ingrediente ID:', selectedIngredientId);
 
-                    const response = await fetch(`http://localhost:3484/api/ingredient/${selectedIngredientId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/ingredient/${selectedIngredientId}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
@@ -735,6 +737,9 @@ const initialIngredients = ingredientsData || [];
             const filterProduct = document.getElementById('filterProduct') as HTMLSelectElement | null;
 
             const initialDataElement = document.getElementById('initial-ingredients-data');
+            
+            // Obtener la URL de la API desde el data attribute
+            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
 
             if (initialDataElement && initialDataElement.dataset.ingredients) {
                 allIngredients = JSON.parse(initialDataElement.dataset.ingredients);

@@ -3,6 +3,7 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
+import { BACKEND_API_URL } from "../../../config/api";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
@@ -13,7 +14,7 @@ const inventoryRouteMap: Record<string, string> = {
     "Proveedores": "/administracion/inventario/proveedores"
 };
 
-const response = await fetch("http://localhost:3484/api/suppliers", {
+const response = await fetch(`${BACKEND_API_URL}/suppliers`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -318,6 +319,7 @@ const initialSuppliers = suppliersData || [];
     <div 
         id="initial-suppliers-data" 
         data-suppliers={JSON.stringify(initialSuppliers)}
+        data-api-url={BACKEND_API_URL}
         style="display: none;"
     ></div>
 
@@ -368,7 +370,7 @@ const initialSuppliers = suppliersData || [];
 
                     console.log('Enviando datos para agregar:', supplierData);
 
-                    const response = await fetch('http://localhost:3484/api/suppliers', {
+                    const response = await fetch(`${BACKEND_API_URL}/suppliers`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -427,7 +429,7 @@ const initialSuppliers = suppliersData || [];
 
                     console.log('Enviando datos para actualizar:', supplierData, 'ID:', selectedSupplierId);
 
-                    const response = await fetch(`http://localhost:3484/api/suppliers/${selectedSupplierId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/suppliers/${selectedSupplierId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -468,7 +470,7 @@ const initialSuppliers = suppliersData || [];
                 try {
                     console.log('Eliminando proveedor ID:', selectedSupplierId);
 
-                    const response = await fetch(`http://localhost:3484/api/suppliers/${selectedSupplierId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/suppliers/${selectedSupplierId}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
@@ -661,6 +663,9 @@ const initialSuppliers = suppliersData || [];
             const filterStatus = document.getElementById('filterStatus') as HTMLSelectElement;
             
             const initialDataElement = document.getElementById('initial-suppliers-data');
+            
+            // Obtener la URL de la API desde el data attribute
+            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
             
             if (initialDataElement && initialDataElement.dataset.suppliers) {
                 allSuppliers = JSON.parse(initialDataElement.dataset.suppliers);

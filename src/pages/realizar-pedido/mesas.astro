@@ -1,8 +1,9 @@
 ---
 export const prerender = false;
 import LeftBar from "../../components/LeftBar.astro";
+import Navbar from "../../components/Navbar.astro";
 import Layout from "../../layouts/Layout.astro";
-import { BACKEND_API_URL } from '../../config/api';
+import { BACKEND_API_URL } from "../../config/api";
 const user = (Astro.locals as any).user;
 
 // Obtener zonas desde la API
@@ -13,11 +14,15 @@ try {
     const data = await response.json();
     const mesas = data.data;
     // Extraer zonas únicas (ej: "ZONA A" -> "A")
-    const zonasUnicas = [...new Set(mesas.map((m: any) => {
-      const zona = m.zone?.split(" ")[1];
-      return zona || m.zone;
-    }))];
-    options = zonasUnicas.filter((z: any) => z) as string[]; 
+    const zonasUnicas = [
+      ...new Set(
+        mesas.map((m: any) => {
+          const zona = m.zone?.split(" ")[1];
+          return zona || m.zone;
+        })
+      ),
+    ];
+    options = zonasUnicas.filter((z: any) => z) as string[];
   }
 } catch (error) {
   console.error("Error al cargar zonas:", error);
@@ -26,60 +31,123 @@ try {
 ---
 
 <Layout>
-  <div class="d-flex flex-row">
-    <LeftBar title="Mesas" options={options} returnPath="/home"/>
-
-    <div data-user={user.userId}
-      id="tables_container"
-      class="w-100 d-flex flex-wrap gap-2 p-2 overflow-y-auto align-content-start"
-      style="min-height:"
-    >
+  <div class="d-flex flex-column" style="min-height: 100vh;">
+    <div class="w-100 m-0">
+      <Navbar />
     </div>
+    
+    <div class="d-flex flex-grow-1">
+      <LeftBar title="Mesas" options={options} returnPath="/home" />
 
-    <div 
-      class="d-flex flex-column gap-3 table-bar py-3 px-3"
-      style="width:450px; overflow-y: auto;"
-    >
-      <div id="sidebar-content" class="d-flex flex-column gap-3">
-        <!-- Header del panel -->
-        <div class="text-center mb-2">
-          <h5 class="fw-bold mb-1" style="color: #482E21;">Información de Mesa</h5>
-          <p class="text-muted mb-0" style="font-size: 0.9rem;">Seleccione una mesa para ver detalles</p>
-        </div>
+      <div
+        data-user={user.userId}
+        id="tables_container"
+        class="flex-grow-1 d-flex flex-wrap gap-2 p-2 overflow-y-auto align-content-start"
+      >
+      </div>
 
-        <!-- Campos de información (inicialmente visibles) -->
-        <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Nombre de Cliente</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="Sin cliente" />
-        </div>
-        <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Mesa</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="Sin seleccionar" />
-        </div>
-        <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Hora de Apertura</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="--/--/---- --:--" />
-        </div>
-        <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Última vez abierto</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="--/--/---- --:--" />
-        </div>
+      <div
+        class="d-flex flex-column gap-3 table-bar py-3 px-3"
+        style="width:450px; overflow-y: auto; height: calc(100vh - 60px);"
+      >
+        <div id="sidebar-content" class="d-flex flex-column gap-3">
+          <!-- Header del panel -->
+          <div class="text-center mb-2">
+            <h5 class="fw-bold mb-1" style="color: #482E21;">
+              Información de Mesa
+            </h5>
+            <p class="text-muted mb-0" style="font-size: 0.9rem;">
+              Seleccione una mesa para ver detalles
+            </p>
+          </div>
 
-        <!-- Botones de acción -->
-        <div class="d-flex flex-column gap-2 mt-3">
-          <button id="finishOrder" class="bill-btn w-100 fourth_color" style="display: none;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
-              <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
-            </svg>
-            Ver Mesa
-          </button>
-          <button id="closeOrder" class="bill-btn w-100 third_color_light" style="display: none;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-            </svg>
-            Cerrar Cuentas
-          </button>
+          <!-- Campos de información (inicialmente visibles) -->
+          <div class="data-groupd d-flex flex-column">
+            <label class="fw-bold mb-2" style="color: #482E21;"
+              >Nombre de Cliente</label
+            >
+            <input
+              class="w-100 border-0 rounded-2 input fw-light"
+              readonly
+              placeholder="Sin cliente"
+            />
+          </div>
+          <div class="data-groupd d-flex flex-column">
+            <label class="fw-bold mb-2" style="color: #482E21;">Mesa</label>
+            <input
+              class="w-100 border-0 rounded-2 input fw-light"
+              readonly
+              placeholder="Sin seleccionar"
+            />
+          </div>
+          <div class="data-groupd d-flex flex-column">
+            <label class="fw-bold mb-2" style="color: #482E21;"
+              >Hora de Apertura</label
+            >
+            <input
+              class="w-100 border-0 rounded-2 input fw-light"
+              readonly
+              placeholder="--/--/---- --:--"
+            />
+          </div>
+          <div class="data-groupd d-flex flex-column">
+            <label class="fw-bold mb-2" style="color: #482E21;"
+              >Última vez abierto</label
+            >
+            <input
+              class="w-100 border-0 rounded-2 input fw-light"
+              readonly
+              placeholder="--/--/---- --:--"
+            />
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="d-flex flex-column gap-2 mt-3">
+            <button
+              id="finishOrder"
+              class="bill-btn w-100 fourth_color"
+              style="display: none;"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-arrow-right-circle me-2"
+                viewBox="0 0 16 16"
+                style="vertical-align: middle;"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
+                ></path>
+              </svg>
+              Ver Mesa
+            </button>
+            <button
+              id="closeOrder"
+              class="bill-btn w-100 third_color_light"
+              style="display: none;"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-x-circle me-2"
+                viewBox="0 0 16 16"
+                style="vertical-align: middle;"
+              >
+                <path
+                  d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"
+                ></path>
+                <path
+                  d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"
+                ></path>
+              </svg>
+              Cerrar Cuentas
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -89,3 +157,4 @@ try {
     import "../../client-js/mesas.ts";
   </script>
 </Layout>
+

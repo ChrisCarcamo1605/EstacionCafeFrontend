@@ -13,7 +13,7 @@ const { options = [], title, selectedOption = "" , returnPath="/administracion",
 ---
 
 <div
-  class="siderbar_left d-flex align-items-center flex-column border-end pt-3 px-3 z-2 vh-100"
+  class="siderbar_left d-flex align-items-center flex-column border-end pt-3 px-3 z-2 h-auto"
 >
   <div class="w-100 d-flex flex-row align-items-left">
     <a href={returnPath}>
@@ -74,16 +74,6 @@ const { options = [], title, selectedOption = "" , returnPath="/administracion",
         option.addEventListener('click', () => {
           window.location.href = route;
         });
-        
-        option.addEventListener('mouseenter', () => {
-          if (!option.classList.contains('sidebar_option_selected')) {
-            option.style.transform = 'scale(1.02)';
-          }
-        });
-        
-        option.addEventListener('mouseleave', () => {
-          option.style.transform = 'scale(1)';
-        });
       }
     });
   });
@@ -101,6 +91,7 @@ const { options = [], title, selectedOption = "" , returnPath="/administracion",
   .sidebar_option_selected {
     background-color: #482E21;
     color: white;
+    transform: scale(1);
   }
   
   .sidebar_option_selected span {

@@ -71,11 +71,12 @@ body {
 }
 
 .sidebar_option:hover {
-  background-color: var(--secondary-color);
+  background-color: rgba(72, 46, 33, 0.1);
 }
 
 .sidebar_option_active {
-  background-color: var(--secondary-color);
+  background-color: var(--third-color);
+  color: white;
   font-weight: bold;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }

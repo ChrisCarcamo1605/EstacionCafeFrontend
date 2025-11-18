@@ -137,116 +137,6 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-
-    <script>
-    const routeMap = {
-        "Estadisticas de Ventas": "http://localhost:4321/administracion/estadisticas/estadisticas-ventas",
-        "Estadisticas de Gastos": "http://localhost:4321/administracion/estadisticas/estadisticas-gastos", 
-        "Reporte de Ventas": "http://localhost:4321/administracion/estadisticas/reporte-ventas"
-    };
-
-    function setupLeftBarNavigation() {
-        setTimeout(() => {
-            const sidebarItems = document.querySelectorAll('.sidebar-item, .nav-link, .list-group-item, [class*="option"], [class*="item"]');
-            
-            sidebarItems.forEach(item => {
-                const text = item.textContent?.trim();
-                if (text && text in routeMap) {
-                    (item as HTMLElement).style.cursor = 'pointer';
-                    item.addEventListener('click', () => {
-                        console.log('Navegando a:', routeMap[text as keyof typeof routeMap]);
-                        window.location.href = routeMap[text as keyof typeof routeMap];
-                    });
-                    
-                    item.addEventListener('mouseenter', () => {
-                        (item as HTMLElement).style.backgroundColor = '#f8f9fa';
-                        (item as HTMLElement).style.transition = 'background-color 0.2s';
-                    });
-                    item.addEventListener('mouseleave', () => {
-                        (item as HTMLElement).style.backgroundColor = '';
-                    });
-                }
-            });
-            
-            console.log('Navegación del LeftBar configurada - Método 1');
-        }, 100);
-    }
-
-    function setupLeftBarNavigationAlternative() {
-        setTimeout(() => {
-            const options = ["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"];
-            
-            options.forEach(optionText => {
-                const elements = document.querySelectorAll('*');
-                elements.forEach(element => {
-                    if (element.textContent?.trim() === optionText && routeMap[optionText as keyof typeof routeMap]) {
-                        if (!element.hasAttribute('data-nav-configured')) {
-                            (element as HTMLElement).style.cursor = 'pointer';
-                            element.setAttribute('data-nav-configured', 'true');
-                            
-                            element.addEventListener('click', (e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('Navegando a:', routeMap[optionText as keyof typeof routeMap]);
-                                window.location.href = routeMap[optionText as keyof typeof routeMap];
-                            });
-                            
-                            element.addEventListener('mouseenter', () => {
-                                (element as HTMLElement).style.backgroundColor = '#f8f9fa';
-                                (element as HTMLElement).style.transition = 'background-color 0.2s';
-                            });
-                            element.addEventListener('mouseleave', () => {
-                                (element as HTMLElement).style.backgroundColor = '';
-                            });
-                        }
-                    }
-                });
-            });
-            
-            console.log('Navegación del LeftBar configurada - Método 2');
-        }, 200);
-    }
-
-    function setupLeftBarNavigationAggressive() {
-        setTimeout(() => {
-            const options = ["Estadisticas de Ventas", "Estadisticas de Gastos", "Reporte de Ventas"];
-            
-            const possibleContainers = document.querySelectorAll('div, span, a, li, p, button, label');
-            
-            possibleContainers.forEach(container => {
-                const text = container.textContent?.trim();
-                if (text && options.includes(text) && text in routeMap) {
-                    if (!container.hasAttribute('data-nav-configured')) {
-                        (container as HTMLElement).style.cursor = 'pointer';
-                        container.setAttribute('data-nav-configured', 'true');
-                        
-                        container.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log('Navegando a:', routeMap[text as keyof typeof routeMap]);
-                            window.location.href = routeMap[text as keyof typeof routeMap];
-                        });
-                        
-                        container.addEventListener('mouseenter', () => {
-                            (container as HTMLElement).style.backgroundColor = '#f8f9fa';
-                        });
-                        container.addEventListener('mouseleave', () => {
-                            (container as HTMLElement).style.backgroundColor = '';
-                        });
-                    }
-                }
-            });
-            
-            console.log('Navegación del LeftBar configurada - Método 3');
-        }, 300);
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        setupLeftBarNavigation();
-        setTimeout(setupLeftBarNavigationAlternative, 500);
-        setTimeout(setupLeftBarNavigationAggressive, 1000);
-    });
-    </script>
 </Layout>
 
 <style>
@@ -281,11 +171,6 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
         font-size: 2.5rem;
     }
 
-    [class*="sidebar"] [class*="item"],
-    [class*="nav"] [class*="link"],
-    [class*="list"] [class*="item"] {
-        transition: background-color 0.2s ease;
-    }
 </style>
 
 <script>

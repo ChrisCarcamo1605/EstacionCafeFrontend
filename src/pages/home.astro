@@ -10,57 +10,64 @@ const isAdmin = user?.role === "admin";
 
 <Layout title="Home">
   <Navbar />
-  <div class="container-fluid py-4 p-0">
-    <div class="d-flex flex-row justify-content-center gap-3 h-100 py-3">
-      <!-- Realizar Pedido -->
-
+  <div class="container-fluid bg-light" style="min-height: calc(100vh -50px); padding: 20px 50px 50px 50px;">
+    <div class="row g-3 align-items-center " style="height: calc(100vh - 100px);">
       <!-- Para llevar -->
-      <div class=`${isAdmin ? 'col-3' : 'col-3'}`>
-        <a href="/realizar-pedido/pedido">
-          <div class="menu-item position-relative shadow-lg rounded">
-            <img
-              src="home2.png"
-              alt="Para llevar"
-              class="img-fluid w-100 img-expanded"
-              style="object-fit: cover;"
-            />
-            <div class="color-overlay"></div>
-            <div class="card-overlay">
-              <h3 class="card-title-overlay">Para Llevar</h3>
+      <div class=`${isAdmin ? 'col-md-3' : 'col-md-4'}` style="height: 100%;">
+        <a href="/realizar-pedido/pedido" class="text-decoration-none">
+          <div class="card shadow border-0 menu-item h-100">
+            <div style="position: relative; height: 100%;">
+              <img
+                src="home2.png"
+                alt="Para llevar"
+                class="card-img"
+                style="height: 100%; width: 100%; object-fit: cover;"
+              />
+              <div class="color-overlay"></div>
+              <div class="card-overlay">
+                <h3 class="card-title-overlay">Para Llevar</h3>
+              </div>
             </div>
           </div>
         </a>
       </div>
 
-      <div class=`${isAdmin ? 'col-5' : 'col-7'}`>
-        <a href="/realizar-pedido/mesas">
-          <div class="menu-item position-relative shadow-lg rounded">
-            <img
-              src="home1.jpg"
-              alt="Pedidos"
-              class="w-100 h-100 img-expanded"
-              style="object-fit: cover;"
-            />
-            <div class="color-overlay"></div>
-            <div class="card-overlay">
-              <h3 class="card-title-overlay">Realizar Pedido</h3>
+      <!-- Realizar Pedido -->
+      <div class=`${isAdmin ? 'col-md-6' : 'col-md-8'}` style="height: 100%;">
+        <a href="/realizar-pedido/mesas" class="text-decoration-none">
+          <div class="card shadow border-0 menu-item h-100">
+            <div style="position: relative; height: 100%;">
+              <img
+                src="home1.jpg"
+                alt="Pedidos"
+                class="card-img"
+                style="height: 100%; width: 100%; object-fit: cover;"
+              />
+              <div class="color-overlay"></div>
+              <div class="card-overlay">
+                <h3 class="card-title-overlay">Realizar Pedido</h3>
+              </div>
             </div>
           </div>
         </a>
       </div>
+
       <!-- Administración - Solo visible para admin -->
       {isAdmin && (
-      <div class="col-3">
-        <a href="/administracion">
-          <div class="menu-item position-relative shadow-lg rounded">
-            <img
-              src="home4.jpg"
-              alt="Administración"
-              class="img-fluid w-100 img-expanded"
-              style="object-fit: cover;"
-            /><div class="color-overlay"></div>
-            <div class="card-overlay">
-              <h3 class="card-title-overlay">Administración</h3>
+      <div class="col-md-3" style="height: 100%;">
+        <a href="/administracion" class="text-decoration-none">
+          <div class="card shadow border-0 menu-item h-100">
+            <div style="position: relative; height: 100%;">
+              <img
+                src="home4.jpg"
+                alt="Administración"
+                class="card-img"
+                style="height: 100%; width: 100%; object-fit: cover;"
+              />
+              <div class="color-overlay"></div>
+              <div class="card-overlay">
+                <h3 class="card-title-overlay">Administración</h3>
+              </div>
             </div>
           </div>
         </a>

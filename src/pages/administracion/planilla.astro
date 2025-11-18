@@ -6,6 +6,10 @@ import LeftBar from "../../components/LeftBar.astro";
 import {BACKEND_API_URL} from '../../config/api'
 const sidebarOptions = ["Planilla"];
 
+const planillaRouteMap: Record<string, string> = {
+    "Planilla": "/administracion/planilla"
+};
+
 // Fetch de datos de usuarios (planilla)
 const response = await fetch(`${BACKEND_API_URL}/users`, {
     method: "GET",
@@ -49,7 +53,7 @@ const initialUsers = usersData || [];
         <Navbar />
 
         <div class="d-flex flex-grow-1">
-            <LeftBar title="Administración" options={sidebarOptions} selectedOption="Planilla" />
+            <LeftBar title="Administración" options={sidebarOptions} selectedOption="Planilla" routeMap={planillaRouteMap} />
 
             <div class="main-content-with-navbar-sidebar flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif; position: relative;">
                 <div class="p-4">
@@ -368,10 +372,6 @@ const initialUsers = usersData || [];
 
     <script>
         // Definir tipos para TypeScript
-        interface RouteMap {
-            Planilla: string;
-        }
-
         interface User {
             userId?: string;
             id?: string;
@@ -386,55 +386,8 @@ const initialUsers = usersData || [];
             active?: boolean;
         }
 
-        const routeMap: RouteMap = {
-            "Planilla": "/administracion/planilla"
-        };
-
-        function setupLeftBarNavigation() {
-            console.log('Configurando navegación del LeftBar para Administración...');
-
-            setTimeout(() => {
-                const options = ["Planilla"];
-
-                options.forEach(optionText => {
-                    const elements = document.querySelectorAll('*');
-                    elements.forEach(element => {
-                        const htmlElement = element as HTMLElement;
-                        if (htmlElement.textContent?.trim() === optionText && routeMap[optionText as keyof RouteMap]) {
-                            if (!htmlElement.hasAttribute('data-nav-configured')) {
-                                htmlElement.style.cursor = 'pointer';
-                                htmlElement.setAttribute('data-nav-configured', 'true');
-
-                                htmlElement.addEventListener('click', (e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    const route = routeMap[optionText as keyof RouteMap];
-                                    console.log('Navegando a:', route);
-                                    window.location.href = route;
-                                });
-
-                                htmlElement.addEventListener('mouseenter', () => {
-                                    htmlElement.style.backgroundColor = '#f8f9fa';
-                                    htmlElement.style.transition = 'background-color 0.2s';
-                                });
-                                htmlElement.addEventListener('mouseleave', () => {
-                                    htmlElement.style.backgroundColor = '';
-                                });
-
-                                console.log('Configurado elemento para:', optionText);
-                            }
-                        }
-                    });
-                });
-            }, 100);
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM cargado, inicializando navegación de administración...');
-
-            setupLeftBarNavigation();
-
-            console.log('Inicializando funcionalidad de planilla...');
+            console.log('DOM cargado, inicializando funcionalidad de planilla...');
 
             // Declarar variables con tipos específicos
             let selectedUserId: string | null = null;
@@ -1116,11 +1069,6 @@ const initialUsers = usersData || [];
 
             updateTable();
             console.log('Sistema de planilla inicializado correctamente');
-        });
-
-        window.addEventListener('load', function() {
-            console.log('Ventana cargada, verificando navegación de administración...');
-            setTimeout(setupLeftBarNavigation, 300);
         });
     </script>
 </Layout>

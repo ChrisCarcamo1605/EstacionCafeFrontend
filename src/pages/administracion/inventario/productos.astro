@@ -4,13 +4,18 @@ import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
 
-const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
+const sidebarOptions = [
+  "Consumibles",
+  "Productos",
+  "Ingredientes",
+  "Proveedores",
+];
 
 const inventoryRouteMap: Record<string, string> = {
-    "Consumibles": "/administracion/inventario/consumibles",
-    "Productos": "/administracion/inventario/productos",
-    "Ingredientes": "/administracion/inventario/ingredientes",
-    "Proveedores": "/administracion/inventario/proveedores"
+  Consumibles: "/administracion/inventario/consumibles",
+  Productos: "/administracion/inventario/productos",
+  Ingredientes: "/administracion/inventario/ingredientes",
+  Proveedores: "/administracion/inventario/proveedores",
 };
 
 const productsResponse = await fetch("http://localhost:3484/api/products", {

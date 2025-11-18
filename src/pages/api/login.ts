@@ -40,6 +40,7 @@ export const POST: APIRoute = async ({request,redirect,cookies})=>{
             }
         } else {
             const errorText = await apiResponse.text();
+            alert(errorText)
             return redirect('/login?error='+encodeURIComponent('CREDENCIALES INCORRECTAS'));
         }
     }catch(error:any){

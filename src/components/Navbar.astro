@@ -3,7 +3,8 @@ import { undefined } from "astro:schema";
 import EstacionCafeLogoWhite from "../../public/EstacionCafeWhite.png";
 
 //@ts-ignore
-const user = Astro.locals.user?.username;
+const user = Astro.locals.user;
+const username = user?.username;
 ---
 
 <nav class="navbar fourth_color p-0 " data-bs-theme="dark">
@@ -20,7 +21,7 @@ const user = Astro.locals.user?.username;
     <div class="d-flex align-items-center flex-row gap-3">
       <div>
         {
-          user && (
+          username && (
             <div class="dropdown">
               <button
                 class="btn btn-secondary fourth_color border-0 d-flex align-self-center"
@@ -29,7 +30,7 @@ const user = Astro.locals.user?.username;
                 aria-expanded="false"
               >
                 <div class="align-items-center d-flex flex-row">
-                  <span class="text-light fw-normal pe-2">{user}</span>
+                  <span class="text-light fw-normal pe-2">{username}</span>
                   <div class="">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

@@ -18,6 +18,14 @@ FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Establecer variables de entorno para el build de Astro
+ENV SERVER_BACKEND_API_URL=http://backend:3484/api
+ENV SERVER_ML_API_URL=http://ml-dashboard:8000/api
+ENV SERVER_EMAIL_SERVICE_URL=http://email-server:3004/api/send-report
+ENV PUBLIC_BACKEND_API_URL=http://localhost:3484/api
+ENV PUBLIC_ML_API_URL=http://localhost:8000/api
+ENV PUBLIC_EMAIL_SERVICE_URL=http://localhost:3004/api/send-report
+
 # Build de la aplicación Astro
 RUN npm run build
 
@@ -34,15 +42,22 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
+# Copiar archivo de variables de entorno
+COPY --from=builder /app/.env.docker ./.env.docker
+
+# Cambiar permisos
+RUN chown -R astro:nodejs /app
+
 # Cambiar al usuario no-root
 USER astro
 
 # Exponer puerto
 EXPOSE 4321
 
-# Variables de entorno
+# Variables de entorno base
 ENV HOST=0.0.0.0
 ENV PORT=4321
+ENV NODE_ENV=production
 
 # Comando para iniciar la aplicación
 CMD ["node", "./dist/server/entry.mjs"]

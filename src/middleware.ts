@@ -6,11 +6,10 @@ const PUBLIC_ROUTES = ['/', '/login', '/api/login'];
 
 const ROUTE_PERMISSIONS: Record<string, string[]> = {
     '/administracion': ['admin','cajero'],
-    '/administracion/inventario': ['mesero'],
-    '/administracion/estadisticas': ['admin'],
+    '/administracion/inventario': ['admin'],
+    '/administracion/estadisticas': ['admin','cajero'],
     '/administracion/ajustes': ['admin'],
-    '/administracion/planilla': ['admin'],
-    
+    '/administracion/planilla': ['admin','cajero'],
     '/realizar-pedido': ['admin', 'mesero', 'cajero'],
 };
 

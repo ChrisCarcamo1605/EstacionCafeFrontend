@@ -1,10 +1,11 @@
 import type { Mesa, Cuenta } from "../types/mesa";
+import { BACKEND_API_URL } from "../config/api";
 
 /**
  * Servicio para manejar todas las llamadas API relacionadas con mesas y cuentas
  */
 export class MesaApiService {
-  private static BASE_URL = "http://localhost:3484/api";
+  private static BASE_URL = BACKEND_API_URL;
 
   /**
    * Obtener todas las mesas desde el backend

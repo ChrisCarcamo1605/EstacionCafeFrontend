@@ -3,11 +3,12 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
+import { BACKEND_API_URL } from "../../../config/api";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
 // Fetch de datos de consumibles
-const response = await fetch("http://localhost:3484/api/consumable", {
+const response = await fetch(`${BACKEND_API_URL}/consumable`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -15,7 +16,7 @@ const response = await fetch("http://localhost:3484/api/consumable", {
 });
 
 // Fetch de tipos de consumibles para los selects
-const consumableTypesResponse = await fetch("http://localhost:3484/api/consumable-type", {
+const consumableTypesResponse = await fetch(`${BACKEND_API_URL}/consumable-type`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -23,7 +24,7 @@ const consumableTypesResponse = await fetch("http://localhost:3484/api/consumabl
 });
 
 // Fetch de proveedores para los selects
-const suppliersResponse = await fetch("http://localhost:3484/api/suppliers", {
+const suppliersResponse = await fetch(`${BACKEND_API_URL}/suppliers`, {
     method: "GET",
     headers: {
         "Content-Type": "application/json",
@@ -439,6 +440,7 @@ const unitMeasurementOptions = [
     <div
             id="initial-consumables-data"
             data-consumables={JSON.stringify(initialConsumables)}
+            data-api-url={BACKEND_API_URL}
             style="display: none;"
     ></div>
 
@@ -593,7 +595,7 @@ const unitMeasurementOptions = [
 
                     console.log('Enviando datos para agregar:', consumableData);
 
-                    const response = await fetch('http://localhost:3484/api/consumable', {
+                    const response = await fetch(`${BACKEND_API_URL}/consumable`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -663,7 +665,7 @@ const unitMeasurementOptions = [
 
                     console.log('Enviando datos para actualizar:', consumableData, 'ID:', selectedConsumableId);
 
-                    const response = await fetch(`http://localhost:3484/api/consumable/${selectedConsumableId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/consumable/${selectedConsumableId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -704,7 +706,7 @@ const unitMeasurementOptions = [
                 try {
                     console.log('Eliminando consumible ID:', selectedConsumableId);
 
-                    const response = await fetch(`http://localhost:3484/api/consumable/${selectedConsumableId}`, {
+                    const response = await fetch(`${BACKEND_API_URL}/consumable/${selectedConsumableId}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json',
@@ -875,6 +877,9 @@ const unitMeasurementOptions = [
             const filterStatus = document.getElementById('filterStatus') as HTMLSelectElement | null;
 
             const initialDataElement = document.getElementById('initial-consumables-data');
+            
+            // Obtener la URL de la API desde el data attribute
+            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
 
             if (initialDataElement && initialDataElement.dataset.consumables) {
                 allConsumables = JSON.parse(initialDataElement.dataset.consumables);

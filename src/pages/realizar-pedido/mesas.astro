@@ -2,13 +2,13 @@
 export const prerender = false;
 import LeftBar from "../../components/LeftBar.astro";
 import Layout from "../../layouts/Layout.astro";
-
+import { BACKEND_API_URL } from '../../config/api';
 const user = (Astro.locals as any).user;
 
 // Obtener zonas desde la API
 let options: string[] = [];
 try {
-  const response = await fetch("http://localhost:3484/api/tables");
+  const response = await fetch(`${BACKEND_API_URL}/tables`);
   if (response.ok) {
     const data = await response.json();
     const mesas = data.data;

@@ -1,7 +1,8 @@
 import type { Detail, Product } from "../types/detail.interface";
+import { BACKEND_API_URL } from "../config/api";
 
 export class BillApiService {
-  private static BASE_URL = "http://localhost:3484/api";
+  private static BASE_URL = BACKEND_API_URL;
 
   /**
    * Actualizar una cuenta existente

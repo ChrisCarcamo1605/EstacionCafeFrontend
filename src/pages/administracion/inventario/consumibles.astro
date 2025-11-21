@@ -5,1287 +5,1889 @@ import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
 import { BACKEND_API_URL } from "../../../config/api";
 
-const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
+const sidebarOptions = [
+  "Consumibles",
+  "Productos",
+  "Ingredientes",
+  "Proveedores",
+];
 
-// Fetch de datos de consumibles
-const response = await fetch(`${BACKEND_API_URL}/consumable`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+// Datos estáticos de tipos de consumibles
+const consumableTypesData = [
+  { consumableTypeId: "T-01", name: "Bebida" },
+  { consumableTypeId: "T-02", name: "Lácteo" },
+  { consumableTypeId: "T-03", name: "Endulzante" },
+  { consumableTypeId: "T-04", name: "Cereal" },
+  { consumableTypeId: "T-05", name: "Fruta" },
+  { consumableTypeId: "T-06", name: "Proteína" },
+  { consumableTypeId: "T-07", name: "Grasa" },
+  { consumableTypeId: "T-08", name: "Saborizante" },
+  { consumableTypeId: "T-09", name: "Vegetal" },
+  { consumableTypeId: "T-10", name: "Otros" },
+];
 
-// Fetch de tipos de consumibles para los selects
-const consumableTypesResponse = await fetch(`${BACKEND_API_URL}/consumable-type`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+// Datos estáticos de proveedores con nombres ficticios
+const suppliersData = [
+  { supplierId: "S-01", name: "Distribuidora El Buen Café" },
+  { supplierId: "S-02", name: "Lácteos La Vaquita Feliz" },
+  { supplierId: "S-03", name: "Azúcar Dulce Hogar" },
+  { supplierId: "S-04", name: "Chocolatería Fantasía" },
+  { supplierId: "S-05", name: "Frutas del Bosque" },
+  { supplierId: "S-06", name: "Panadería Don Pancho" },
+  { supplierId: "S-07", name: "Quesos La Cueva" },
+  { supplierId: "S-08", name: "Jamones El Ibérico" },
+  { supplierId: "S-09", name: "Verduras La Huerta" },
+  { supplierId: "S-10", name: "Aceites Sol Dorado" },
+];
 
-// Fetch de proveedores para los selects
-const suppliersResponse = await fetch(`${BACKEND_API_URL}/suppliers`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+// Datos estáticos de consumibles
+const consumablesData = [
+  {
+    consumableId: "CON-001",
+    name: "Café en grano",
+    cosumableTypeId: "Bebida",
+    unitMeasurement: "kg",
+    quantity: 50,
+    cost: 200,
+    supplierId: "Distribuidora El Buen Café",
+    active: true,
+  },
+  {
+    consumableId: "CON-002",
+    name: "Leche",
+    cosumableTypeId: "Lácteo",
+    unitMeasurement: "l",
+    quantity: 100,
+    cost: 150,
+    supplierId: "Lácteos La Vaquita Feliz",
+    active: true,
+  },
+  {
+    consumableId: "CON-003",
+    name: "Azúcar",
+    cosumableTypeId: "Endulzante",
+    unitMeasurement: "kg",
+    quantity: 80,
+    cost: 60,
+    supplierId: "Azúcar Dulce Hogar",
+    active: true,
+  },
+  {
+    consumableId: "CON-004",
+    name: "Chocolate",
+    cosumableTypeId: "Cereal",
+    unitMeasurement: "kg",
+    quantity: 40,
+    cost: 120,
+    supplierId: "Chocolatería Fantasía",
+    active: true,
+  },
+  {
+    consumableId: "CON-005",
+    name: "Té verde",
+    cosumableTypeId: "Bebida",
+    unitMeasurement: "g",
+    quantity: 200,
+    cost: 90,
+    supplierId: "Distribuidora El Buen Café",
+    active: true,
+  },
+  {
+    consumableId: "CON-006",
+    name: "Harina",
+    cosumableTypeId: "Cereal",
+    unitMeasurement: "kg",
+    quantity: 120,
+    cost: 70,
+    supplierId: "Panadería Don Pancho",
+    active: true,
+  },
+  {
+    consumableId: "CON-007",
+    name: "Mantequilla",
+    cosumableTypeId: "Grasa",
+    unitMeasurement: "kg",
+    quantity: 60,
+    cost: 110,
+    supplierId: "Panadería Don Pancho",
+    active: true,
+  },
+  {
+    consumableId: "CON-008",
+    name: "Huevos",
+    cosumableTypeId: "Proteína",
+    unitMeasurement: "unit",
+    quantity: 300,
+    cost: 90,
+    supplierId: "Panadería Don Pancho",
+    active: true,
+  },
+  {
+    consumableId: "CON-009",
+    name: "Vainilla",
+    cosumableTypeId: "Saborizante",
+    unitMeasurement: "ml",
+    quantity: 500,
+    cost: 50,
+    supplierId: "Aceites Sol Dorado",
+    active: true,
+  },
+  {
+    consumableId: "CON-010",
+    name: "Frutas",
+    cosumableTypeId: "Fruta",
+    unitMeasurement: "kg",
+    quantity: 70,
+    cost: 130,
+    supplierId: "Frutas del Bosque",
+    active: true,
+  },
+  {
+    consumableId: "CON-011",
+    name: "Queso",
+    cosumableTypeId: "Grasa",
+    unitMeasurement: "kg",
+    quantity: 40,
+    cost: 140,
+    supplierId: "Quesos La Cueva",
+    active: true,
+  },
+  {
+    consumableId: "CON-012",
+    name: "Jamón",
+    cosumableTypeId: "Proteína",
+    unitMeasurement: "kg",
+    quantity: 35,
+    cost: 160,
+    supplierId: "Jamones El Ibérico",
+    active: true,
+  },
+  {
+    consumableId: "CON-013",
+    name: "Espinaca",
+    cosumableTypeId: "Vegetal",
+    unitMeasurement: "kg",
+    quantity: 55,
+    cost: 70,
+    supplierId: "Verduras La Huerta",
+    active: true,
+  },
+  {
+    consumableId: "CON-014",
+    name: "Tomate",
+    cosumableTypeId: "Vegetal",
+    unitMeasurement: "kg",
+    quantity: 90,
+    cost: 60,
+    supplierId: "Verduras La Huerta",
+    active: true,
+  },
+  {
+    consumableId: "CON-015",
+    name: "Aceite",
+    cosumableTypeId: "Grasa",
+    unitMeasurement: "l",
+    quantity: 200,
+    cost: 100,
+    supplierId: "Aceites Sol Dorado",
+    active: true,
+  },
+];
 
-let consumablesData = [];
-let consumableTypesData = [];
-let suppliersData = [];
-
-if (response.ok) {
-    const result = await response.json();
-    consumablesData = result.data || result;
-    console.log('Datos de consumibles:', consumablesData);
-} else {
-    console.error("Error fetching consumables data:", response.statusText);
-}
-
-if (consumableTypesResponse.ok) {
-    const result = await consumableTypesResponse.json();
-    consumableTypesData = result.data || result;
-    console.log('Datos de tipos de consumibles:', consumableTypesData);
-} else {
-    console.error("Error fetching consumable types data:", consumableTypesResponse.statusText);
-}
-
-if (suppliersResponse.ok) {
-    const result = await suppliersResponse.json();
-    suppliersData = result.data || result;
-    console.log('Datos de proveedores:', suppliersData);
-} else {
-    console.error("Error fetching suppliers data:", suppliersResponse.statusText);
-}
-
-const initialConsumables = consumablesData || [];
+const initialConsumables = consumablesData;
 
 // Mapeo de unidades de medida para mostrar nombres amigables
 const unitMeasurementOptions = [
-    { value: "g", label: "Gramos" },
-    { value: "kg", label: "Kilogramos" },
-    { value: "l", label: "Litros" },
-    { value: "ml", label: "Mililitros" },
-    { value: "oz", label: "Onzas" },
-    { value: "lb", label: "Libras" },
-    { value: "unit", label: "Unidad" },
-    { value: "tbsp", label: "Cucharada" },
-    { value: "tsp", label: "Cucharadita" },
-    { value: "cup", label: "Taza" },
-    { value: "piece", label: "Pieza" }
+  { value: "g", label: "Gramos" },
+  { value: "kg", label: "Kilogramos" },
+  { value: "l", label: "Litros" },
+  { value: "ml", label: "Mililitros" },
+  { value: "oz", label: "Onzas" },
+  { value: "lb", label: "Libras" },
+  { value: "unit", label: "Unidad" },
+  { value: "tbsp", label: "Cucharada" },
+  { value: "tsp", label: "Cucharadita" },
+  { value: "cup", label: "Taza" },
+  { value: "piece", label: "Pieza" },
 ];
 ---
 
 <Layout>
-    <div class="d-flex flex-column min-vh-100">
-        <Navbar />
+  <div class="d-flex flex-column min-vh-100">
+    <Navbar />
 
-        <div class="d-flex flex-grow-1">
-            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Consumibles" />
+    <div class="d-flex flex-grow-1">
+      <LeftBar
+        title="Inventario"
+        options={sidebarOptions}
+        selectedOption="Consumibles"
+      />
 
-            <div class="main-content-with-navbar-sidebar flex-grow-1 bg-light position-relative" style="font-family: 'Roboto', sans-serif;">
-                <div class="p-4">
-                    <!-- BOTONES EN LA ESQUINA SUPERIOR DERECHA (no fijos) -->
-                        <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
-                        <div class="d-flex flex-column gap-1">
-                            <button
-                                class="btn btn-primary d-flex align-items-center justify-content-center gap-2"
-                                style="background-color: #482E21; border-color: #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
-                                id="addConsumableBtn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                </svg>
-                                Agregar
-                            </button>
-                                <button
-                                    class="btn btn-warning d-flex align-items-center justify-content-center gap-2"
-                                    style="background-color: #F3DCBB; color: #000; border-color: #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
-                                    id="updateConsumableBtn"
-                                >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                </svg>
-                                Actualizar
-                            </button>
-                                <button
-                                    class="btn btn-danger d-flex align-items-center justify-content-center gap-2"
-                                    style="background-color: #930000; border-color: #930000; width: 257px; height: 50px; font-size: 1.1rem;"
-                                    id="deleteConsumableBtn"
-                                >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                </svg>
-                                Eliminar
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- CONTENIDO PRINCIPAL CON MARGEN PARA LOS BOTONES -->
-                    <div style="margin-right: 300px;">
-                        <div class="d-flex align-items-start">
-                            <div style="width: 100%;">
-                                <h1 class="h3 fw-bold mb-4">Consumibles</h1>
-
-                                <div class="d-flex gap-4 mb-3">
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
-                                        <input type="text" class="form-control search-input" id="searchId" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" readonly />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
-                                        <input type="text" class="form-control search-input" id="searchName" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Tipo</label>
-                                        <select class="form-select search-input" id="searchType" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                            <option value="">Seleccionar</option>
-                                            {consumableTypesData.map((type: any) => (
-                                                    <option value={type.consumableTypeId || type.id}>{type.name || 'N/A'}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Unidad de Medida</label>
-                                        <select class="form-select search-input" id="searchUnitMeasurement" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                            <option value="">Seleccionar</option>
-                                            {unitMeasurementOptions.map((unit) => (
-                                                    <option value={unit.value}>{unit.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="d-flex gap-4">
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Cantidad</label>
-                                        <input type="number" step="0.01" class="form-control search-input" id="searchQuantity" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Precio Costo</label>
-                                        <input type="number" step="0.01" class="form-control search-input" id="searchCost" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Proveedor</label>
-                                        <select class="form-select search-input" id="searchSupplier" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                            <option value="">Seleccionar</option>
-                                            {suppliersData.map((supplier: any) => (
-                                                    <option value={supplier.supplierId || supplier.id}>{supplier.name || 'N/A'}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Estado</label>
-                                        <select class="form-select search-input" id="searchStatus" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                            <option value="active">Activo</option>
-                                            <option value="inactive">Inactivo</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div id="message" class="mt-3" style="display: none;"></div>
-
-                                <div class="d-flex gap-4 mt-3 align-items-center">
-                                    <div class="position-relative">
-                                        <button
-                                                class="btn mt-4 d-flex align-items-center gap-2 sort-toggle-btn"
-                                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
-                                                type="button"
-                                                id="sortButton"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
-                                            </svg>
-                                            Ordenar
-                                        </button>
-                                        <div class="sort-dropdown-menu" id="sortDropdown" style="display: none;">
-                                            <div class="card shadow-sm border-0 mt-1">
-                                                <div class="card-body p-2">
-                                                    <h6 class="fw-bold mb-2">Ordenar por</h6>
-                                                    <div class="sort-options">
-                                                        <div class="sort-option" data-sort-by="id" data-sort-order="asc">
-                                                            <span>ID (Ascendente)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="id" data-sort-order="desc">
-                                                            <span>ID (Descendente)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="name" data-sort-order="asc">
-                                                            <span>Nombre (A-Z)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="name" data-sort-order="desc">
-                                                            <span>Nombre (Z-A)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="quantity" data-sort-order="asc">
-                                                            <span>Cantidad (Menor a Mayor)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="quantity" data-sort-order="desc">
-                                                            <span>Cantidad (Mayor a Menor)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="cost" data-sort-order="asc">
-                                                            <span>Precio Costo (Menor a Mayor)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="cost" data-sort-order="desc">
-                                                            <span>Precio Costo (Mayor a Menor)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="status" data-sort-order="asc">
-                                                            <span>Estado (Activos primero)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="status" data-sort-order="desc">
-                                                            <span>Estado (Inactivos primero)</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <button
-                                                class="btn mt-4 d-flex align-items-center gap-2 filter-toggle-btn"
-                                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
-                                                type="button"
-                                                id="filterButton"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
-                                            </svg>
-                                            Filtrar
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="mt-3" id="filtersAccordion" style="display: none;">
-                                    <div class="card card-body border-0 shadow-sm">
-                                        <h6 class="fw-bold mb-3">Filtros Avanzados</h6>
-
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">ID</label>
-                                                <input
-                                                        type="text"
-                                                        class="form-control filter-input"
-                                                        id="filterId"
-                                                        placeholder="Buscar por ID"
-                                                />
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Nombre</label>
-                                                <input
-                                                        type="text"
-                                                        class="form-control filter-input"
-                                                        id="filterName"
-                                                        placeholder="Buscar por nombre"
-                                                />
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Tipo</label>
-                                                <select class="form-select filter-input" id="filterType">
-                                                    <option value="">Todos los tipos</option>
-                                                    {consumableTypesData.map((type: any) => (
-                                                            <option value={type.consumableTypeId || type.id}>{type.name || 'N/A'}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Unidad de Medida</label>
-                                                <select class="form-select filter-input" id="filterUnitMeasurement">
-                                                    <option value="">Todas las unidades</option>
-                                                    {unitMeasurementOptions.map((unit) => (
-                                                            <option value={unit.value}>{unit.label}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Cantidad</label>
-                                                <input
-                                                        type="number"
-                                                        step="0.01"
-                                                        class="form-control filter-input"
-                                                        id="filterQuantity"
-                                                        placeholder="Buscar por cantidad"
-                                                />
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Precio Costo</label>
-                                                <input
-                                                        type="number"
-                                                        step="0.01"
-                                                        class="form-control filter-input"
-                                                        id="filterCost"
-                                                        placeholder="Buscar por precio costo"
-                                                />
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Proveedor</label>
-                                                <select class="form-select filter-input" id="filterSupplier">
-                                                    <option value="">Todos los proveedores</option>
-                                                    {suppliersData.map((supplier: any) => (
-                                                            <option value={supplier.supplierId || supplier.id}>{supplier.name || 'N/A'}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Mostrar Inactivos</label>
-                                                <select class="form-select filter-input" id="filterStatus">
-                                                    <option value="active">Solo activos</option>
-                                                    <option value="inactive">Solo inactivos</option>
-                                                    <option value="">Todos los estados</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-4 d-flex align-items-end gap-2">
-                                                <button
-                                                        class="btn btn-primary flex-grow-1"
-                                                        id="applyFilters"
-                                                        style="background-color: #482E21; border-color: #482E21;"
-                                                >
-                                                    Aplicar Filtros
-                                                </button>
-                                                <button
-                                                        class="btn btn-outline-secondary"
-                                                        id="clearFilters"
-                                                >
-                                                    Limpiar
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-5">
-                            <div class="card shadow-sm border-0" style="border-radius: 8px;">
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover mb-0">
-                                            <thead style="background-color: #482E21; color: white;">
-                                            <tr>
-                                                <th scope="col" style="width: 8%;">ID</th>
-                                                <th scope="col" style="width: 18%;">Nombre</th>
-                                                <th scope="col" style="width: 15%;">Tipo</th>
-                                                <th scope="col" style="width: 12%;">Unidad de Medida</th>
-                                                <th scope="col" style="width: 10%;">Cantidad</th>
-                                                <th scope="col" style="width: 12%;">Precio Costo</th>
-                                                <th scope="col" style="width: 15%;">Proveedor</th>
-                                                <th scope="col" style="width: 10%;">Estado</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody id="consumablesTableBody">
-                                            {initialConsumables.length > 0 ? (
-                                                initialConsumables
-                                                    .filter((consumable: any) => consumable.active !== false)
-                                                    .map((consumable: any) => (
-                                                            <tr data-consumable-id={consumable.consumableId || consumable.id}>
-                                                                <th scope="row">{consumable.consumableId || consumable.id || 'N/A'}</th>
-                                                                <td>{consumable.name || ''}</td>
-                                                                <td>{consumable.consumableType?.name || ''}</td>
-                                                                <td>
-                                                                    {(() => {
-                                                                        const unit = unitMeasurementOptions.find(u => u.value === consumable.unitMeasurement);
-                                                                        return unit ? unit.label : consumable.unitMeasurement || '';
-                                                                    })()}
-                                                                </td>
-                                                                <td>{consumable.quantity || ''}</td>
-                                                                <td>${consumable.cost || ''}</td>
-                                                                <td>{consumable.supplier?.name || ''}</td>
-                                                                <td>
-                                                                    <span class={`badge ${(consumable.active !== false) ? 'bg-success' : 'bg-danger'}`}>
-                                                                        {(consumable.active !== false) ? 'Activo' : 'Inactivo'}
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                    ))
-                                            ) : (
-                                                    <tr>
-                                                        <td colspan="8" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-inbox" viewBox="0 0 16 16">
-                                                                    <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm-1.17-.437A1.5 1.5 0 0 1 4.98 3h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1 .106.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z"/>
-                                                                </svg>
-                                                                <p class="mt-2 mb-0">No hay datos disponibles</p>
-                                                                <small>Verifica que el endpoint esté funcionando correctamente</small>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                            )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div
+        class="main-content-with-navbar-sidebar flex-grow-1 bg-light position-relative"
+        style="font-family: 'Roboto', sans-serif;"
+      >
+        <div class="p-4">
+          <!-- BOTONES EN LA ESQUINA SUPERIOR DERECHA (no fijos) -->
+          <div
+            class="position-absolute"
+            style="top: 100px; right: 20px; z-index: 10;"
+          >
+            <div class="d-flex flex-column gap-1">
+              <button
+                class="btn btn-primary d-flex align-items-center justify-content-center gap-2"
+                style="background-color: #482E21; border-color: #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
+                id="addConsumableBtn"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                  ></path>
+                </svg>
+                Agregar
+              </button>
+              <button
+                class="btn btn-warning d-flex align-items-center justify-content-center gap-2"
+                style="background-color: #F3DCBB; color: #000; border-color: #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
+                id="updateConsumableBtn"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"
+                  ></path>
+                </svg>
+                Actualizar
+              </button>
+              <button
+                class="btn btn-danger d-flex align-items-center justify-content-center gap-2"
+                style="background-color: #930000; border-color: #930000; width: 257px; height: 50px; font-size: 1.1rem;"
+                id="deleteConsumableBtn"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                  ></path>
+                  <path
+                    fill-rule="evenodd"
+                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                  ></path>
+                </svg>
+                Eliminar
+              </button>
             </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <div
-            id="initial-consumables-data"
-            data-consumables={JSON.stringify(initialConsumables)}
-            data-api-url={BACKEND_API_URL}
-            style="display: none;"
-    ></div>
-
-    <script>
-        // Definir tipos para TypeScript
-        interface RouteMap {
-            Consumibles: string;
-            Productos: string;
-            Ingredientes: string;
-            Proveedores: string;
-        }
-
-        interface Consumable {
-            consumableId?: string;
-            id?: string;
-            name?: string;
-            cosumableTypeId?: string;
-            consumableType?: any;
-            unitMeasurement?: string;
-            quantity?: number | string;
-            cost?: number | string;
-            supplierId?: string;
-            supplier?: any;
-            active?: boolean;
-        }
-
-        const routeMap: RouteMap = {
-            "Consumibles": "/administracion/inventario/consumibles",
-            "Productos": "/administracion/inventario/productos",
-            "Ingredientes": "/administracion/inventario/ingredientes",
-            "Proveedores": "/administracion/inventario/proveedores"
-        };
-
-        // Mapeo de unidades de medida para el frontend
-        const unitMeasurementMap = {
-            "g": "Gramos",
-            "kg": "Kilogramos",
-            "l": "Litros",
-            "ml": "Mililitros",
-            "oz": "Onzas",
-            "lb": "Libras",
-            "unit": "Unidad",
-            "tbsp": "Cucharada",
-            "tsp": "Cucharadita",
-            "cup": "Taza",
-            "piece": "Pieza"
-        };
-
-        function setupLeftBarNavigation() {
-            console.log('Configurando navegación del LeftBar para Inventario...');
-
-            setTimeout(() => {
-                const options = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
-
-                options.forEach(optionText => {
-                    const elements = document.querySelectorAll('*');
-                    elements.forEach(element => {
-                        const htmlElement = element as HTMLElement;
-                        if (htmlElement.textContent?.trim() === optionText && routeMap[optionText as keyof RouteMap]) {
-                            if (!htmlElement.hasAttribute('data-nav-configured')) {
-                                htmlElement.style.cursor = 'pointer';
-                                htmlElement.setAttribute('data-nav-configured', 'true');
-
-                                htmlElement.addEventListener('click', (e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    const route = routeMap[optionText as keyof RouteMap];
-                                    console.log('Navegando a:', route);
-                                    window.location.href = route;
-                                });
-
-                                htmlElement.addEventListener('mouseenter', () => {
-                                    htmlElement.style.backgroundColor = '#f8f9fa';
-                                    htmlElement.style.transition = 'background-color 0.2s';
-                                });
-                                htmlElement.addEventListener('mouseleave', () => {
-                                    htmlElement.style.backgroundColor = '';
-                                });
-
-                                console.log('Configurado elemento para:', optionText);
-                            }
-                        }
-                    });
-                });
-            }, 100);
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM cargado, inicializando navegación de inventario...');
-
-            setupLeftBarNavigation();
-
-            console.log('Inicializando funcionalidad de consumibles...');
-
-            // Declarar variables con tipos específicos
-            let selectedConsumableId: string | null = null;
-            let allConsumables: Consumable[] = [];
-            let currentFilteredConsumables: Consumable[] = [];
-            let showInactive = false;
-
-            // Obtener elementos del DOM con tipos específicos
-            const addConsumableBtn = document.getElementById('addConsumableBtn') as HTMLButtonElement | null;
-            const updateConsumableBtn = document.getElementById('updateConsumableBtn') as HTMLButtonElement | null;
-            const deleteConsumableBtn = document.getElementById('deleteConsumableBtn') as HTMLButtonElement | null;
-            const message = document.getElementById('message') as HTMLDivElement | null;
-
-            // Obtener elementos de formulario con tipos específicos
-            const searchId = document.getElementById('searchId') as HTMLInputElement | null;
-            const searchName = document.getElementById('searchName') as HTMLInputElement | null;
-            const searchType = document.getElementById('searchType') as HTMLSelectElement | null;
-            const searchUnitMeasurement = document.getElementById('searchUnitMeasurement') as HTMLSelectElement | null;
-            const searchQuantity = document.getElementById('searchQuantity') as HTMLInputElement | null;
-            const searchCost = document.getElementById('searchCost') as HTMLInputElement | null;
-            const searchSupplier = document.getElementById('searchSupplier') as HTMLSelectElement | null;
-            const searchStatus = document.getElementById('searchStatus') as HTMLSelectElement | null;
-
-            async function addNewConsumable() {
-                const name = searchName?.value.trim();
-                const consumableTypeId = searchType?.value;
-                const unitMeasurement = searchUnitMeasurement?.value;
-                const quantity = searchQuantity?.value.trim();
-                const cost = searchCost?.value.trim();
-                const supplierId = searchSupplier?.value;
-                const status = searchStatus?.value;
-
-                if (!name || !consumableTypeId || !unitMeasurement || !quantity || !cost || !supplierId) {
-                    showMessage('Por favor complete todos los campos obligatorios', 'error');
-                    return;
-                }
-
-                if (isNaN(parseFloat(quantity)) || parseFloat(quantity) < 0) {
-                    showMessage('Por favor ingrese una cantidad válida', 'error');
-                    return;
-                }
-
-                if (isNaN(parseFloat(cost)) || parseFloat(cost) < 0) {
-                    showMessage('Por favor ingrese un precio costo válido', 'error');
-                    return;
-                }
-
-                try {
-                    // CORRECCIÓN: Enviar los IDs como strings para que Zod los pueda transformar
-                    const consumableData = {
-                        name: name,
-                        cosumableTypeId: consumableTypeId, // Enviar como string
-                        unitMeasurement: unitMeasurement, // Ya usa los valores correctos del enum
-                        quantity: quantity, // Enviar como string para que Zod lo transforme
-                        cost: cost, // Enviar como string para que Zod lo transforme
-                        supplierId: supplierId, // Enviar como string
-                        active: status === 'active'
-                    };
-
-                    console.log('Enviando datos para agregar:', consumableData);
-
-                    const response = await fetch(`${BACKEND_API_URL}/consumable`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(consumableData)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Consumible agregado exitosamente:', result);
-                        showMessage('Consumible agregado exitosamente', 'success');
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al agregar consumible:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo agregar el consumible'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            async function updateConsumable() {
-                if (!selectedConsumableId) {
-                    showMessage('Por favor seleccione un consumible de la tabla haciendo clic en la fila', 'error');
-                    return;
-                }
-
-                const name = searchName?.value.trim();
-                const consumableTypeId = searchType?.value;
-                const unitMeasurement = searchUnitMeasurement?.value;
-                const quantity = searchQuantity?.value.trim();
-                const cost = searchCost?.value.trim();
-                const supplierId = searchSupplier?.value;
-                const status = searchStatus?.value;
-
-                if (!name || !consumableTypeId || !unitMeasurement || !quantity || !cost || !supplierId) {
-                    showMessage('Por favor complete todos los campos obligatorios', 'error');
-                    return;
-                }
-
-                if (isNaN(parseFloat(quantity)) || parseFloat(quantity) < 0) {
-                    showMessage('Por favor ingrese una cantidad válida', 'error');
-                    return;
-                }
-
-                if (isNaN(parseFloat(cost)) || parseFloat(cost) < 0) {
-                    showMessage('Por favor ingrese un precio costo válido', 'error');
-                    return;
-                }
-
-                try {
-                    // CORRECCIÓN: Enviar los IDs como strings para que Zod los pueda transformar
-                    const consumableData = {
-                        name: name,
-                        cosumableTypeId: consumableTypeId, // Enviar como string
-                        unitMeasurement: unitMeasurement, // Ya usa los valores correctos del enum
-                        quantity: quantity, // Enviar como string
-                        cost: cost, // Enviar como string
-                        supplierId: supplierId, // Enviar como string
-                        active: status === 'active'
-                    };
-
-                    console.log('Enviando datos para actualizar:', consumableData, 'ID:', selectedConsumableId);
-
-                    const response = await fetch(`${BACKEND_API_URL}/consumable/${selectedConsumableId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(consumableData)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Consumible actualizado exitosamente:', result);
-                        showMessage('Consumible actualizado exitosamente', 'success');
-                        clearSelection();
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al actualizar consumible:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo actualizar el consumible'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            async function deleteConsumable() {
-                if (!selectedConsumableId) {
-                    showMessage('Por favor seleccione un consumible de la tabla haciendo clic en la fila', 'error');
-                    return;
-                }
-
-                if (!confirm('¿Está seguro de que desea eliminar este consumible?')) {
-                    return;
-                }
-
-                try {
-                    console.log('Eliminando consumible ID:', selectedConsumableId);
-
-                    const response = await fetch(`${BACKEND_API_URL}/consumable/${selectedConsumableId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-
-                    if (response.ok) {
-                        console.log('Consumible eliminado exitosamente');
-                        showMessage('Consumible eliminado exitosamente', 'success');
-                        clearSelection();
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al eliminar consumible:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo eliminar el consumible'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            function showMessage(text: string, type: 'success' | 'error' | 'info') {
-                if (!message) return;
-
-                message.textContent = text;
-                message.style.display = 'block';
-                message.className = `alert alert-${type === 'success' ? 'success' : type === 'info' ? 'info' : 'danger'} mt-3`;
-
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 5000);
-            }
-
-            function clearForm() {
-                if (searchId) searchId.value = '';
-                if (searchName) searchName.value = '';
-                if (searchType) searchType.value = '';
-                if (searchUnitMeasurement) searchUnitMeasurement.value = '';
-                if (searchQuantity) searchQuantity.value = '';
-                if (searchCost) searchCost.value = '';
-                if (searchSupplier) searchSupplier.value = '';
-                if (searchStatus) searchStatus.value = 'active';
-            }
-
-            function clearSelection() {
-                selectedConsumableId = null;
-                const allRows = document.querySelectorAll('#consumablesTableBody tr');
-                allRows.forEach(row => {
-                    row.classList.remove('table-primary');
-                });
-            }
-
-            function loadConsumableData(consumableId: string) {
-                console.log('Buscando consumible con ID:', consumableId);
-                console.log('Consumibles filtrados actuales:', currentFilteredConsumables);
-
-                const consumable = currentFilteredConsumables.find(c => {
-                    const id = c.consumableId || c.id;
-                    return id == consumableId;
-                });
-
-                if (!consumable) {
-                    console.error('Consumible no encontrado con ID:', consumableId);
-                    showMessage('Error: No se pudo cargar los datos del consumible', 'error');
-                    return;
-                }
-
-                console.log('Consumible encontrado:', consumable);
-
-                if (searchId) searchId.value = consumable.consumableId || consumable.id || '';
-                if (searchName) searchName.value = consumable.name || '';
-                if (searchType) searchType.value = consumable.cosumableTypeId || '';
-                if (searchUnitMeasurement) searchUnitMeasurement.value = consumable.unitMeasurement || '';
-                if (searchQuantity) searchQuantity.value = consumable.quantity?.toString() || '';
-                if (searchCost) searchCost.value = consumable.cost?.toString() || '';
-                if (searchSupplier) searchSupplier.value = consumable.supplierId || '';
-                if (searchStatus) searchStatus.value = (consumable.active !== false) ? 'active' : 'inactive';
-
-                console.log('Formulario llenado exitosamente para consumible:', consumableId);
-            }
-
-            // Configurar event listeners
-            if (addConsumableBtn) {
-                addConsumableBtn.addEventListener('click', addNewConsumable);
-            }
-
-            if (updateConsumableBtn) {
-                updateConsumableBtn.addEventListener('click', updateConsumable);
-            }
-
-            if (deleteConsumableBtn) {
-                deleteConsumableBtn.addEventListener('click', deleteConsumable);
-            }
-
-            // Sistema de selección de filas
-            let lastClickTime = 0;
-            const DOUBLE_CLICK_DELAY = 300;
-
-            const tableBody = document.getElementById('consumablesTableBody');
-            if (tableBody) {
-                tableBody.addEventListener('click', function(event: MouseEvent) {
-                    const target = event.target as HTMLElement;
-                    const row = target.closest('tr') as HTMLTableRowElement;
-
-                    if (row && row.getAttribute('data-consumable-id')) {
-                        const currentTime = new Date().getTime();
-                        const timeSinceLastClick = currentTime - lastClickTime;
-
-                        if (timeSinceLastClick < DOUBLE_CLICK_DELAY) {
-                            console.log('Doble clic detectado en fila');
-                            handleDoubleClick(row);
-                        } else {
-                            handleSingleClick(row);
-                        }
-
-                        lastClickTime = currentTime;
-                    }
-                });
-            }
-
-            function handleSingleClick(row: HTMLTableRowElement) {
-                const allRows = document.querySelectorAll('#consumablesTableBody tr');
-                allRows.forEach(r => {
-                    r.classList.remove('table-primary');
-                });
-
-                row.classList.add('table-primary');
-
-                selectedConsumableId = row.getAttribute('data-consumable-id');
-
-                console.log('Consumible seleccionado (clic simple):', selectedConsumableId);
-            }
-
-            function handleDoubleClick(row: HTMLTableRowElement) {
-                const consumableId = row.getAttribute('data-consumable-id');
-                if (!consumableId) return;
-
-                console.log('Procesando doble clic para consumible ID:', consumableId);
-
-                handleSingleClick(row);
-
-                loadConsumableData(consumableId);
-
-                showMessage(`Datos del consumible cargados en el formulario. Puede editarlos y hacer clic en "Actualizar".`, 'info');
-
-                console.log('Formulario llenado automáticamente (doble clic) para consumible:', consumableId);
-            }
-
-            // Sistema de filtros y ordenamiento
-            const applyFiltersBtn = document.getElementById('applyFilters') as HTMLButtonElement | null;
-            const clearFiltersBtn = document.getElementById('clearFilters') as HTMLButtonElement | null;
-            const filterButton = document.getElementById('filterButton') as HTMLButtonElement | null;
-            const filtersAccordion = document.getElementById('filtersAccordion') as HTMLDivElement | null;
-            const sortButton = document.getElementById('sortButton') as HTMLButtonElement | null;
-            const sortDropdown = document.getElementById('sortDropdown') as HTMLDivElement | null;
-
-            const filterId = document.getElementById('filterId') as HTMLInputElement | null;
-            const filterName = document.getElementById('filterName') as HTMLInputElement | null;
-            const filterType = document.getElementById('filterType') as HTMLSelectElement | null;
-            const filterUnitMeasurement = document.getElementById('filterUnitMeasurement') as HTMLSelectElement | null;
-            const filterQuantity = document.getElementById('filterQuantity') as HTMLInputElement | null;
-            const filterCost = document.getElementById('filterCost') as HTMLInputElement | null;
-            const filterSupplier = document.getElementById('filterSupplier') as HTMLSelectElement | null;
-            const filterStatus = document.getElementById('filterStatus') as HTMLSelectElement | null;
-
-            const initialDataElement = document.getElementById('initial-consumables-data');
-            
-            // Obtener la URL de la API desde el data attribute
-            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
-
-            if (initialDataElement && initialDataElement.dataset.consumables) {
-                allConsumables = JSON.parse(initialDataElement.dataset.consumables);
-                console.log('Datos iniciales cargados:', allConsumables.length, 'consumibles');
-            } else {
-                console.error('No se pudieron cargar los datos iniciales');
-                allConsumables = [];
-            }
-
-            let currentFilters = {
-                id: '',
-                name: '',
-                type: '',
-                unitMeasurement: '',
-                quantity: '',
-                cost: '',
-                supplier: '',
-                status: 'active',
-            };
-
-            let currentSort = {
-                by: 'id',
-                order: 'asc'
-            };
-
-            let isFiltersVisible = false;
-            let isSortVisible = false;
-
-            function toggleSortDropdown() {
-                isSortVisible = !isSortVisible;
-                if (sortDropdown) {
-                    if (isSortVisible) {
-                        sortDropdown.style.display = 'block';
-                        if (sortButton) sortButton.classList.add('active');
-                        if (isFiltersVisible) {
-                            toggleFiltersAccordion();
-                        }
-                    } else {
-                        sortDropdown.style.display = 'none';
-                        if (sortButton) sortButton.classList.remove('active');
-                    }
-                }
-            }
-
-            function toggleFiltersAccordion() {
-                isFiltersVisible = !isFiltersVisible;
-                if (filtersAccordion) {
-                    if (isFiltersVisible) {
-                        filtersAccordion.style.display = 'block';
-                        if (filterButton) filterButton.classList.add('active');
-                        if (isSortVisible) {
-                            toggleSortDropdown();
-                        }
-                    } else {
-                        filtersAccordion.style.display = 'none';
-                        if (filterButton) filterButton.classList.remove('active');
-                    }
-                }
-            }
-
-            function applySort(sortBy: string, sortOrder: string) {
-                console.log('Aplicando ordenamiento:', sortBy, sortOrder);
-                if (sortBy) currentSort.by = sortBy;
-                if (sortOrder) currentSort.order = sortOrder;
-                updateTable();
-
-                if (isSortVisible) {
-                    toggleSortDropdown();
-                }
-            }
-
-            function applyQuickSearch() {
-                console.log('Aplicando búsqueda rápida...');
-                currentFilters = {
-                    id: searchId ? searchId.value.toLowerCase() : '',
-                    name: searchName ? searchName.value.toLowerCase() : '',
-                    type: searchType ? searchType.value : '',
-                    unitMeasurement: searchUnitMeasurement ? searchUnitMeasurement.value : '',
-                    quantity: searchQuantity ? searchQuantity.value.toLowerCase() : '',
-                    cost: searchCost ? searchCost.value.toLowerCase() : '',
-                    supplier: searchSupplier ? searchSupplier.value : '',
-                    status: searchStatus ? searchStatus.value : 'active',
-                };
-                updateTable();
-            }
-
-            function applyAdvancedFilters() {
-                console.log('Aplicando filtros avanzados...');
-                currentFilters = {
-                    id: filterId ? filterId.value.toLowerCase() : '',
-                    name: filterName ? filterName.value.toLowerCase() : '',
-                    type: filterType ? filterType.value : '',
-                    unitMeasurement: filterUnitMeasurement ? filterUnitMeasurement.value : '',
-                    quantity: filterQuantity ? filterQuantity.value.toLowerCase() : '',
-                    cost: filterCost ? filterCost.value.toLowerCase() : '',
-                    supplier: filterSupplier ? filterSupplier.value : '',
-                    status: filterStatus ? filterStatus.value : 'active',
-                };
-                updateTable();
-
-                if (isFiltersVisible) {
-                    toggleFiltersAccordion();
-                }
-            }
-
-            function clearAllFilters() {
-                console.log('Limpiando todos los filtros...');
-
-                if (searchId) searchId.value = '';
-                if (searchName) searchName.value = '';
-                if (searchType) searchType.value = '';
-                if (searchUnitMeasurement) searchUnitMeasurement.value = '';
-                if (searchQuantity) searchQuantity.value = '';
-                if (searchCost) searchCost.value = '';
-                if (searchSupplier) searchSupplier.value = '';
-                if (searchStatus) searchStatus.value = 'active';
-
-                if (filterId) filterId.value = '';
-                if (filterName) filterName.value = '';
-                if (filterType) filterType.value = '';
-                if (filterUnitMeasurement) filterUnitMeasurement.value = '';
-                if (filterQuantity) filterQuantity.value = '';
-                if (filterCost) filterCost.value = '';
-                if (filterSupplier) filterSupplier.value = '';
-                if (filterStatus) filterStatus.value = 'active';
-
-                currentFilters = {
-                    id: '',
-                    name: '',
-                    type: '',
-                    unitMeasurement: '',
-                    quantity: '',
-                    cost: '',
-                    supplier: '',
-                    status: 'active',
-                };
-
-                updateTable();
-            }
-
-            function sortConsumables(consumables: Consumable[]) {
-                return consumables.sort((a, b) => {
-                    let valueA: any, valueB: any;
-
-                    switch (currentSort.by) {
-                        case 'id':
-                            valueA = a.consumableId || a.id || '';
-                            valueB = b.consumableId || b.id || '';
-                            const numA = Number(valueA);
-                            const numB = Number(valueB);
-                            valueA = isNaN(numA) ? valueA.toString().toLowerCase() : numA;
-                            valueB = isNaN(numB) ? valueB.toString().toLowerCase() : numB;
-                            break;
-                        case 'name':
-                            valueA = a.name || '';
-                            valueB = b.name || '';
-                            valueA = valueA.toString().toLowerCase();
-                            valueB = valueB.toString().toLowerCase();
-                            break;
-                        case 'quantity':
-                            valueA = parseFloat(a.quantity as string) || 0;
-                            valueB = parseFloat(b.quantity as string) || 0;
-                            break;
-                        case 'cost':
-                            valueA = parseFloat(a.cost as string) || 0;
-                            valueB = parseFloat(b.cost as string) || 0;
-                            break;
-                        case 'status':
-                            valueA = (a.active !== false) ? 1 : 0;
-                            valueB = (b.active !== false) ? 1 : 0;
-                            break;
-                        default:
-                            valueA = a.consumableId || a.id || '';
-                            valueB = b.consumableId || b.id || '';
-                    }
-
-                    if (currentSort.order === 'asc') {
-                        return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-                    } else {
-                        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
-                    }
-                });
-            }
-
-            function updateTable() {
-                if (!tableBody) {
-                    console.error('No se encontró el elemento consumablesTableBody');
-                    return;
-                }
-
-                if (!allConsumables.length) {
-                    console.log('No hay datos de consumibles para mostrar');
-                    tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay datos disponibles</td></tr>';
-                    return;
-                }
-
-                console.log('Filtros aplicados:', currentFilters);
-                console.log('Ordenamiento aplicado:', currentSort);
-
-                let filteredConsumables = allConsumables.filter(consumable => {
-                    // Filtro por estado (activo/inactivo)
-                    if (currentFilters.status === 'active' && consumable.active === false) {
-                        return false;
-                    }
-                    if (currentFilters.status === 'inactive' && consumable.active !== false) {
-                        return false;
-                    }
-
-                    // Filtro por ID
-                    if (currentFilters.id) {
-                        const consumableId = (consumable.consumableId || consumable.id || '').toString().toLowerCase();
-                        if (!consumableId.includes(currentFilters.id)) {
-                            return false;
-                        }
-                    }
-
-                    // Filtro por nombre
-                    if (currentFilters.name && consumable.name) {
-                        const consumableName = consumable.name.toLowerCase();
-                        if (!consumableName.includes(currentFilters.name)) {
-                            return false;
-                        }
-                    }
-
-                    // Filtro por tipo
-                    if (currentFilters.type && consumable.cosumableTypeId) {
-                        if (consumable.cosumableTypeId !== currentFilters.type) {
-                            return false;
-                        }
-                    }
-
-                    // Filtro por unidad de medida
-                    if (currentFilters.unitMeasurement && consumable.unitMeasurement) {
-                        if (consumable.unitMeasurement !== currentFilters.unitMeasurement) {
-                            return false;
-                        }
-                    }
-
-                    // Filtro por cantidad
-                    if (currentFilters.quantity && consumable.quantity) {
-                        const consumableQuantity = consumable.quantity.toString().toLowerCase();
-                        if (!consumableQuantity.includes(currentFilters.quantity)) {
-                            return false;
-                        }
-                    }
-
-                    // Filtro por precio costo
-                    if (currentFilters.cost && consumable.cost) {
-                        const consumableCost = consumable.cost.toString().toLowerCase();
-                        if (!consumableCost.includes(currentFilters.cost)) {
-                            return false;
-                        }
-                    }
-
-                    // Filtro por proveedor
-                    if (currentFilters.supplier && consumable.supplierId) {
-                        if (consumable.supplierId !== currentFilters.supplier) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                });
-
-                filteredConsumables = sortConsumables(filteredConsumables);
-
-                currentFilteredConsumables = filteredConsumables;
-                console.log('Consumibles filtrados guardados:', currentFilteredConsumables.length);
-
-                if (filteredConsumables.length === 0) {
-                    tableBody.innerHTML = `
+          </div>
+
+          <!-- CONTENIDO PRINCIPAL CON MARGEN PARA LOS BOTONES -->
+          <div style="margin-right: 300px;">
+            <div class="d-flex align-items-start">
+              <div style="width: 100%;">
+                <h1 class="h3 fw-bold mb-4">Consumibles</h1>
+
+                <div class="d-flex gap-4 mb-3">
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;">ID</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control search-input"
+                      id="searchId"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                      readonly
+                    />
+                  </div>
+
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;">Nombre</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control search-input"
+                      id="searchName"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                    />
+                  </div>
+
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;">Tipo</label
+                    >
+                    <select
+                      class="form-select search-input"
+                      id="searchType"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                    >
+                      <option value="">Seleccionar</option>
+                      {
+                        consumableTypesData.map((type: any) => (
+                          <option value={type.consumableTypeId || type.id}>
+                            {type.name || "N/A"}
+                          </option>
+                        ))
+                      }
+                    </select>
+                  </div>
+
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;"
+                      >Unidad de Medida</label
+                    >
+                    <select
+                      class="form-select search-input"
+                      id="searchUnitMeasurement"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                    >
+                      <option value="">Seleccionar</option>
+                      {
+                        unitMeasurementOptions.map((unit) => (
+                          <option value={unit.value}>{unit.label}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="d-flex gap-4">
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;">Cantidad</label
+                    >
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control search-input"
+                      id="searchQuantity"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                    />
+                  </div>
+
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;"
+                      >Precio Costo</label
+                    >
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control search-input"
+                      id="searchCost"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                    />
+                  </div>
+
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;"
+                      >Proveedor</label
+                    >
+                    <select
+                      class="form-select search-input"
+                      id="searchSupplier"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                    >
+                      <option value="">Seleccionar</option>
+                      {
+                        suppliersData.map((supplier: any) => (
+                          <option value={supplier.supplierId || supplier.id}>
+                            {supplier.name || "N/A"}
+                          </option>
+                        ))
+                      }
+                    </select>
+                  </div>
+
+                  <div class="flex-grow-1">
+                    <label
+                      class="form-label fw-bold mb-2"
+                      style="font-family: 'Roboto', sans-serif;">Estado</label
+                    >
+                    <select
+                      class="form-select search-input"
+                      id="searchStatus"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px;"
+                    >
+                      <option value="active">Activo</option>
+                      <option value="inactive">Inactivo</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="message" class="mt-3" style="display: none;"></div>
+
+                <div class="d-flex gap-4 mt-3 align-items-center">
+                  <div class="position-relative">
+                    <button
+                      class="btn mt-4 d-flex align-items-center gap-2 sort-toggle-btn"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
+                      type="button"
+                      id="sortButton"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"
+                        ></path>
+                      </svg>
+                      Ordenar
+                    </button>
+                    <div
+                      class="sort-dropdown-menu"
+                      id="sortDropdown"
+                      style="display: none;"
+                    >
+                      <div class="card shadow-sm border-0 mt-1">
+                        <div class="card-body p-2">
+                          <h6 class="fw-bold mb-2">Ordenar por</h6>
+                          <div class="sort-options">
+                            <div
+                              class="sort-option"
+                              data-sort-by="id"
+                              data-sort-order="asc"
+                            >
+                              <span>ID (Ascendente)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="id"
+                              data-sort-order="desc"
+                            >
+                              <span>ID (Descendente)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="name"
+                              data-sort-order="asc"
+                            >
+                              <span>Nombre (A-Z)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="name"
+                              data-sort-order="desc"
+                            >
+                              <span>Nombre (Z-A)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="quantity"
+                              data-sort-order="asc"
+                            >
+                              <span>Cantidad (Menor a Mayor)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="quantity"
+                              data-sort-order="desc"
+                            >
+                              <span>Cantidad (Mayor a Menor)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="cost"
+                              data-sort-order="asc"
+                            >
+                              <span>Precio Costo (Menor a Mayor)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="cost"
+                              data-sort-order="desc"
+                            >
+                              <span>Precio Costo (Mayor a Menor)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="status"
+                              data-sort-order="asc"
+                            >
+                              <span>Estado (Activos primero)</span>
+                            </div>
+                            <div
+                              class="sort-option"
+                              data-sort-by="status"
+                              data-sort-order="desc"
+                            >
+                              <span>Estado (Inactivos primero)</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      class="btn mt-4 d-flex align-items-center gap-2 filter-toggle-btn"
+                      style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
+                      type="button"
+                      id="filterButton"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"
+                        ></path>
+                      </svg>
+                      Filtrar
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mt-3" id="filtersAccordion" style="display: none;">
+                  <div class="card card-body border-0 shadow-sm">
+                    <h6 class="fw-bold mb-3">Filtros Avanzados</h6>
+
+                    <div class="row g-3">
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">ID</label>
+                        <input
+                          type="text"
+                          class="form-control filter-input"
+                          id="filterId"
+                          placeholder="Buscar por ID"
+                        />
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Nombre</label>
+                        <input
+                          type="text"
+                          class="form-control filter-input"
+                          id="filterName"
+                          placeholder="Buscar por nombre"
+                        />
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Tipo</label>
+                        <select
+                          class="form-select filter-input"
+                          id="filterType"
+                        >
+                          <option value="">Todos los tipos</option>
+                          {
+                            consumableTypesData.map((type: any) => (
+                              <option value={type.consumableTypeId || type.id}>
+                                {type.name || "N/A"}
+                              </option>
+                            ))
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold"
+                          >Unidad de Medida</label
+                        >
+                        <select
+                          class="form-select filter-input"
+                          id="filterUnitMeasurement"
+                        >
+                          <option value="">Todas las unidades</option>
+                          {
+                            unitMeasurementOptions.map((unit) => (
+                              <option value={unit.value}>{unit.label}</option>
+                            ))
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Cantidad</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          class="form-control filter-input"
+                          id="filterQuantity"
+                          placeholder="Buscar por cantidad"
+                        />
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold"
+                          >Precio Costo</label
+                        >
+                        <input
+                          type="number"
+                          step="0.01"
+                          class="form-control filter-input"
+                          id="filterCost"
+                          placeholder="Buscar por precio costo"
+                        />
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold">Proveedor</label>
+                        <select
+                          class="form-select filter-input"
+                          id="filterSupplier"
+                        >
+                          <option value="">Todos los proveedores</option>
+                          {
+                            suppliersData.map((supplier: any) => (
+                              <option
+                                value={supplier.supplierId || supplier.id}
+                              >
+                                {supplier.name || "N/A"}
+                              </option>
+                            ))
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label fw-semibold"
+                          >Mostrar Inactivos</label
+                        >
+                        <select
+                          class="form-select filter-input"
+                          id="filterStatus"
+                        >
+                          <option value="active">Solo activos</option>
+                          <option value="inactive">Solo inactivos</option>
+                          <option value="">Todos los estados</option>
+                        </select>
+                      </div>
+
+                      <div class="col-md-4 d-flex align-items-end gap-2">
+                        <button
+                          class="btn btn-primary flex-grow-1"
+                          id="applyFilters"
+                          style="background-color: #482E21; border-color: #482E21;"
+                        >
+                          Aplicar Filtros
+                        </button>
+                        <button
+                          class="btn btn-outline-secondary"
+                          id="clearFilters"
+                        >
+                          Limpiar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-5">
+              <div class="card shadow-sm border-0" style="border-radius: 8px;">
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                      <thead style="background-color: #482E21; color: white;">
                         <tr>
-                            <td colspan="8" class="text-center py-4">
-                                <div class="text-muted">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                                    </svg>
-                                    <p class="mt-2 mb-0">No se encontraron consumibles</p>
-                                    <small>Intenta con otros criterios de búsqueda</small>
-                                </div>
-                            </td>
+                          <th scope="col" style="width: 8%;">ID</th>
+                          <th scope="col" style="width: 18%;">Nombre</th>
+                          <th scope="col" style="width: 15%;">Tipo</th>
+                          <th scope="col" style="width: 12%;"
+                            >Unidad de Medida</th
+                          >
+                          <th scope="col" style="width: 10%;">Cantidad</th>
+                          <th scope="col" style="width: 12%;">Precio Costo</th>
+                          <th scope="col" style="width: 15%;">Proveedor</th>
+                          <th scope="col" style="width: 10%;">Estado</th>
                         </tr>
-                    `;
-                } else {
-                    tableBody.innerHTML = filteredConsumables.map(consumable => {
-                        const unitLabel = unitMeasurementMap[consumable.unitMeasurement as keyof typeof unitMeasurementMap] || consumable.unitMeasurement;
+                      </thead>
+                      <tbody id="consumablesTableBody">
+                        {
+                          initialConsumables.length > 0 ? (
+                            initialConsumables
+                              .filter(
+                                (consumable: any) => consumable.active !== false
+                              )
+                              .map((consumable: any) => (
+                                <tr
+                                  data-consumable-id={
+                                    consumable.consumableId || consumable.id
+                                  }
+                                >
+                                  <th scope="row">
+                                    {consumable.consumableId ||
+                                      consumable.id ||
+                                      "N/A"}
+                                  </th>
+                                  <td>{consumable.name || ""}</td>
+                                  <td>{consumable.cosumableTypeId || ""}</td>
+                                  <td>
+                                    {(() => {
+                                      const unit = unitMeasurementOptions.find(
+                                        (u) =>
+                                          u.value === consumable.unitMeasurement
+                                      );
+                                      return unit
+                                        ? unit.label
+                                        : consumable.unitMeasurement || "";
+                                    })()}
+                                  </td>
+                                  <td>{consumable.quantity || ""}</td>
+                                  <td>${consumable.cost || ""}</td>
+                                  <td>{consumable.supplierId}</td>
+                                  <td>
+                                    <span
+                                      class={`badge ${consumable.active !== false ? "bg-success" : "bg-danger"}`}
+                                    >
+                                      {consumable.active !== false
+                                        ? "Activo"
+                                        : "Inactivo"}
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))
+                          ) : (
+                            <tr>
+                              <td colspan="8" class="text-center py-4">
+                                <div class="text-muted">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="48"
+                                    height="48"
+                                    fill="currentColor"
+                                    class="bi bi-inbox"
+                                    viewBox="0 0 16 16"
+                                  >
+                                    <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm-1.17-.437A1.5 1.5 0 0 1 4.98 3h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1 .106.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z" />
+                                  </svg>
+                                  <p class="mt-2 mb-0">
+                                    No hay datos disponibles
+                                  </p>
+                                  <small>
+                                    Verifica que el endpoint esté funcionando
+                                    correctamente
+                                  </small>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-                        return `
-                        <tr data-consumable-id="${consumable.consumableId || consumable.id || 'N/A'}">
-                            <th scope="row">${consumable.consumableId || consumable.id || 'N/A'}</th>
-                            <td>${consumable.name || ''}</td>
-                            <td>${consumable.consumableType?.name || ''}</td>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  ></script>
+
+  <div
+    id="initial-consumables-data"
+    data-consumables={JSON.stringify(initialConsumables)}
+    data-api-url={BACKEND_API_URL}
+    style="display: none;"
+  >
+  </div>
+
+  <script>
+    // Definir tipos para TypeScript
+    interface RouteMap {
+      Consumibles: string;
+      Productos: string;
+      Ingredientes: string;
+      Proveedores: string;
+    }
+
+    interface Consumable {
+      consumableId?: string;
+      id?: string;
+      name?: string;
+      cosumableTypeId?: string;
+      consumableType?: any;
+      unitMeasurement?: string;
+      quantity?: number | string;
+      cost?: number | string;
+      supplierId?: string;
+      supplier?: any;
+      active?: boolean;
+    }
+
+    const routeMap: RouteMap = {
+      Consumibles: "/administracion/inventario/consumibles",
+      Productos: "/administracion/inventario/productos",
+      Ingredientes: "/administracion/inventario/ingredientes",
+      Proveedores: "/administracion/inventario/proveedores",
+    };
+
+    // Mapeo de unidades de medida para el frontend
+    const unitMeasurementMap = {
+      g: "Gramos",
+      kg: "Kilogramos",
+      l: "Litros",
+      ml: "Mililitros",
+      oz: "Onzas",
+      lb: "Libras",
+      unit: "Unidad",
+      tbsp: "Cucharada",
+      tsp: "Cucharadita",
+      cup: "Taza",
+      piece: "Pieza",
+    };
+
+    function setupLeftBarNavigation() {
+      console.log("Configurando navegación del LeftBar para Inventario...");
+
+      setTimeout(() => {
+        const options = [
+          "Consumibles",
+          "Productos",
+          "Ingredientes",
+          "Proveedores",
+        ];
+
+        options.forEach((optionText) => {
+          const elements = document.querySelectorAll("*");
+          elements.forEach((element) => {
+            const htmlElement = element as HTMLElement;
+            if (
+              htmlElement.textContent?.trim() === optionText &&
+              routeMap[optionText as keyof RouteMap]
+            ) {
+              if (!htmlElement.hasAttribute("data-nav-configured")) {
+                htmlElement.style.cursor = "pointer";
+                htmlElement.setAttribute("data-nav-configured", "true");
+
+                htmlElement.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const route = routeMap[optionText as keyof RouteMap];
+                  console.log("Navegando a:", route);
+                  window.location.href = route;
+                });
+
+                htmlElement.addEventListener("mouseenter", () => {
+                  htmlElement.style.backgroundColor = "#f8f9fa";
+                  htmlElement.style.transition = "background-color 0.2s";
+                });
+                htmlElement.addEventListener("mouseleave", () => {
+                  htmlElement.style.backgroundColor = "";
+                });
+
+                console.log("Configurado elemento para:", optionText);
+              }
+            }
+          });
+        });
+      }, 100);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("DOM cargado, inicializando navegación de inventario...");
+
+      setupLeftBarNavigation();
+
+      console.log("Inicializando funcionalidad de consumibles...");
+
+      // Declarar variables con tipos específicos
+      let selectedConsumableId: string | null = null;
+      let allConsumables: Consumable[] = [];
+      let currentFilteredConsumables: Consumable[] = [];
+      let showInactive = false;
+
+      // Datos estáticos de ejemplo para suppliers y consumibleTypes
+      const suppliersData = [
+        { supplierId: "1", name: "Proveedor Café Central" },
+        { supplierId: "2", name: "Distribuidora La Esquina" },
+        { supplierId: "3", name: "Alimentos El Buen Sabor" },
+        { supplierId: "4", name: "Suministros Gourmet" },
+        { supplierId: "5", name: "Mercado Express" },
+        { supplierId: "6", name: "Proveedor Ficticio 1" },
+        { supplierId: "7", name: "Proveedor Ficticio 2" },
+        { supplierId: "8", name: "Proveedor Ficticio 3" },
+        { supplierId: "9", name: "Proveedor Ficticio 4" },
+        { supplierId: "10", name: "Proveedor Ficticio 5" },
+      ];
+
+      const consumableTypesData = [
+        { consumableTypeId: "1", name: "Bebida" },
+        { consumableTypeId: "2", name: "Snack" },
+        { consumableTypeId: "3", name: "Ingrediente" },
+        { consumableTypeId: "4", name: "Limpieza" },
+        { consumableTypeId: "5", name: "Desechable" },
+        { consumableTypeId: "6", name: "Otro" },
+      ];
+
+      // Obtener elementos del DOM con tipos específicos
+      const addConsumableBtn = document.getElementById(
+        "addConsumableBtn"
+      ) as HTMLButtonElement | null;
+      const updateConsumableBtn = document.getElementById(
+        "updateConsumableBtn"
+      ) as HTMLButtonElement | null;
+      const deleteConsumableBtn = document.getElementById(
+        "deleteConsumableBtn"
+      ) as HTMLButtonElement | null;
+      const message = document.getElementById(
+        "message"
+      ) as HTMLDivElement | null;
+
+      // Obtener elementos de formulario con tipos específicos
+      const searchId = document.getElementById(
+        "searchId"
+      ) as HTMLInputElement | null;
+      const searchName = document.getElementById(
+        "searchName"
+      ) as HTMLInputElement | null;
+      const searchType = document.getElementById(
+        "searchType"
+      ) as HTMLSelectElement | null;
+      const searchUnitMeasurement = document.getElementById(
+        "searchUnitMeasurement"
+      ) as HTMLSelectElement | null;
+      const searchQuantity = document.getElementById(
+        "searchQuantity"
+      ) as HTMLInputElement | null;
+      const searchCost = document.getElementById(
+        "searchCost"
+      ) as HTMLInputElement | null;
+      const searchSupplier = document.getElementById(
+        "searchSupplier"
+      ) as HTMLSelectElement | null;
+      const searchStatus = document.getElementById(
+        "searchStatus"
+      ) as HTMLSelectElement | null;
+
+      async function addNewConsumable() {
+        const name = searchName?.value.trim();
+        const consumableTypeId = searchType?.value;
+        const unitMeasurement = searchUnitMeasurement?.value;
+        const quantity = searchQuantity?.value.trim();
+        const cost = searchCost?.value.trim();
+        const supplierId = searchSupplier?.value;
+        const status = searchStatus?.value;
+
+        if (
+          !name ||
+          !consumableTypeId ||
+          !unitMeasurement ||
+          !quantity ||
+          !cost ||
+          !supplierId
+        ) {
+          showMessage(
+            "Por favor complete todos los campos obligatorios",
+            "error"
+          );
+          return;
+        }
+
+        if (isNaN(parseFloat(quantity)) || parseFloat(quantity) < 0) {
+          showMessage("Por favor ingrese una cantidad válida", "error");
+          return;
+        }
+
+        if (isNaN(parseFloat(cost)) || parseFloat(cost) < 0) {
+          showMessage("Por favor ingrese un precio costo válido", "error");
+          return;
+        }
+
+        try {
+          // CORRECCIÓN: Enviar los IDs como strings para que Zod los pueda transformar
+          const consumableData = {
+            name: name,
+            cosumableTypeId: consumableTypeId,
+            unitMeasurement: unitMeasurement, 
+            quantity: quantity, 
+            cost: cost, 
+            supplierId: supplierId, 
+            active: status === "active",
+          };
+
+          console.log("Enviando datos para agregar:", consumableData);
+
+          /*
+          const response = await fetch(`${BACKEND_API_URL}/consumable`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(consumableData),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            console.log("Consumible agregado exitosamente:", result);
+            showMessage("Consumible agregado exitosamente", "success");
+            clearForm();
+            setTimeout(() => {
+              location.reload();
+            }, 1500);
+          } else {
+            const errorData = await response.json();
+            console.error("Error al agregar consumible:", errorData);
+            showMessage(
+              `Error: ${errorData.message || "No se pudo agregar el consumible"}`,
+              "error"
+            );
+          }*/
+        } catch (error) {
+          console.error("Error de red:", error);
+          showMessage(
+            "Error de conexión. Verifique que el servidor esté funcionando.",
+            "error"
+          );
+        }
+      }
+
+      async function updateConsumable() {
+        if (!selectedConsumableId) {
+          showMessage(
+            "Por favor seleccione un consumible de la tabla haciendo clic en la fila",
+            "error"
+          );
+          return;
+        }
+
+        const name = searchName?.value.trim();
+        const consumableTypeId = searchType?.value;
+        const unitMeasurement = searchUnitMeasurement?.value;
+        const quantity = searchQuantity?.value.trim();
+        const cost = searchCost?.value.trim();
+        const supplierId = searchSupplier?.value;
+        const status = searchStatus?.value;
+
+        if (
+          !name ||
+          !consumableTypeId ||
+          !unitMeasurement ||
+          !quantity ||
+          !cost ||
+          !supplierId
+        ) {
+          showMessage(
+            "Por favor complete todos los campos obligatorios",
+            "error"
+          );
+          return;
+        }
+
+        if (isNaN(parseFloat(quantity)) || parseFloat(quantity) < 0) {
+          showMessage("Por favor ingrese una cantidad válida", "error");
+          return;
+        }
+
+        if (isNaN(parseFloat(cost)) || parseFloat(cost) < 0) {
+          showMessage("Por favor ingrese un precio costo válido", "error");
+          return;
+        }
+
+        try {
+          // CORRECCIÓN: Enviar los IDs como strings para que Zod los pueda transformar
+          const consumableData = {
+            name: name,
+            cosumableTypeId: consumableTypeId, // Enviar como string
+            unitMeasurement: unitMeasurement, // Ya usa los valores correctos del enum
+            quantity: quantity, // Enviar como string
+            cost: cost, // Enviar como string
+            supplierId: supplierId, // Enviar como string
+            active: status === "active",
+          };
+
+          console.log(
+            "Enviando datos para actualizar:",
+            consumableData,
+            "ID:",
+            selectedConsumableId
+          );
+
+          /*
+          const response = await fetch(
+            `${BACKEND_API_URL}/consumable/${selectedConsumableId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(consumableData),
+            }
+          );
+
+          
+
+          if (response.ok) {
+            const result = await response.json();
+            console.log("Consumible actualizado exitosamente:", result);
+            showMessage("Consumible actualizado exitosamente", "success");
+            clearSelection();
+            clearForm();
+            setTimeout(() => {
+              location.reload();
+            }, 1500);
+          } else {
+            const errorData = await response.json();
+            console.error("Error al actualizar consumible:", errorData);
+            showMessage(
+              `Error: ${errorData.message || "No se pudo actualizar el consumible"}`,
+              "error"
+            );
+          } */
+        } catch (error) {
+          console.error("Error de red:", error);
+          showMessage(
+            "Error de conexión. Verifique que el servidor esté funcionando.",
+            "error"
+          );
+        }
+      }
+
+      async function deleteConsumable() {
+        if (!selectedConsumableId) {
+          showMessage(
+            "Por favor seleccione un consumible de la tabla haciendo clic en la fila",
+            "error"
+          );
+          return;
+        }
+
+        if (!confirm("¿Está seguro de que desea eliminar este consumible?")) {
+          return;
+        }
+
+        try {
+          console.log("Eliminando consumible ID:", selectedConsumableId);
+          /*
+          const response = await fetch(
+            `${BACKEND_API_URL}/consumable/${selectedConsumableId}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            console.log("Consumible eliminado exitosamente");
+            showMessage("Consumible eliminado exitosamente", "success");
+            clearSelection();
+            clearForm();
+            setTimeout(() => {
+              location.reload();
+            }, 1500);
+          } else {
+            const errorData = await response.json();
+            console.error("Error al eliminar consumible:", errorData);
+            showMessage(
+              `Error: ${errorData.message || "No se pudo eliminar el consumible"}`,
+              "error"
+            );
+          }
+            */
+        } catch (error) {
+          console.error("Error de red:", error);
+          showMessage(
+            "Error de conexión. Verifique que el servidor esté funcionando.",
+            "error"
+          );
+        }
+      }
+
+      function showMessage(text: string, type: "success" | "error" | "info") {
+        if (!message) return;
+
+        message.textContent = text;
+        message.style.display = "block";
+        message.className = `alert alert-${type === "success" ? "success" : type === "info" ? "info" : "danger"} mt-3`;
+
+        setTimeout(() => {
+          message.style.display = "none";
+        }, 5000);
+      }
+
+      function clearForm() {
+        if (searchId) searchId.value = "";
+        if (searchName) searchName.value = "";
+        if (searchType) searchType.value = "";
+        if (searchUnitMeasurement) searchUnitMeasurement.value = "";
+        if (searchQuantity) searchQuantity.value = "";
+        if (searchCost) searchCost.value = "";
+        if (searchSupplier) searchSupplier.value = "";
+        if (searchStatus) searchStatus.value = "active";
+      }
+
+      function clearSelection() {
+        selectedConsumableId = null;
+        const allRows = document.querySelectorAll("#consumablesTableBody tr");
+        allRows.forEach((row) => {
+          row.classList.remove("table-primary");
+        });
+      }
+
+      function loadConsumableData(consumableId: string) {
+        console.log("Buscando consumible con ID:", consumableId);
+        console.log(
+          "Consumibles filtrados actuales:",
+          currentFilteredConsumables
+        );
+
+        const consumable = currentFilteredConsumables.find((c) => {
+          const id = c.consumableId || c.id;
+          return id == consumableId;
+        });
+
+        if (!consumable) {
+          console.error("Consumible no encontrado con ID:", consumableId);
+          showMessage(
+            "Error: No se pudo cargar los datos del consumible",
+            "error"
+          );
+          return;
+        }
+
+        console.log("Consumible encontrado:", consumable);
+
+        if (searchId)
+          searchId.value = consumable.consumableId || consumable.id || "";
+        if (searchName) searchName.value = consumable.name || "";
+        if (searchType) searchType.value = consumable.cosumableTypeId || "";
+        if (searchUnitMeasurement)
+          searchUnitMeasurement.value = consumable.unitMeasurement || "";
+        if (searchQuantity)
+          searchQuantity.value = consumable.quantity?.toString() || "";
+        if (searchCost) searchCost.value = consumable.cost?.toString() || "";
+        if (searchSupplier) searchSupplier.value = consumable.supplierId || "";
+        if (searchStatus)
+          searchStatus.value =
+            consumable.active !== false ? "active" : "inactive";
+
+        console.log(
+          "Formulario llenado exitosamente para consumible:",
+          consumableId
+        );
+      }
+
+      // Configurar event listeners
+      if (addConsumableBtn) {
+        addConsumableBtn.addEventListener("click", addNewConsumable);
+      }
+
+      if (updateConsumableBtn) {
+        updateConsumableBtn.addEventListener("click", updateConsumable);
+      }
+
+      if (deleteConsumableBtn) {
+        deleteConsumableBtn.addEventListener("click", deleteConsumable);
+      }
+
+      // Sistema de selección de filas
+      let lastClickTime = 0;
+      const DOUBLE_CLICK_DELAY = 300;
+
+      const tableBody = document.getElementById("consumablesTableBody");
+      if (tableBody) {
+        tableBody.addEventListener("click", function (event: MouseEvent) {
+          const target = event.target as HTMLElement;
+          const row = target.closest("tr") as HTMLTableRowElement;
+
+          if (row && row.getAttribute("data-consumable-id")) {
+            const currentTime = new Date().getTime();
+            const timeSinceLastClick = currentTime - lastClickTime;
+
+            if (timeSinceLastClick < DOUBLE_CLICK_DELAY) {
+              console.log("Doble clic detectado en fila");
+              handleDoubleClick(row);
+            } else {
+              handleSingleClick(row);
+            }
+
+            lastClickTime = currentTime;
+          }
+        });
+      }
+
+      function handleSingleClick(row: HTMLTableRowElement) {
+        const allRows = document.querySelectorAll("#consumablesTableBody tr");
+        allRows.forEach((r) => {
+          r.classList.remove("table-primary");
+        });
+
+        row.classList.add("table-primary");
+
+        selectedConsumableId = row.getAttribute("data-consumable-id");
+
+        console.log(
+          "Consumible seleccionado (clic simple):",
+          selectedConsumableId
+        );
+      }
+
+      function handleDoubleClick(row: HTMLTableRowElement) {
+        const consumableId = row.getAttribute("data-consumable-id");
+        if (!consumableId) return;
+
+        console.log("Procesando doble clic para consumible ID:", consumableId);
+
+        handleSingleClick(row);
+
+        loadConsumableData(consumableId);
+
+        showMessage(
+          `Datos del consumible cargados en el formulario. Puede editarlos y hacer clic en "Actualizar".`,
+          "info"
+        );
+
+        console.log(
+          "Formulario llenado automáticamente (doble clic) para consumible:",
+          consumableId
+        );
+      }
+
+      // Sistema de filtros y ordenamiento
+      const applyFiltersBtn = document.getElementById(
+        "applyFilters"
+      ) as HTMLButtonElement | null;
+      const clearFiltersBtn = document.getElementById(
+        "clearFilters"
+      ) as HTMLButtonElement | null;
+      const filterButton = document.getElementById(
+        "filterButton"
+      ) as HTMLButtonElement | null;
+      const filtersAccordion = document.getElementById(
+        "filtersAccordion"
+      ) as HTMLDivElement | null;
+      const sortButton = document.getElementById(
+        "sortButton"
+      ) as HTMLButtonElement | null;
+      const sortDropdown = document.getElementById(
+        "sortDropdown"
+      ) as HTMLDivElement | null;
+
+      const filterId = document.getElementById(
+        "filterId"
+      ) as HTMLInputElement | null;
+      const filterName = document.getElementById(
+        "filterName"
+      ) as HTMLInputElement | null;
+      const filterType = document.getElementById(
+        "filterType"
+      ) as HTMLSelectElement | null;
+      const filterUnitMeasurement = document.getElementById(
+        "filterUnitMeasurement"
+      ) as HTMLSelectElement | null;
+      const filterQuantity = document.getElementById(
+        "filterQuantity"
+      ) as HTMLInputElement | null;
+      const filterCost = document.getElementById(
+        "filterCost"
+      ) as HTMLInputElement | null;
+      const filterSupplier = document.getElementById(
+        "filterSupplier"
+      ) as HTMLSelectElement | null;
+      const filterStatus = document.getElementById(
+        "filterStatus"
+      ) as HTMLSelectElement | null;
+
+      const initialDataElement = document.getElementById(
+        "initial-consumables-data"
+      );
+
+      // Obtener la URL de la API desde el data attribute
+
+      if (initialDataElement && initialDataElement.dataset.consumables) {
+        allConsumables = JSON.parse(initialDataElement.dataset.consumables);
+        console.log(
+          "Datos iniciales cargados:",
+          allConsumables.length,
+          "consumibles"
+        );
+      } else {
+        console.error("No se pudieron cargar los datos iniciales");
+        allConsumables = [];
+      }
+
+      let currentFilters = {
+        id: "",
+        name: "",
+        type: "",
+        unitMeasurement: "",
+        quantity: "",
+        cost: "",
+        supplier: "",
+        status: "active",
+      };
+
+      let currentSort = {
+        by: "id",
+        order: "asc",
+      };
+
+      let isFiltersVisible = false;
+      let isSortVisible = false;
+
+      function toggleSortDropdown() {
+        isSortVisible = !isSortVisible;
+        if (sortDropdown) {
+          if (isSortVisible) {
+            sortDropdown.style.display = "block";
+            if (sortButton) sortButton.classList.add("active");
+            if (isFiltersVisible) {
+              toggleFiltersAccordion();
+            }
+          } else {
+            sortDropdown.style.display = "none";
+            if (sortButton) sortButton.classList.remove("active");
+          }
+        }
+      }
+
+      function toggleFiltersAccordion() {
+        isFiltersVisible = !isFiltersVisible;
+        if (filtersAccordion) {
+          if (isFiltersVisible) {
+            filtersAccordion.style.display = "block";
+            if (filterButton) filterButton.classList.add("active");
+            if (isSortVisible) {
+              toggleSortDropdown();
+            }
+          } else {
+            filtersAccordion.style.display = "none";
+            if (filterButton) filterButton.classList.remove("active");
+          }
+        }
+      }
+
+      function applySort(sortBy: string, sortOrder: string) {
+        console.log("Aplicando ordenamiento:", sortBy, sortOrder);
+        if (sortBy) currentSort.by = sortBy;
+        if (sortOrder) currentSort.order = sortOrder;
+        updateTable();
+
+        if (isSortVisible) {
+          toggleSortDropdown();
+        }
+      }
+
+      function applyQuickSearch() {
+        console.log("Aplicando búsqueda rápida...");
+        currentFilters = {
+          id: searchId ? searchId.value.toLowerCase() : "",
+          name: searchName ? searchName.value.toLowerCase() : "",
+          type: searchType ? searchType.value : "",
+          unitMeasurement: searchUnitMeasurement
+            ? searchUnitMeasurement.value
+            : "",
+          quantity: searchQuantity ? searchQuantity.value.toLowerCase() : "",
+          cost: searchCost ? searchCost.value.toLowerCase() : "",
+          supplier: searchSupplier ? searchSupplier.value : "",
+          status: searchStatus ? searchStatus.value : "active",
+        };
+        updateTable();
+      }
+
+      function applyAdvancedFilters() {
+        console.log("Aplicando filtros avanzados...");
+        currentFilters = {
+          id: filterId ? filterId.value.toLowerCase() : "",
+          name: filterName ? filterName.value.toLowerCase() : "",
+          type: filterType ? filterType.value : "",
+          unitMeasurement: filterUnitMeasurement
+            ? filterUnitMeasurement.value
+            : "",
+          quantity: filterQuantity ? filterQuantity.value.toLowerCase() : "",
+          cost: filterCost ? filterCost.value.toLowerCase() : "",
+          supplier: filterSupplier ? filterSupplier.value : "",
+          status: filterStatus ? filterStatus.value : "active",
+        };
+        updateTable();
+
+        if (isFiltersVisible) {
+          toggleFiltersAccordion();
+        }
+      }
+
+      function clearAllFilters() {
+        console.log("Limpiando todos los filtros...");
+
+        if (searchId) searchId.value = "";
+        if (searchName) searchName.value = "";
+        if (searchType) searchType.value = "";
+        if (searchUnitMeasurement) searchUnitMeasurement.value = "";
+        if (searchQuantity) searchQuantity.value = "";
+        if (searchCost) searchCost.value = "";
+        if (searchSupplier) searchSupplier.value = "";
+        if (searchStatus) searchStatus.value = "active";
+
+        if (filterId) filterId.value = "";
+        if (filterName) filterName.value = "";
+        if (filterType) filterType.value = "";
+        if (filterUnitMeasurement) filterUnitMeasurement.value = "";
+        if (filterQuantity) filterQuantity.value = "";
+        if (filterCost) filterCost.value = "";
+        if (filterSupplier) filterSupplier.value = "";
+        if (filterStatus) filterStatus.value = "active";
+
+        currentFilters = {
+          id: "",
+          name: "",
+          type: "",
+          unitMeasurement: "",
+          quantity: "",
+          cost: "",
+          supplier: "",
+          status: "active",
+        };
+
+        updateTable();
+      }
+
+      function sortConsumables(consumables: Consumable[]) {
+        return consumables.sort((a, b) => {
+          let valueA: any, valueB: any;
+
+          switch (currentSort.by) {
+            case "id":
+              valueA = a.consumableId || a.id || "";
+              valueB = b.consumableId || b.id || "";
+              const numA = Number(valueA);
+              const numB = Number(valueB);
+              valueA = isNaN(numA) ? valueA.toString().toLowerCase() : numA;
+              valueB = isNaN(numB) ? valueB.toString().toLowerCase() : numB;
+              break;
+            case "name":
+              valueA = a.name || "";
+              valueB = b.name || "";
+              valueA = valueA.toString().toLowerCase();
+              valueB = valueB.toString().toLowerCase();
+              break;
+            case "quantity":
+              valueA = parseFloat(a.quantity as string) || 0;
+              valueB = parseFloat(b.quantity as string) || 0;
+              break;
+            case "cost":
+              valueA = parseFloat(a.cost as string) || 0;
+              valueB = parseFloat(b.cost as string) || 0;
+              break;
+            case "status":
+              valueA = a.active !== false ? 1 : 0;
+              valueB = b.active !== false ? 1 : 0;
+              break;
+            default:
+              valueA = a.consumableId || a.id || "";
+              valueB = b.consumableId || b.id || "";
+          }
+
+          if (currentSort.order === "asc") {
+            return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+          } else {
+            return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+          }
+        });
+      }
+
+      function updateTable() {
+        if (!tableBody) {
+          console.error("No se encontró el elemento consumablesTableBody");
+          return;
+        }
+
+        // No enriquecer, solo mostrar los datos tal como están
+
+        if (!allConsumables.length) {
+          console.log("No hay datos de consumibles para mostrar");
+          tableBody.innerHTML =
+            '<tr><td colspan="8" class="text-center">No hay datos disponibles</td></tr>';
+          return;
+        }
+
+        console.log("Filtros aplicados:", currentFilters);
+        console.log("Ordenamiento aplicado:", currentSort);
+
+        let filteredConsumables = allConsumables.filter((consumable) => {
+          // Filtro por estado (activo/inactivo)
+          if (
+            currentFilters.status === "active" &&
+            consumable.active === false
+          ) {
+            return false;
+          }
+          if (
+            currentFilters.status === "inactive" &&
+            consumable.active !== false
+          ) {
+            return false;
+          }
+
+          // Filtro por ID
+          if (currentFilters.id) {
+            const consumableId = (
+              consumable.consumableId ||
+              consumable.id ||
+              ""
+            )
+              .toString()
+              .toLowerCase();
+            if (!consumableId.includes(currentFilters.id)) {
+              return false;
+            }
+          }
+
+          // Filtro por nombre
+          if (currentFilters.name && consumable.name) {
+            const consumableName = consumable.name.toLowerCase();
+            if (!consumableName.includes(currentFilters.name)) {
+              return false;
+            }
+          }
+
+          // Filtro por tipo
+          if (currentFilters.type && consumable.cosumableTypeId) {
+            if (consumable.cosumableTypeId !== currentFilters.type) {
+              return false;
+            }
+          }
+
+          // Filtro por unidad de medida
+          if (currentFilters.unitMeasurement && consumable.unitMeasurement) {
+            if (consumable.unitMeasurement !== currentFilters.unitMeasurement) {
+              return false;
+            }
+          }
+
+          // Filtro por cantidad
+          if (currentFilters.quantity && consumable.quantity) {
+            const consumableQuantity = consumable.quantity
+              .toString()
+              .toLowerCase();
+            if (!consumableQuantity.includes(currentFilters.quantity)) {
+              return false;
+            }
+          }
+
+          // Filtro por precio costo
+          if (currentFilters.cost && consumable.cost) {
+            const consumableCost = consumable.cost.toString().toLowerCase();
+            if (!consumableCost.includes(currentFilters.cost)) {
+              return false;
+            }
+          }
+
+          // Filtro por proveedor
+          if (currentFilters.supplier && consumable.supplierId) {
+            if (consumable.supplierId !== currentFilters.supplier) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        filteredConsumables = sortConsumables(filteredConsumables);
+
+        currentFilteredConsumables = filteredConsumables;
+        console.log(
+          "Consumibles filtrados guardados:",
+          currentFilteredConsumables.length
+        );
+
+        if (filteredConsumables.length === 0) {
+            tableBody.innerHTML = `
+                  <tr>
+                    <td colspan="8" class="text-center py-4">
+                      <div class="text-muted">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                        <p class="mt-2 mb-0">No se encontraron consumibles</p>
+                        <small>Intenta con otros criterios de búsqueda</small>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+        } else {
+          tableBody.innerHTML = filteredConsumables
+            .map((consumable) => {
+              const unitLabel =
+                unitMeasurementMap[
+                  consumable.unitMeasurement as keyof typeof unitMeasurementMap
+                ] || consumable.unitMeasurement;
+              const typeLabel = consumable.cosumableTypeId || "";
+              const supplierLabel = consumable.supplierId || "";
+              return `
+                        <tr data-consumable-id="${consumable.consumableId || consumable.id || "N/A"}">
+                            <th scope="row">${consumable.consumableId || consumable.id || "N/A"}</th>
+                            <td>${consumable.name || ""}</td>
+                            <td>${typeLabel}</td>
                             <td>${unitLabel}</td>
-                            <td>${consumable.quantity || ''}</td>
-                            <td>$${consumable.cost || ''}</td>
-                            <td>${consumable.supplier?.name || ''}</td>
+                            <td>${consumable.quantity || ""}</td>
+                            <td>$${consumable.cost || ""}</td>
+                            <td>${supplierLabel}</td>
                             <td>
-                                <span class="badge ${(consumable.active !== false) ? 'bg-success' : 'bg-danger'}">
-                                    ${(consumable.active !== false) ? 'Activo' : 'Inactivo'}
+                                <span class="badge ${consumable.active !== false ? "bg-success" : "bg-danger"}">
+                                    ${consumable.active !== false ? "Activo" : "Inactivo"}
                                 </span>
                             </td>
                         </tr>
-                    `}).join('');
-                }
-            }
+                    `;
+            })
+            .join("");
+        }
+      }
 
-            // Configurar event listeners para filtros y ordenamiento
-            if (applyFiltersBtn) {
-                applyFiltersBtn.addEventListener('click', applyAdvancedFilters);
-            }
+      // Configurar event listeners para filtros y ordenamiento
+      if (applyFiltersBtn) {
+        applyFiltersBtn.addEventListener("click", applyAdvancedFilters);
+      }
 
-            if (clearFiltersBtn) {
-                clearFiltersBtn.addEventListener('click', clearAllFilters);
-            }
+      if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener("click", clearAllFilters);
+      }
 
-            if (filterButton) {
-                filterButton.addEventListener('click', toggleFiltersAccordion);
-            }
+      if (filterButton) {
+        filterButton.addEventListener("click", toggleFiltersAccordion);
+      }
 
-            if (sortButton) {
-                sortButton.addEventListener('click', toggleSortDropdown);
-            }
+      if (sortButton) {
+        sortButton.addEventListener("click", toggleSortDropdown);
+      }
 
-            const sortOptions = document.querySelectorAll('.sort-option');
-            sortOptions.forEach(option => {
-                option.addEventListener('click', function(this: HTMLElement) {
-                    const sortBy = this.getAttribute('data-sort-by');
-                    const sortOrder = this.getAttribute('data-sort-order');
-                    if (sortBy && sortOrder) {
-                        applySort(sortBy, sortOrder);
-                    }
-                });
-            });
-
-            const quickSearchInputs = [
-                searchId, searchName, searchType, searchUnitMeasurement,
-                searchQuantity, searchCost, searchSupplier, searchStatus
-            ];
-            quickSearchInputs.forEach(input => {
-                if (input) {
-                    input.addEventListener('input', applyQuickSearch);
-                    input.addEventListener('change', applyQuickSearch);
-                }
-            });
-
-            const advancedFilterInputs = [
-                filterId, filterName, filterType, filterUnitMeasurement,
-                filterQuantity, filterCost, filterSupplier, filterStatus
-            ];
-            advancedFilterInputs.forEach(input => {
-                if (input) {
-                    input.addEventListener('keypress', function(e) {
-                        if ((e as KeyboardEvent).key === 'Enter') {
-                            applyAdvancedFilters();
-                        }
-                    });
-                }
-            });
-
-            document.addEventListener('click', function(event: MouseEvent) {
-                const target = event.target as Node;
-                if (isSortVisible && sortButton && !sortButton.contains(target) && sortDropdown && !sortDropdown.contains(target)) {
-                    toggleSortDropdown();
-                }
-                if (isFiltersVisible && filterButton && !filterButton.contains(target) && filtersAccordion && !filtersAccordion.contains(target)) {
-                    toggleFiltersAccordion();
-                }
-            });
-
-            updateTable();
-            console.log('Sistema de consumibles inicializado correctamente');
+      const sortOptions = document.querySelectorAll(".sort-option");
+      sortOptions.forEach((option) => {
+        option.addEventListener("click", function (this: HTMLElement) {
+          const sortBy = this.getAttribute("data-sort-by");
+          const sortOrder = this.getAttribute("data-sort-order");
+          if (sortBy && sortOrder) {
+            applySort(sortBy, sortOrder);
+          }
         });
+      });
 
-        window.addEventListener('load', function() {
-            console.log('Ventana cargada, verificando navegación de inventario...');
-            setTimeout(setupLeftBarNavigation, 300);
-        });
-    </script>
+      const quickSearchInputs = [
+        searchId,
+        searchName,
+        searchType,
+        searchUnitMeasurement,
+        searchQuantity,
+        searchCost,
+        searchSupplier,
+        searchStatus,
+      ];
+      quickSearchInputs.forEach((input) => {
+        if (input) {
+          input.addEventListener("input", applyQuickSearch);
+          input.addEventListener("change", applyQuickSearch);
+        }
+      });
+
+      const advancedFilterInputs = [
+        filterId,
+        filterName,
+        filterType,
+        filterUnitMeasurement,
+        filterQuantity,
+        filterCost,
+        filterSupplier,
+        filterStatus,
+      ];
+      advancedFilterInputs.forEach((input) => {
+        if (input) {
+          input.addEventListener("keypress", function (e) {
+            if ((e as KeyboardEvent).key === "Enter") {
+              applyAdvancedFilters();
+            }
+          });
+        }
+      });
+
+      document.addEventListener("click", function (event: MouseEvent) {
+        const target = event.target as Node;
+        if (
+          isSortVisible &&
+          sortButton &&
+          !sortButton.contains(target) &&
+          sortDropdown &&
+          !sortDropdown.contains(target)
+        ) {
+          toggleSortDropdown();
+        }
+        if (
+          isFiltersVisible &&
+          filterButton &&
+          !filterButton.contains(target) &&
+          filtersAccordion &&
+          !filtersAccordion.contains(target)
+        ) {
+          toggleFiltersAccordion();
+        }
+      });
+
+      updateTable();
+      console.log("Sistema de consumibles inicializado correctamente");
+    });
+
+    window.addEventListener("load", function () {
+      console.log("Ventana cargada, verificando navegación de inventario...");
+      setTimeout(setupLeftBarNavigation, 300);
+    });
+  </script>
 </Layout>
 
-    <style>
-        /* Solo estilos personalizados que no cubre Bootstrap */
-        .btn-warning {
-            background-color: #F3DCBB;
-            color: #000;
-            border-color: #F3DCBB;
-        }
-        .btn-warning:hover {
-            background-color: #e2c89c;
-            color: #000;
-            border-color: #e2c89c;
-        }
-        .btn-primary {
-            background-color: #482E21;
-            border-color: #482E21;
-        }
-        .btn-primary:hover {
-            background-color: #3a251a;
-            border-color: #3a251a;
-        }
-        .btn-danger {
-            background-color: #930000;
-            border-color: #930000;
-        }
-        .btn-danger:hover {
-            background-color: #7a0000;
-            border-color: #7a0000;
-        }
-    </style>
+<style>
+  /* Solo estilos personalizados que no cubre Bootstrap */
+  .btn-warning {
+    background-color: #f3dcbb;
+    color: #000;
+    border-color: #f3dcbb;
+  }
+  .btn-warning:hover {
+    background-color: #e2c89c;
+    color: #000;
+    border-color: #e2c89c;
+  }
+  .btn-primary {
+    background-color: #482e21;
+    border-color: #482e21;
+  }
+  .btn-primary:hover {
+    background-color: #3a251a;
+    border-color: #3a251a;
+  }
+  .btn-danger {
+    background-color: #930000;
+    border-color: #930000;
+  }
+  .btn-danger:hover {
+    background-color: #7a0000;
+    border-color: #7a0000;
+  }
+</style>

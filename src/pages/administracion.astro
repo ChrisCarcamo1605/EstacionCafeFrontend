@@ -80,64 +80,40 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
       </div>
 
       <!-- Redirige a planilla -->
-      <div class="col-md-4" style="height: 100%;">
-        <div class="row g-2 h-100">
-          <div class="col-12" style="height: calc(33.33% - 5px);">
-            <a href="/administracion/planilla" class="text-decoration-none">
-              <div class="card shadow border-0 menu-item h-100">
-                <div style="position: relative; height: 100%;">
-                  <img
-                    src="/usuarios.jpg"
-                    class="card-img"
-                    alt="Usuarios"
-                    style="height: 100%; width: 100%; object-fit: cover;"
-                  />
-                  <div class="color-overlay"></div>
-                  <div class="card-overlay">
-                    <h3 class="card-title-overlay">Usuarios</h3>
-                  </div>
-                </div>
-              </div>
-            </a>
+      <div class="col-md-4 h-100 d-flex flex-column">
+        <div class="h-50 mb-2">
+          <a href="/administracion/planilla" class="text-decoration-none h-100">
+        <div class="card shadow border-0 menu-item h-100">
+          <div style="position: relative; height: 100%;">
+            <img
+          src="/usuarios.jpg"
+          class="card-img h-100"
+          alt="Usuarios"
+          style="height: 100%; width: 100%; object-fit: cover;"
+            />
+            <div class="color-overlay"></div>
+            <div class="card-overlay">
+          <h3 class="card-title-overlay">Usuarios</h3>
+            </div>
           </div>
-
-          <!-- Redirige a estadisticas-gastos -->
-          <div class="col-12" style="height: calc(33.33% - 5px);">
-            <a href="/administracion/estadisticas/estadisticas-gastos" class="text-decoration-none">
-              <div class="card shadow border-0 menu-item h-100">
-                <div style="position: relative; height: 100%;">
-                  <img
-                    src="/gastos.jpg"
-                    class="card-img"
-                    alt="Gastos"
-                    style="height: 100%; width: 100%; object-fit: cover;"
-                  />
-                  <div class="color-overlay"></div>
-                  <div class="card-overlay">
-                    <h3 class="card-title-overlay">Gastos</h3>
-                  </div>
-                </div>
-              </div>
-            </a>
+        </div>
+          </a>
+        </div>
+        <div class="h-50">
+          <a href="/administracion/ajustes/ajustes-general" class="text-decoration-none h-100">
+        <div
+          class="card shadow border-0 menu-item h-100"
+          style="background-color: #000;"
+        >
+          <div
+            style="position: relative; height: 100%; background-color: #000; display: flex; align-items: center; justify-content: center;"
+          >
+            <div class="text-center" style="color: white;">
+          <h3 class="card-title-overlay">Ajustes</h3>
+            </div>
           </div>
-
-          <!-- Redirige a ajustes-general -->
-          <div class="col-12" style="height: calc(33.33% - 5px);">
-            <a href="/administracion/ajustes/ajustes-general" class="text-decoration-none">
-              <div
-                class="card shadow border-0 menu-item h-100"
-                style="background-color: #000;"
-              >
-                <div
-                  style="position: relative; height: 100%; background-color: #000; display: flex; align-items: center; justify-content: center;"
-                >
-                  <div class="text-center" style="color: white;">
-                    <h3 class="card-title-overlay">Ajustes</h3>
-                  </div>
-                </div>
-              </div>
-            </a>
-          </div>
+        </div>
+          </a>
         </div>
       </div>
     </div>

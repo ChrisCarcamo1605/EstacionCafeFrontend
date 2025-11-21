@@ -7,59 +7,63 @@ import { BACKEND_API_URL } from "../../../config/api";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
-// Fetch de datos de ingredientes
-const response = await fetch(`${BACKEND_API_URL}/ingredient`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
 
-// Fetch de datos de consumibles para los selects
-const consumablesResponse = await fetch(`${BACKEND_API_URL}/consumable`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+// Datos estáticos de consumibles
+const consumablesData = [
+  { consumableId: "CON-001", name: "Café en grano", unitMeasurement: "kg" },
+  { consumableId: "CON-002", name: "Leche", unitMeasurement: "l" },
+  { consumableId: "CON-003", name: "Azúcar", unitMeasurement: "kg" },
+  { consumableId: "CON-004", name: "Chocolate", unitMeasurement: "kg" },
+  { consumableId: "CON-005", name: "Té verde", unitMeasurement: "g" },
+  { consumableId: "CON-006", name: "Harina", unitMeasurement: "kg" },
+  { consumableId: "CON-007", name: "Mantequilla", unitMeasurement: "kg" },
+  { consumableId: "CON-008", name: "Huevos", unitMeasurement: "unit" },
+  { consumableId: "CON-009", name: "Vainilla", unitMeasurement: "ml" },
+  { consumableId: "CON-010", name: "Frutas", unitMeasurement: "kg" },
+  { consumableId: "CON-011", name: "Queso", unitMeasurement: "kg" },
+  { consumableId: "CON-012", name: "Jamón", unitMeasurement: "kg" },
+  { consumableId: "CON-013", name: "Espinaca", unitMeasurement: "kg" },
+  { consumableId: "CON-014", name: "Tomate", unitMeasurement: "kg" },
+  { consumableId: "CON-015", name: "Aceite", unitMeasurement: "l" }
+];
 
-// Fetch de datos de productos para los selects
-const productsResponse = await fetch(`${BACKEND_API_URL}/products`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+// Datos estáticos de productos
+const productsData = [
+  { productId: "PROD-001", name: "Café Americano" },
+  { productId: "PROD-002", name: "Capuchino" },
+  { productId: "PROD-003", name: "Croissant" },
+  { productId: "PROD-004", name: "Té Verde" },
+  { productId: "PROD-005", name: "Muffin de Chocolate" },
+  { productId: "PROD-006", name: "Sandwich de Jamón" },
+  { productId: "PROD-007", name: "Sandwich de Queso" },
+  { productId: "PROD-008", name: "Ensalada de Espinaca" },
+  { productId: "PROD-009", name: "Jugo de Frutas" },
+  { productId: "PROD-010", name: "Tarta de Manzana" },
+  { productId: "PROD-011", name: "Café Latte" },
+  { productId: "PROD-012", name: "Brownie" },
+  { productId: "PROD-013", name: "Tostada Francesa" },
+  { productId: "PROD-014", name: "Bizcocho Vainilla" },
+  { productId: "PROD-015", name: "Té Negro" }
+];
 
-let ingredientsData = null;
-let consumablesData = [];
-let productsData = [];
-
-if (response.ok) {
-    const result = await response.json();
-    ingredientsData = result.data || result;
-    console.log('Datos de ingredientes:', ingredientsData);
-} else {
-    console.error("Error fetching ingredients data:", response.statusText);
-}
-
-if (consumablesResponse.ok) {
-    const result = await consumablesResponse.json();
-    consumablesData = result.data || result;
-    console.log('Datos de consumibles:', consumablesData);
-} else {
-    console.error("Error fetching consumables data:", consumablesResponse.statusText);
-}
-
-if (productsResponse.ok) {
-    const result = await productsResponse.json();
-    productsData = result.data || result;
-    console.log('Datos de productos:', productsData);
-} else {
-    console.error("Error fetching products data:", productsResponse.statusText);
-}
-
-const initialIngredients = ingredientsData || [];
+// Datos estáticos de ingredientes, entrelazados con consumibles y productos
+const initialIngredients = [
+    { ingredientId: "ING-001", name: "Café molido", quantity: 1000, consumableId: "Café en grano", productId: "Café Americano" },
+    { ingredientId: "ING-002", name: "Leche entera", quantity: 500, consumableId: "Leche", productId: "Capuchino" },
+    { ingredientId: "ING-003", name: "Azúcar blanca", quantity: 200, consumableId: "Azúcar", productId: "Café Americano" },
+    { ingredientId: "ING-004", name: "Chocolate en polvo", quantity: 150, consumableId: "Chocolate", productId: "Capuchino" },
+    { ingredientId: "ING-005", name: "Té verde premium", quantity: 50, consumableId: "Té verde", productId: "Té Verde" },
+    { ingredientId: "ING-006", name: "Harina de trigo", quantity: 1000, consumableId: "Harina", productId: "Croissant" },
+    { ingredientId: "ING-007", name: "Mantequilla fresca", quantity: 200, consumableId: "Mantequilla", productId: "Croissant" },
+    { ingredientId: "ING-008", name: "Huevos grandes", quantity: 12, consumableId: "Huevos", productId: "Croissant" },
+    { ingredientId: "ING-009", name: "Vainilla líquida", quantity: 30, consumableId: "Vainilla", productId: "Bizcocho Vainilla" },
+    { ingredientId: "ING-010", name: "Frutas mixtas", quantity: 500, consumableId: "Frutas", productId: "Jugo de Frutas" },
+    { ingredientId: "ING-011", name: "Queso cheddar", quantity: 100, consumableId: "Queso", productId: "Sandwich de Queso" },
+    { ingredientId: "ING-012", name: "Jamón cocido", quantity: 100, consumableId: "Jamón", productId: "Sandwich de Jamón" },
+    { ingredientId: "ING-013", name: "Espinaca fresca", quantity: 200, consumableId: "Espinaca", productId: "Ensalada de Espinaca" },
+    { ingredientId: "ING-014", name: "Tomate en rodajas", quantity: 150, consumableId: "Tomate", productId: "Ensalada de Espinaca" },
+    { ingredientId: "ING-015", name: "Aceite vegetal", quantity: 100, consumableId: "Aceite", productId: "Tarta de Manzana" }
+];
 ---
 
 <Layout>
@@ -321,8 +325,8 @@ const initialIngredients = ingredientsData || [];
                                                             <th scope="row">{ingredient.ingredientId || ingredient.id || 'N/A'}</th>
                                                             <td>{ingredient.name || ''}</td>
                                                             <td>{ingredient.quantity || ''}</td>
-                                                            <td>{ingredient.consumable?.name || ''}</td>
-                                                            <td>{ingredient.product?.name || ''}</td>
+                                                            <td>{ingredient.consumableId || ''}</td>
+                                                            <td>{ingredient.productId|| ''}</td>
                                                         </tr>
                                                 ))
                                             ) : (
@@ -994,8 +998,8 @@ const initialIngredients = ingredientsData || [];
                             <th scope="row">${ingredient.ingredientId || ingredient.id || 'N/A'}</th>
                             <td>${ingredient.name || ''}</td>
                             <td>${ingredient.quantity || ''}</td>
-                            <td>${ingredient.consumable?.name || ''}</td>
-                            <td>${ingredient.product?.name || ''}</td>
+                            <td>${ingredient.consumableId || ''}</td>
+                            <td>${ingredient.productId || ''}</td>
                         </tr>
                     `).join('');
                 }

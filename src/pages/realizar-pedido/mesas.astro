@@ -6,19 +6,17 @@ import { BACKEND_API_URL } from '../../config/api';
 const user = (Astro.locals as any).user;
 
 // Obtener zonas desde la API
+import { MesaApiService } from "../../services/mesa-api.service";
+
 let options: string[] = [];
 try {
-  const response = await fetch(`${BACKEND_API_URL}/tables`);
-  if (response.ok) {
-    const data = await response.json();
-    const mesas = data.data;
-    // Extraer zonas únicas (ej: "ZONA A" -> "A")
-    const zonasUnicas = [...new Set(mesas.map((m: any) => {
-      const zona = m.zone?.split(" ")[1];
-      return zona || m.zone;
-    }))];
-    options = zonasUnicas.filter((z: any) => z) as string[]; 
-  }
+  const mesas = await MesaApiService.getMesas();
+  // Extraer zonas únicas (ej: "ZONA A" -> "A")
+  const zonasUnicas = [...new Set(mesas.map((m: any) => {
+    const zona = m.zone?.split(" ")[1];
+    return zona || m.zone;
+  }))];
+  options = zonasUnicas.filter((z: any) => z) as string[];
 } catch (error) {
   console.error("Error al cargar zonas:", error);
   options = ["A", "B", "C", "D", "E"];

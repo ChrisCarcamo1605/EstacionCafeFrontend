@@ -11,11 +11,12 @@ const details: any[] = [];
 const user = (Astro.locals as any).user;
 
 // Obtener tipos de productos desde la API
+import { BillApiService } from "../../services/bill-api.service";
+
 let options: string[] = [];
 try {
-  const response = await fetch(`${BACKEND_API_URL}/product-type`);
-  const data = await response.json();
-  options = data.data?.map((type: any) => type.name) || [];
+  const productTypes = await BillApiService.getProductTypes();
+  options = productTypes.map((type: any) => type.name);
 } catch (error) {
   console.error("Error al cargar tipos de productos:", error);
   options = [];

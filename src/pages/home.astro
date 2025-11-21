@@ -5,6 +5,7 @@ import Layout from "../layouts/Layout.astro";
 import loginImage from "../../public/loginimage.jpg";
 
 const user = (Astro.locals as any)?.user;
+const isAdmin = user?.role === "admin";
 ---
 
 <Layout title="Home">
@@ -14,7 +15,7 @@ const user = (Astro.locals as any)?.user;
       <!-- Realizar Pedido -->
 
       <!-- Para llevar -->
-      <div class="col-3">
+      <div class=`${isAdmin ? 'col-3' : 'col-3'}`>
         <a href="/realizar-pedido/pedido">
           <div class="menu-item position-relative shadow-lg rounded">
             <img
@@ -31,7 +32,7 @@ const user = (Astro.locals as any)?.user;
         </a>
       </div>
 
-      <div class="col-5">
+      <div class=`${isAdmin ? 'col-5' : 'col-7'}`>
         <a href="/realizar-pedido/mesas">
           <div class="menu-item position-relative shadow-lg rounded">
             <img
@@ -47,7 +48,8 @@ const user = (Astro.locals as any)?.user;
           </div>
         </a>
       </div>
-      <!-- Administración -->
+      <!-- Administración - Solo visible para admin -->
+      {isAdmin && (
       <div class="col-3">
         <a href="/administracion">
           <div class="menu-item position-relative shadow-lg rounded">
@@ -63,6 +65,7 @@ const user = (Astro.locals as any)?.user;
           </div>
         </a>
       </div>
+      )}
     </div>
   </div>
 </Layout>

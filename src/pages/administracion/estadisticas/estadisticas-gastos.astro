@@ -4,6 +4,7 @@ import Layout from "../../../layouts/Layout.astro";
 import LeftSidebar from "../../../components/LeftBar.astro";
 import Navbar from "../../../components/Navbar.astro";
 import ApexCharts from "apexcharts";
+import { BACKEND_API_URL } from "../../../config/api";
 
 const estadisticasRouteMap: Record<string, string> = {
     "Estadisticas de Ventas": "/administracion/estadisticas/estadisticas-ventas",
@@ -407,32 +408,6 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
 
                 var histogramChart = new ApexCharts(document.querySelector("#histograma-compras"), histogramOptions);
                 histogramChart.render();
-
-                const totalGastadoClient = montos.reduce((sum: any, monto: any) => sum + monto, 0);
-                const promedioComprasClient = totalGastadoClient / montos.length;
-                const compraMasAltaClient = Math.max(...montos);
-                const compraMasBajaClient = Math.min(...montos);
-
-                console.log('=== ESTADÍSTICAS DE GASTOS ===');
-                console.log('Total de compras:', montos.length);
-                console.log('Total gastado: $' + totalGastadoClient.toFixed(2));
-                console.log('Promedio por compra: $' + promedioComprasClient.toFixed(2));
-                console.log('Compra más alta: $' + compraMasAltaClient.toFixed(2));
-                console.log('Compra más baja: $' + compraMasBajaClient.toFixed(2));
-                
-                const gastosPorProveedor: Record<string, number> = {};
-                montos.forEach((monto: any, index: string | number) => {
-                  const proveedor = proveedores[index];
-                  if (!gastosPorProveedor[proveedor]) {
-                    gastosPorProveedor[proveedor] = 0;
-                  }
-                  gastosPorProveedor[proveedor] += monto;
-                });
-                
-                console.log('=== GASTOS POR PROVEEDOR ===');
-                Object.entries(gastosPorProveedor).forEach(([proveedor, total]) => {
-                  console.log(proveedor + ': $' + total.toFixed(2));
-                });
             }
         }
     });

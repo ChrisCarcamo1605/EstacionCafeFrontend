@@ -4,6 +4,7 @@ import Layout from "../../../layouts/Layout.astro";
 import LeftSidebar from "../../../components/LeftBar.astro";
 import Navbar from "../../../components/Navbar.astro";
 import ApexCharts from "apexcharts";
+import {BACKEND_API_URL, ML_API_URL} from '../../../config/api'
 
 const estadisticasRouteMap: Record<string, string> = {
     "Estadisticas de Ventas": "/administracion/estadisticas/estadisticas-ventas",
@@ -367,12 +368,6 @@ const productosMasRentables = json.analisis_productos
 
                 var areaChart = new ApexCharts(document.querySelector("#area-chart"), areaOptions);
                 areaChart.render();
-
-                console.log('Estadísticas de Ventas:');
-                console.log('- Total de ventas:', montosVenta.length);
-                console.log('- Monto promedio:', (montosVenta.reduce(function(a: any, b: any) { return a + b; }, 0) / montosVenta.length).toFixed(2));
-                console.log('- Monto mínimo:', Math.min(...montosVenta));
-                console.log('- Monto máximo:', Math.max(...montosVenta));
             }
         }
     });

@@ -3,12 +3,13 @@ import { undefined } from "astro:schema";
 import EstacionCafeLogoWhite from "../../public/EstacionCafeWhite.png";
 
 //@ts-ignore
-const user = Astro.locals.user?.username;
+const user = Astro.locals.user;
+const username = user?.username;
 ---
 
-<nav class="navbar fourth_color p-0 " data-bs-theme="dark">
+<nav class="navbar fourth_color p-0" data-bs-theme="dark">
   <div class="container-fluid px-5">
-    <div class="w-25">
+    <div id="estacion-logo" class="w-25">
       <a href="/home">
         <img
           class="w-50 p-2 object-fit-contain"
@@ -20,7 +21,7 @@ const user = Astro.locals.user?.username;
     <div class="d-flex align-items-center flex-row gap-3">
       <div>
         {
-          user && (
+          username && (
             <div class="dropdown">
               <button
                 class="btn btn-secondary fourth_color border-0 d-flex align-self-center"
@@ -29,7 +30,7 @@ const user = Astro.locals.user?.username;
                 aria-expanded="false"
               >
                 <div class="align-items-center d-flex flex-row">
-                  <span class="text-light fw-normal pe-2">{user}</span>
+                  <span class="text-light fw-normal pe-2">{username}</span>
                   <div class="">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -64,15 +65,28 @@ const user = Astro.locals.user?.username;
     </div>
   </div>
 </nav>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+></script>
 
 <script>
+  import { BACKEND_API_URL } from "../config/api";
+
   document.addEventListener("DOMContentLoaded", () => {
     const signOutBtn = document.getElementById("signOutBtn");
     signOutBtn?.addEventListener("click", async (e) => {
       e.preventDefault();
-      const response = await fetch("http://localhost:3484/api/users/logout", {
+
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date(0).toUTCString() + ";path=/");
+      });
+
+      window.location.href = "/login";
+
+      /*
+      const response = await fetch(`${BACKEND_API_URL}/users/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -85,6 +99,12 @@ const user = Astro.locals.user?.username;
 
         window.location.href ='/login'
       }
+        
+    */
+    });
+
+    document.querySelector("#estacion-logo")?.addEventListener("click", () => {
+      sessionStorage.clear();
     });
   });
 </script>

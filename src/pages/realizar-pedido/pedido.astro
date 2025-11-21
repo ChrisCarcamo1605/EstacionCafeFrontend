@@ -5,6 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import LeftBar from "../../components/LeftBar.astro";
 import Navbar from "../../components/Navbar.astro";
 import BillBar from "../../components/BillBar.astro";
+import { BACKEND_API_URL } from "../../config/api.ts"; 
 
 const details: any[] = [];
 const user = (Astro.locals as any).user;
@@ -12,7 +13,7 @@ const user = (Astro.locals as any).user;
 // Obtener tipos de productos desde la API
 let options: string[] = [];
 try {
-  const response = await fetch("http://localhost:3484/api/product-type");
+  const response = await fetch(`${BACKEND_API_URL}/product-type`);
   const data = await response.json();
   options = data.data?.map((type: any) => type.name) || [];
 } catch (error) {
@@ -24,7 +25,7 @@ const productRouteMap: Record<string, string> = {};
 ---
 
 <Layout title="Realizar Pedido">
-  <div
+  <div id="products-container"
     class="container-fluid p-0 vh-100 overflow-hidden d-flex flex-column"
     data-user={JSON.stringify(user.userId)}
   >
@@ -48,5 +49,4 @@ const productRouteMap: Record<string, string> = {};
     </div>
   </div>
   <script src="../../client-js/realizar-pedido.ts"></script>
-</Layout>;
----
+</Layout>

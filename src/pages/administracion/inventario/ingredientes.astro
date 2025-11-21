@@ -3,237 +3,1102 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
+import { BACKEND_API_URL } from "../../../config/api";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
-const inventoryRouteMap: Record<string, string> = {
-    "Consumibles": "/administracion/inventario/consumibles",
-    "Productos": "/administracion/inventario/productos",
-    "Ingredientes": "/administracion/inventario/ingredientes",
-    "Proveedores": "/administracion/inventario/proveedores"
-};
+// Fetch de datos de ingredientes
+const response = await fetch(`${BACKEND_API_URL}/ingredient`, {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+// Fetch de datos de consumibles para los selects
+const consumablesResponse = await fetch(`${BACKEND_API_URL}/consumable`, {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+// Fetch de datos de productos para los selects
+const productsResponse = await fetch(`${BACKEND_API_URL}/products`, {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+    },
+});
+
+let ingredientsData = null;
+let consumablesData = [];
+let productsData = [];
+
+if (response.ok) {
+    const result = await response.json();
+    ingredientsData = result.data || result;
+    console.log('Datos de ingredientes:', ingredientsData);
+} else {
+    console.error("Error fetching ingredients data:", response.statusText);
+}
+
+if (consumablesResponse.ok) {
+    const result = await consumablesResponse.json();
+    consumablesData = result.data || result;
+    console.log('Datos de consumibles:', consumablesData);
+} else {
+    console.error("Error fetching consumables data:", consumablesResponse.statusText);
+}
+
+if (productsResponse.ok) {
+    const result = await productsResponse.json();
+    productsData = result.data || result;
+    console.log('Datos de productos:', productsData);
+} else {
+    console.error("Error fetching products data:", productsResponse.statusText);
+}
+
+const initialIngredients = ingredientsData || [];
 ---
 
-<Layout title="Ingredientes">
-    <div class="d-flex flex-column" style="min-height: 100vh;">
-        <!-- Navbar que cubre toda la parte superior -->
+<Layout>
+    <div class="d-flex flex-column min-vh-100">
         <Navbar />
 
-        <div class="d-flex flex-grow-1">
-            <!-- LeftBar debajo del Navbar -->
-            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Ingredientes" routeMap={inventoryRouteMap} />
+        <div class="d-flex flex-grow-1 min-vh-100">
+            <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Ingredientes" />
 
-            <!-- Contenido principal -->
-            <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
+            <div class="main-content-with-navbar-sidebar flex-grow-1 bg-light position-relative" style="font-family: 'Roboto', sans-serif; min-height: 100%;">
                 <div class="p-4">
-                    <!-- Título Ingredientes y campos -->
-                    <div class="d-flex align-items-start gap-5">
-                        <!-- Sección izquierda con título y campos -->
-                        <div style="width: calc(100% - 300px);">
-                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Ingredientes</h1>
-
-                            <!-- Primera fila de campos en horizontal -->
-                            <div class="d-flex gap-4 mb-3">
-                                <!-- Campo ID -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
-                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Nombre -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
-                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Cantidad -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Cantidad</label>
-                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Consumible ID -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Consumible ID</label>
-                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-
-                                <!-- Campo Producto ID -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Producto ID</label>
-                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                </div>
-                            </div>
-
-                            <!-- Segunda fila de campos en horizontal -->
-                            <div class="d-flex gap-4">
-                                <!-- Campo Consumible -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Consumible</label>
-                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                        <option selected>Seleccionar</option>
-                                        <option>Crema Batida Botella</option>
-                                        <option>Café Molido</option>
-                                        <option>Azúcar</option>
-                                        <option>Leche</option>
-                                    </select>
-                                </div>
-
-                                <!-- Campo Producto -->
-                                <div class="flex-grow-1">
-                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Producto</label>
-                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                        <option selected>Seleccionar</option>
-                                        <option>Café Americano</option>
-                                        <option>Capuchino</option>
-                                        <option>Latte</option>
-                                        <option>Expreso</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Tercera fila con botones Ordenar, Filtrar y Mostrar Inactivos -->
-                            <div class="d-flex gap-4 mt-3 align-items-center">
-                                <div>
-                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                            <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
-                                        </svg>
-                                        Ordenar
-                                    </button>
-                                </div>
-                                <div>
-                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
-                                        </svg>
-                                        Filtrar
-                                    </button>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 mt-4">
-                                    <span class="fw-bold" style="font-family: 'Roboto', sans-serif;">Mostrar Inactivos</span>
-                                    <input type="radio" class="form-check-input" style="border-radius: 50%;" />
-                                </div>
-                            </div>
+                    <!-- BOTONES EN LA ESQUINA SUPERIOR DERECHA (no fijos) -->
+                    <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
+                        <div class="d-flex flex-column gap-1">
+                            <button
+                                    class="btn d-flex align-items-center justify-content-center gap-2"
+                                    style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
+                                    id="addIngredientBtn"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                                Agregar
+                            </button>
+                            <button
+                                    class="btn d-flex align-items-center justify-content-center gap-2"
+                                    style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; color: rgb(0, 0, 0); border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
+                                    id="updateIngredientBtn"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                </svg>
+                                Actualizar
+                            </button>
+                            <button
+                                    class="btn d-flex align-items-center justify-content-center gap-2"
+                                    style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #930000; color: white; border: 1px solid #930000; width: 257px; height: 50px; font-size: 1.1rem;"
+                                    id="deleteIngredientBtn"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                </svg>
+                                Eliminar
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Tabla de datos -->
-                    <div class="mt-2">
-                        <div class="card shadow-sm border-0" style="border-radius: 8px;">
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead style="background-color: #482E21; color: white;">
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Nombre</th>
-                                            <th scope="col">Cantidad</th>
-                                            <th scope="col">Consumible ID</th>
-                                            <th scope="col">Producto ID</th>
-                                            <th scope="col">Consumible</th>
-                                            <th scope="col">Producto</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>Crema Batida</td>
-                                            <td>0.05</td>
-                                            <td>12</td>
-                                            <td>5</td>
-                                            <td>Crema Batida Botella</td>
-                                            <td>Capuchino</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">2</th>
-                                            <td>Café Molido</td>
-                                            <td>0.02</td>
-                                            <td>15</td>
-                                            <td>5</td>
-                                            <td>Café Molido</td>
-                                            <td>Capuchino</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">3</th>
-                                            <td>Leche</td>
-                                            <td>0.15</td>
-                                            <td>18</td>
-                                            <td>5</td>
-                                            <td>Leche Entera</td>
-                                            <td>Capuchino</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                    <!-- CONTENIDO PRINCIPAL CON MARGEN PARA LOS BOTONES -->
+                    <div style="margin-right: 300px;">
+                        <div class="d-flex align-items-start">
+                            <div style="width: 100%;">
+                                <h1 class="h3 fw-bold mb-4">Ingredientes</h1>
+
+                                <div class="d-flex gap-4 mb-3">
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
+                                        <input type="text" class="form-control search-input" id="searchId" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" readonly />
+                                    </div>
+
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
+                                        <input type="text" class="form-control search-input" id="searchName" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                    </div>
+
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Cantidad</label>
+                                        <input type="number" step="0.01" class="form-control search-input" id="searchQuantity" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-4">
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Consumible</label>
+                                        <select class="form-select search-input" id="searchConsumable" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                            <option value="">Seleccionar</option>
+                                            {consumablesData.map((consumable: any) => (
+                                                    <option value={consumable.consumableId || consumable.id}>{consumable.name || 'N/A'}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div class="flex-grow-1">
+                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Producto</label>
+                                        <select class="form-select search-input" id="searchProduct" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                            <option value="">Seleccionar</option>
+                                            {productsData.map((product: any) => (
+                                                    <option value={product.productId || product.id}>{product.name || 'N/A'}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="message" class="mt-3" style="display: none;"></div>
+
+                                <div class="d-flex gap-4 mt-3 align-items-center">
+                                    <div class="position-relative">
+                                        <button
+                                                class="btn mt-4 d-flex align-items-center gap-2 sort-toggle-btn"
+                                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
+                                                type="button"
+                                                id="sortButton"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                                            </svg>
+                                            Ordenar
+                                        </button>
+                                        <div class="sort-dropdown-menu" id="sortDropdown" style="display: none;">
+                                            <div class="card shadow-sm border-0 mt-1">
+                                                <div class="card-body p-2">
+                                                    <h6 class="fw-bold mb-2">Ordenar por</h6>
+                                                    <div class="sort-options">
+                                                        <div class="sort-option" data-sort-by="id" data-sort-order="asc">
+                                                            <span>ID (Ascendente)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="id" data-sort-order="desc">
+                                                            <span>ID (Descendente)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="name" data-sort-order="asc">
+                                                            <span>Nombre (A-Z)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="name" data-sort-order="desc">
+                                                            <span>Nombre (Z-A)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="quantity" data-sort-order="asc">
+                                                            <span>Cantidad (Menor a Mayor)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="quantity" data-sort-order="desc">
+                                                            <span>Cantidad (Mayor a Menor)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="consumable" data-sort-order="asc">
+                                                            <span>Consumible (A-Z)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="consumable" data-sort-order="desc">
+                                                            <span>Consumible (Z-A)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="product" data-sort-order="asc">
+                                                            <span>Producto (A-Z)</span>
+                                                        </div>
+                                                        <div class="sort-option" data-sort-by="product" data-sort-order="desc">
+                                                            <span>Producto (Z-A)</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button
+                                                class="btn mt-4 d-flex align-items-center gap-2 filter-toggle-btn"
+                                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
+                                                type="button"
+                                                id="filterButton"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                                            </svg>
+                                            Filtrar
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3" id="filtersAccordion" style="display: none;">
+                                    <div class="card card-body border-0 shadow-sm">
+                                        <h6 class="fw-bold mb-3">Filtros Avanzados</h6>
+
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold">ID</label>
+                                                <input
+                                                        type="text"
+                                                        class="form-control filter-input"
+                                                        id="filterId"
+                                                        placeholder="Buscar por ID"
+                                                />
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold">Nombre</label>
+                                                <input
+                                                        type="text"
+                                                        class="form-control filter-input"
+                                                        id="filterName"
+                                                        placeholder="Buscar por nombre"
+                                                />
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold">Cantidad</label>
+                                                <input
+                                                        type="number"
+                                                        step="0.01"
+                                                        class="form-control filter-input"
+                                                        id="filterQuantity"
+                                                        placeholder="Buscar por cantidad"
+                                                />
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold">Consumible</label>
+                                                <select class="form-select filter-input" id="filterConsumable">
+                                                    <option value="">Todos los consumibles</option>
+                                                    {consumablesData.map((consumable: any) => (
+                                                            <option value={consumable.consumableId || consumable.id}>{consumable.name || 'N/A'}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold">Producto</label>
+                                                <select class="form-select filter-input" id="filterProduct">
+                                                    <option value="">Todos los productos</option>
+                                                    {productsData.map((product: any) => (
+                                                            <option value={product.productId || product.id}>{product.name || 'N/A'}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-4 d-flex align-items-end gap-2">
+                                                <button
+                                                        class="btn btn-primary flex-grow-1"
+                                                        id="applyFilters"
+                                                        style="background-color: #482E21; border-color: #482E21;"
+                                                >
+                                                    Aplicar Filtros
+                                                </button>
+                                                <button
+                                                        class="btn btn-outline-secondary"
+                                                        id="clearFilters"
+                                                >
+                                                    Limpiar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Botones en la esquina superior derecha - Bajados y separados del borde -->
-                <div class="position-absolute mt-5" style="top: 100px; right: 40px;">
-                    <div class="d-flex flex-column gap-1">
-                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                            </svg>
-                            Agregar
-                        </button>
-                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #930000; color: white; border: 1px solid #930000; width: 257px; height: 50px; font-size: 1.1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                            </svg>
-                            Eliminar
-                        </button>
-                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                                <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
-                            </svg>
-                            Subir Imagen
-                        </button>
-                        <div class="text-muted text-end small" style="font-family: 'Roboto', sans-serif;">ingredientes.jpg</div>
+                        <div class="mt-5">
+                            <div class="card shadow-sm border-0" style="border-radius: 8px;">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead style="background-color: #482E21; color: white;">
+                                            <tr>
+                                                <th scope="col" style="width: 10%;">ID</th>
+                                                <th scope="col" style="width: 20%;">Nombre</th>
+                                                <th scope="col" style="width: 15%;">Cantidad</th>
+                                                <th scope="col" style="width: 25%;">Consumible</th>
+                                                <th scope="col" style="width: 25%;">Producto</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="ingredientsTableBody">
+                                            {initialIngredients.length > 0 ? (
+                                                initialIngredients.map((ingredient: any) => (
+                                                        <tr data-ingredient-id={ingredient.ingredientId || ingredient.id}>
+                                                            <th scope="row">{ingredient.ingredientId || ingredient.id || 'N/A'}</th>
+                                                            <td>{ingredient.name || ''}</td>
+                                                            <td>{ingredient.quantity || ''}</td>
+                                                            <td>{ingredient.consumable?.name || ''}</td>
+                                                            <td>{ingredient.product?.name || ''}</td>
+                                                        </tr>
+                                                ))
+                                            ) : (
+                                                    <tr>
+                                                        <td colspan="5" class="text-center py-4">
+                                                            <div class="text-muted">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-inbox" viewBox="0 0 16 16">
+                                                                    <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm-1.17-.437A1.5 1.5 0 0 1 4.98 3h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1 .106.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z"/>
+                                                                </svg>
+                                                                <p class="mt-2 mb-0">No hay datos disponibles</p>
+                                                                <small>Verifica que el endpoint esté funcionando correctamente</small>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                            )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <div
+            id="initial-ingredients-data"
+            data-ingredients={JSON.stringify(initialIngredients)}
+            data-api-url={BACKEND_API_URL}
+            style="display: none;"
+    ></div>
+
+    <script>
+        // Definir tipos para TypeScript
+        interface RouteMap {
+            Consumibles: string;
+            Productos: string;
+            Ingredientes: string;
+            Proveedores: string;
+        }
+
+        interface Ingredient {
+            ingredientId?: string;
+            id?: string;
+            name?: string;
+            quantity?: number | string;
+            consumableId?: string;
+            productId?: string;
+            consumable?: any;
+            product?: any;
+        }
+
+        const routeMap: RouteMap = {
+            "Consumibles": "/administracion/inventario/consumibles",
+            "Productos": "/administracion/inventario/productos",
+            "Ingredientes": "/administracion/inventario/ingredientes",
+            "Proveedores": "/administracion/inventario/proveedores"
+        };
+
+        function setupLeftBarNavigation() {
+            console.log('Configurando navegación del LeftBar para Inventario...');
+
+            setTimeout(() => {
+                const options = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
+
+                options.forEach(optionText => {
+                    const elements = document.querySelectorAll('*');
+                    elements.forEach(element => {
+                        const htmlElement = element as HTMLElement;
+                        if (htmlElement.textContent?.trim() === optionText && routeMap[optionText as keyof RouteMap]) {
+                            if (!htmlElement.hasAttribute('data-nav-configured')) {
+                                htmlElement.style.cursor = 'pointer';
+                                htmlElement.setAttribute('data-nav-configured', 'true');
+
+                                htmlElement.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    const route = routeMap[optionText as keyof RouteMap];
+                                    console.log('Navegando a:', route);
+                                    window.location.href = route;
+                                });
+
+                                htmlElement.addEventListener('mouseenter', () => {
+                                    htmlElement.style.backgroundColor = '#f8f9fa';
+                                    htmlElement.style.transition = 'background-color 0.2s';
+                                });
+                                htmlElement.addEventListener('mouseleave', () => {
+                                    htmlElement.style.backgroundColor = '';
+                                });
+
+                                console.log('Configurado elemento para:', optionText);
+                            }
+                        }
+                    });
+                });
+            }, 100);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM cargado, inicializando navegación de inventario...');
+
+            setupLeftBarNavigation();
+
+            console.log('Inicializando funcionalidad de ingredientes...');
+
+            // Declarar variables con tipos específicos
+            let selectedIngredientId: string | null = null;
+            let allIngredients: Ingredient[] = [];
+            let currentFilteredIngredients: Ingredient[] = [];
+
+            // Obtener elementos del DOM con tipos específicos
+            const addIngredientBtn = document.getElementById('addIngredientBtn') as HTMLButtonElement | null;
+            const updateIngredientBtn = document.getElementById('updateIngredientBtn') as HTMLButtonElement | null;
+            const deleteIngredientBtn = document.getElementById('deleteIngredientBtn') as HTMLButtonElement | null;
+            const message = document.getElementById('message') as HTMLDivElement | null;
+
+            // Obtener elementos de formulario con tipos específicos
+            const searchId = document.getElementById('searchId') as HTMLInputElement | null;
+            const searchName = document.getElementById('searchName') as HTMLInputElement | null;
+            const searchQuantity = document.getElementById('searchQuantity') as HTMLInputElement | null;
+            const searchConsumable = document.getElementById('searchConsumable') as HTMLSelectElement | null;
+            const searchProduct = document.getElementById('searchProduct') as HTMLSelectElement | null;
+
+            async function addNewIngredient() {
+                const name = searchName?.value.trim();
+                const quantity = searchQuantity?.value.trim();
+                const consumableId = searchConsumable?.value;
+                const productId = searchProduct?.value;
+
+                if (!name || !quantity || !consumableId || !productId) {
+                    showMessage('Por favor complete todos los campos obligatorios', 'error');
+                    return;
+                }
+
+                if (isNaN(parseFloat(quantity)) || parseFloat(quantity) < 0) {
+                    showMessage('Por favor ingrese una cantidad válida', 'error');
+                    return;
+                }
+
+                try {
+                    const ingredientData = {
+                        name: name,
+                        quantity: parseFloat(quantity),
+                        consumableId: parseInt(consumableId),
+                        productId: parseInt(productId)
+                    };
+
+                    console.log('Enviando datos para agregar:', ingredientData);
+
+                    const response = await fetch(`${BACKEND_API_URL}/ingredient`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(ingredientData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Ingrediente agregado exitosamente:', result);
+                        showMessage('Ingrediente agregado exitosamente', 'success');
+                        clearForm();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Error al agregar ingrediente:', errorData);
+                        showMessage(`Error: ${errorData.message || 'No se pudo agregar el ingrediente'}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error de red:', error);
+                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
+                }
+            }
+
+            async function updateIngredient() {
+                if (!selectedIngredientId) {
+                    showMessage('Por favor seleccione un ingrediente de la tabla haciendo clic en la fila', 'error');
+                    return;
+                }
+
+                const name = searchName?.value.trim();
+                const quantity = searchQuantity?.value.trim();
+                const consumableId = searchConsumable?.value;
+                const productId = searchProduct?.value;
+
+                if (!name || !quantity || !consumableId || !productId) {
+                    showMessage('Por favor complete todos los campos obligatorios', 'error');
+                    return;
+                }
+
+                if (isNaN(parseFloat(quantity)) || parseFloat(quantity) < 0) {
+                    showMessage('Por favor ingrese una cantidad válida', 'error');
+                    return;
+                }
+
+                try {
+                    const ingredientData = {
+                        name: name,
+                        quantity: parseFloat(quantity),
+                        consumableId: parseInt(consumableId),
+                        productId: parseInt(productId)
+                    };
+
+                    console.log('Enviando datos para actualizar:', ingredientData, 'ID:', selectedIngredientId);
+
+                    const response = await fetch(`${BACKEND_API_URL}/ingredient/${selectedIngredientId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(ingredientData)
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log('Ingrediente actualizado exitosamente:', result);
+                        showMessage('Ingrediente actualizado exitosamente', 'success');
+                        clearSelection();
+                        clearForm();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Error al actualizar ingrediente:', errorData);
+                        showMessage(`Error: ${errorData.message || 'No se pudo actualizar el ingrediente'}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error de red:', error);
+                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
+                }
+            }
+
+            async function deleteIngredient() {
+                if (!selectedIngredientId) {
+                    showMessage('Por favor seleccione un ingrediente de la tabla haciendo clic en la fila', 'error');
+                    return;
+                }
+
+                if (!confirm('¿Está seguro de que desea eliminar este ingrediente?')) {
+                    return;
+                }
+
+                try {
+                    console.log('Eliminando ingrediente ID:', selectedIngredientId);
+
+                    const response = await fetch(`${BACKEND_API_URL}/ingredient/${selectedIngredientId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        console.log('Ingrediente eliminado exitosamente');
+                        showMessage('Ingrediente eliminado exitosamente', 'success');
+                        clearSelection();
+                        clearForm();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Error al eliminar ingrediente:', errorData);
+                        showMessage(`Error: ${errorData.message || 'No se pudo eliminar el ingrediente'}`, 'error');
+                    }
+                } catch (error) {
+                    console.error('Error de red:', error);
+                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
+                }
+            }
+
+            function showMessage(text: string, type: 'success' | 'error' | 'info') {
+                if (!message) return;
+
+                message.textContent = text;
+                message.style.display = 'block';
+                message.className = `alert alert-${type === 'success' ? 'success' : type === 'info' ? 'info' : 'danger'} mt-3`;
+
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+
+            function clearForm() {
+                if (searchId) searchId.value = '';
+                if (searchName) searchName.value = '';
+                if (searchQuantity) searchQuantity.value = '';
+                if (searchConsumable) searchConsumable.value = '';
+                if (searchProduct) searchProduct.value = '';
+            }
+
+            function clearSelection() {
+                selectedIngredientId = null;
+                const allRows = document.querySelectorAll('#ingredientsTableBody tr');
+                allRows.forEach(row => {
+                    row.classList.remove('table-primary');
+                });
+            }
+
+            function loadIngredientData(ingredientId: string) {
+                console.log('Buscando ingrediente con ID:', ingredientId);
+                console.log('Ingredientes filtrados actuales:', currentFilteredIngredients);
+
+                const ingredient = currentFilteredIngredients.find(i => {
+                    const id = i.ingredientId || i.id;
+                    return id == ingredientId;
+                });
+
+                if (!ingredient) {
+                    console.error('Ingrediente no encontrado con ID:', ingredientId);
+                    showMessage('Error: No se pudo cargar los datos del ingrediente', 'error');
+                    return;
+                }
+
+                console.log('Ingrediente encontrado:', ingredient);
+
+                if (searchId) searchId.value = ingredient.ingredientId || ingredient.id || '';
+                if (searchName) searchName.value = ingredient.name || '';
+                if (searchQuantity) searchQuantity.value = ingredient.quantity?.toString() || '';
+                if (searchConsumable) searchConsumable.value = ingredient.consumableId || '';
+                if (searchProduct) searchProduct.value = ingredient.productId || '';
+
+                console.log('Formulario llenado exitosamente para ingrediente:', ingredientId);
+            }
+
+            // Configurar event listeners
+            if (addIngredientBtn) {
+                addIngredientBtn.addEventListener('click', addNewIngredient);
+            }
+
+            if (updateIngredientBtn) {
+                updateIngredientBtn.addEventListener('click', updateIngredient);
+            }
+
+            if (deleteIngredientBtn) {
+                deleteIngredientBtn.addEventListener('click', deleteIngredient);
+            }
+
+            // Sistema de selección de filas
+            let lastClickTime = 0;
+            const DOUBLE_CLICK_DELAY = 300;
+
+            const tableBody = document.getElementById('ingredientsTableBody');
+            if (tableBody) {
+                tableBody.addEventListener('click', function(event: MouseEvent) {
+                    const target = event.target as HTMLElement;
+                    const row = target.closest('tr') as HTMLTableRowElement;
+
+                    if (row && row.getAttribute('data-ingredient-id')) {
+                        const currentTime = new Date().getTime();
+                        const timeSinceLastClick = currentTime - lastClickTime;
+
+                        if (timeSinceLastClick < DOUBLE_CLICK_DELAY) {
+                            console.log('Doble clic detectado en fila');
+                            handleDoubleClick(row);
+                        } else {
+                            handleSingleClick(row);
+                        }
+
+                        lastClickTime = currentTime;
+                    }
+                });
+            }
+
+            function handleSingleClick(row: HTMLTableRowElement) {
+                const allRows = document.querySelectorAll('#ingredientsTableBody tr');
+                allRows.forEach(r => {
+                    r.classList.remove('table-primary');
+                });
+
+                row.classList.add('table-primary');
+
+                selectedIngredientId = row.getAttribute('data-ingredient-id');
+
+                console.log('Ingrediente seleccionado (clic simple):', selectedIngredientId);
+            }
+
+            function handleDoubleClick(row: HTMLTableRowElement) {
+                const ingredientId = row.getAttribute('data-ingredient-id');
+                if (!ingredientId) return;
+
+                console.log('Procesando doble clic para ingrediente ID:', ingredientId);
+
+                handleSingleClick(row);
+
+                loadIngredientData(ingredientId);
+
+                showMessage(`Datos del ingrediente cargados en el formulario. Puede editarlos y hacer clic en "Actualizar".`, 'info');
+
+                console.log('Formulario llenado automáticamente (doble clic) para ingrediente:', ingredientId);
+            }
+
+            // Sistema de filtros y ordenamiento
+            const applyFiltersBtn = document.getElementById('applyFilters') as HTMLButtonElement | null;
+            const clearFiltersBtn = document.getElementById('clearFilters') as HTMLButtonElement | null;
+            const filterButton = document.getElementById('filterButton') as HTMLButtonElement | null;
+            const filtersAccordion = document.getElementById('filtersAccordion') as HTMLDivElement | null;
+            const sortButton = document.getElementById('sortButton') as HTMLButtonElement | null;
+            const sortDropdown = document.getElementById('sortDropdown') as HTMLDivElement | null;
+
+            const filterId = document.getElementById('filterId') as HTMLInputElement | null;
+            const filterName = document.getElementById('filterName') as HTMLInputElement | null;
+            const filterQuantity = document.getElementById('filterQuantity') as HTMLInputElement | null;
+            const filterConsumable = document.getElementById('filterConsumable') as HTMLSelectElement | null;
+            const filterProduct = document.getElementById('filterProduct') as HTMLSelectElement | null;
+
+            const initialDataElement = document.getElementById('initial-ingredients-data');
+            
+            // Obtener la URL de la API desde el data attribute
+            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
+
+            if (initialDataElement && initialDataElement.dataset.ingredients) {
+                allIngredients = JSON.parse(initialDataElement.dataset.ingredients);
+                console.log('Datos iniciales cargados:', allIngredients.length, 'ingredientes');
+            } else {
+                console.error('No se pudieron cargar los datos iniciales');
+                allIngredients = [];
+            }
+
+            let currentFilters = {
+                id: '',
+                name: '',
+                quantity: '',
+                consumable: '',
+                product: '',
+            };
+
+            let currentSort = {
+                by: 'id',
+                order: 'asc'
+            };
+
+            let isFiltersVisible = false;
+            let isSortVisible = false;
+
+            function toggleSortDropdown() {
+                isSortVisible = !isSortVisible;
+                if (sortDropdown) {
+                    if (isSortVisible) {
+                        sortDropdown.style.display = 'block';
+                        if (sortButton) sortButton.classList.add('active');
+                        if (isFiltersVisible) {
+                            toggleFiltersAccordion();
+                        }
+                    } else {
+                        sortDropdown.style.display = 'none';
+                        if (sortButton) sortButton.classList.remove('active');
+                    }
+                }
+            }
+
+            function toggleFiltersAccordion() {
+                isFiltersVisible = !isFiltersVisible;
+                if (filtersAccordion) {
+                    if (isFiltersVisible) {
+                        filtersAccordion.style.display = 'block';
+                        if (filterButton) filterButton.classList.add('active');
+                        if (isSortVisible) {
+                            toggleSortDropdown();
+                        }
+                    } else {
+                        filtersAccordion.style.display = 'none';
+                        if (filterButton) filterButton.classList.remove('active');
+                    }
+                }
+            }
+
+            function applySort(sortBy: string, sortOrder: string) {
+                console.log('Aplicando ordenamiento:', sortBy, sortOrder);
+                if (sortBy) currentSort.by = sortBy;
+                if (sortOrder) currentSort.order = sortOrder;
+                updateTable();
+
+                if (isSortVisible) {
+                    toggleSortDropdown();
+                }
+            }
+
+            function applyQuickSearch() {
+                console.log('Aplicando búsqueda rápida...');
+                currentFilters = {
+                    id: searchId ? searchId.value.toLowerCase() : '',
+                    name: searchName ? searchName.value.toLowerCase() : '',
+                    quantity: searchQuantity ? searchQuantity.value.toLowerCase() : '',
+                    consumable: searchConsumable ? searchConsumable.value : '',
+                    product: searchProduct ? searchProduct.value : '',
+                };
+                updateTable();
+            }
+
+            function applyAdvancedFilters() {
+                console.log('Aplicando filtros avanzados...');
+                currentFilters = {
+                    id: filterId ? filterId.value.toLowerCase() : '',
+                    name: filterName ? filterName.value.toLowerCase() : '',
+                    quantity: filterQuantity ? filterQuantity.value.toLowerCase() : '',
+                    consumable: filterConsumable ? filterConsumable.value : '',
+                    product: filterProduct ? filterProduct.value : '',
+                };
+                updateTable();
+
+                if (isFiltersVisible) {
+                    toggleFiltersAccordion();
+                }
+            }
+
+            function clearAllFilters() {
+                console.log('Limpiando todos los filtros...');
+
+                if (searchId) searchId.value = '';
+                if (searchName) searchName.value = '';
+                if (searchQuantity) searchQuantity.value = '';
+                if (searchConsumable) searchConsumable.value = '';
+                if (searchProduct) searchProduct.value = '';
+
+                if (filterId) filterId.value = '';
+                if (filterName) filterName.value = '';
+                if (filterQuantity) filterQuantity.value = '';
+                if (filterConsumable) filterConsumable.value = '';
+                if (filterProduct) filterProduct.value = '';
+
+                currentFilters = {
+                    id: '',
+                    name: '',
+                    quantity: '',
+                    consumable: '',
+                    product: '',
+                };
+
+                updateTable();
+            }
+
+            function sortIngredients(ingredients: Ingredient[]) {
+                return ingredients.sort((a, b) => {
+                    let valueA: any, valueB: any;
+
+                    switch (currentSort.by) {
+                        case 'id':
+                            valueA = a.ingredientId || a.id || '';
+                            valueB = b.ingredientId || b.id || '';
+                            const numA = Number(valueA);
+                            const numB = Number(valueB);
+                            valueA = isNaN(numA) ? valueA.toString().toLowerCase() : numA;
+                            valueB = isNaN(numB) ? valueB.toString().toLowerCase() : numB;
+                            break;
+                        case 'name':
+                            valueA = a.name || '';
+                            valueB = b.name || '';
+                            valueA = valueA.toString().toLowerCase();
+                            valueB = valueB.toString().toLowerCase();
+                            break;
+                        case 'quantity':
+                            valueA = parseFloat(a.quantity as string) || 0;
+                            valueB = parseFloat(b.quantity as string) || 0;
+                            break;
+                        case 'consumable':
+                            valueA = a.consumable?.name || '';
+                            valueB = b.consumable?.name || '';
+                            valueA = valueA.toString().toLowerCase();
+                            valueB = valueB.toString().toLowerCase();
+                            break;
+                        case 'product':
+                            valueA = a.product?.name || '';
+                            valueB = b.product?.name || '';
+                            valueA = valueA.toString().toLowerCase();
+                            valueB = valueB.toString().toLowerCase();
+                            break;
+                        default:
+                            valueA = a.ingredientId || a.id || '';
+                            valueB = b.ingredientId || b.id || '';
+                    }
+
+                    if (currentSort.order === 'asc') {
+                        return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
+                    } else {
+                        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
+                    }
+                });
+            }
+
+            function updateTable() {
+                if (!tableBody) {
+                    console.error('No se encontró el elemento ingredientsTableBody');
+                    return;
+                }
+
+                if (!allIngredients.length) {
+                    console.log('No hay datos de ingredientes para mostrar');
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No hay datos disponibles</td></tr>';
+                    return;
+                }
+
+                console.log('Filtros aplicados:', currentFilters);
+                console.log('Ordenamiento aplicado:', currentSort);
+
+                let filteredIngredients = allIngredients.filter(ingredient => {
+                    // Filtro por ID
+                    if (currentFilters.id) {
+                        const ingredientId = (ingredient.ingredientId || ingredient.id || '').toString().toLowerCase();
+                        if (!ingredientId.includes(currentFilters.id)) {
+                            return false;
+                        }
+                    }
+
+                    // Filtro por nombre
+                    if (currentFilters.name && ingredient.name) {
+                        const ingredientName = ingredient.name.toLowerCase();
+                        if (!ingredientName.includes(currentFilters.name)) {
+                            return false;
+                        }
+                    }
+
+                    // Filtro por cantidad
+                    if (currentFilters.quantity && ingredient.quantity) {
+                        const ingredientQuantity = ingredient.quantity.toString().toLowerCase();
+                        if (!ingredientQuantity.includes(currentFilters.quantity)) {
+                            return false;
+                        }
+                    }
+
+                    // Filtro por consumible
+                    if (currentFilters.consumable && ingredient.consumableId) {
+                        const consumableId = ingredient.consumableId.toString();
+                        if (consumableId !== currentFilters.consumable) {
+                            return false;
+                        }
+                    }
+
+                    // Filtro por producto
+                    if (currentFilters.product && ingredient.productId) {
+                        const productId = ingredient.productId.toString();
+                        if (productId !== currentFilters.product) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+
+                filteredIngredients = sortIngredients(filteredIngredients);
+
+                currentFilteredIngredients = filteredIngredients;
+                console.log('Ingredientes filtrados guardados:', currentFilteredIngredients.length);
+
+                if (filteredIngredients.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <div class="text-muted">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                    </svg>
+                                    <p class="mt-2 mb-0">No se encontraron ingredientes</p>
+                                    <small>Intenta con otros criterios de búsqueda</small>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tableBody.innerHTML = filteredIngredients.map(ingredient => `
+                        <tr data-ingredient-id="${ingredient.ingredientId || ingredient.id || 'N/A'}">
+                            <th scope="row">${ingredient.ingredientId || ingredient.id || 'N/A'}</th>
+                            <td>${ingredient.name || ''}</td>
+                            <td>${ingredient.quantity || ''}</td>
+                            <td>${ingredient.consumable?.name || ''}</td>
+                            <td>${ingredient.product?.name || ''}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // Configurar event listeners para filtros y ordenamiento
+            if (applyFiltersBtn) {
+                applyFiltersBtn.addEventListener('click', applyAdvancedFilters);
+            }
+
+            if (clearFiltersBtn) {
+                clearFiltersBtn.addEventListener('click', clearAllFilters);
+            }
+
+            if (filterButton) {
+                filterButton.addEventListener('click', toggleFiltersAccordion);
+            }
+
+            if (sortButton) {
+                sortButton.addEventListener('click', toggleSortDropdown);
+            }
+
+            const sortOptions = document.querySelectorAll('.sort-option');
+            sortOptions.forEach(option => {
+                option.addEventListener('click', function(this: HTMLElement) {
+                    const sortBy = this.getAttribute('data-sort-by');
+                    const sortOrder = this.getAttribute('data-sort-order');
+                    if (sortBy && sortOrder) {
+                        applySort(sortBy, sortOrder);
+                    }
+                });
+            });
+
+            const quickSearchInputs = [
+                searchId, searchName, searchQuantity, searchConsumable, searchProduct
+            ];
+            quickSearchInputs.forEach(input => {
+                if (input) {
+                    input.addEventListener('input', applyQuickSearch);
+                    input.addEventListener('change', applyQuickSearch);
+                }
+            });
+
+            const advancedFilterInputs = [
+                filterId, filterName, filterQuantity, filterConsumable, filterProduct
+            ];
+            advancedFilterInputs.forEach(input => {
+                if (input) {
+                    input.addEventListener('keypress', function(e) {
+                        if ((e as KeyboardEvent).key === 'Enter') {
+                            applyAdvancedFilters();
+                        }
+                    });
+                }
+            });
+
+            document.addEventListener('click', function(event: MouseEvent) {
+                const target = event.target as Node;
+                if (isSortVisible && sortButton && !sortButton.contains(target) && sortDropdown && !sortDropdown.contains(target)) {
+                    toggleSortDropdown();
+                }
+                if (isFiltersVisible && filterButton && !filterButton.contains(target) && filtersAccordion && !filtersAccordion.contains(target)) {
+                    toggleFiltersAccordion();
+                }
+            });
+
+            updateTable();
+            console.log('Sistema de ingredientes inicializado correctamente');
+        });
+
+        window.addEventListener('load', function() {
+            console.log('Ventana cargada, verificando navegación de inventario...');
+            setTimeout(setupLeftBarNavigation, 300);
+        });
+    </script>
+
+    <style>
+        /* Solo estilos personalizados que no cubre Bootstrap */
+        .btn-primary {
+            background-color: #482E21;
+            border-color: #482E21;
+        }
+        .btn-primary:hover {
+            background-color: #3a251a;
+            border-color: #3a251a;
+        }
+        .btn-warning {
+            background-color: #F3DCBB;
+            color: #000;
+            border-color: #F3DCBB;
+        }
+        .btn-warning:hover {
+            background-color: #e2c89c;
+            color: #000;
+            border-color: #e2c89c;
+        }
+        .btn-danger {
+            background-color: #930000;
+            border-color: #930000;
+        }
+        .btn-danger:hover {
+            background-color: #7a0000;
+            border-color: #7a0000;
+        }
+    </style>
 </Layout>
-
-<style>
-    .form-control, .form-select {
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-        padding: 8px 12px;
-    }
-
-    .form-label {
-        font-size: 1rem;
-    }
-
-    .form-check-input {
-        margin-top: 0;
-        border-radius: 50%;
-    }
-
-    .table th {
-        font-weight: 600;
-        font-size: 0.875rem;
-        padding: 12px 16px;
-    }
-
-    .table td {
-        padding: 12px 16px;
-        vertical-align: middle;
-    }
-
-    .btn {
-        border-radius: 8px;
-    }
-
-    .card {
-        border-radius: 8px;
-    }
-</style>

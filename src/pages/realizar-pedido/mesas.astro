@@ -2,13 +2,13 @@
 export const prerender = false;
 import LeftBar from "../../components/LeftBar.astro";
 import Layout from "../../layouts/Layout.astro";
-
+import { BACKEND_API_URL } from '../../config/api';
 const user = (Astro.locals as any).user;
 
 // Obtener zonas desde la API
 let options: string[] = [];
 try {
-  const response = await fetch("http://localhost:3484/api/tables");
+  const response = await fetch(`${BACKEND_API_URL}/tables`);
   if (response.ok) {
     const data = await response.json();
     const mesas = data.data;
@@ -32,7 +32,7 @@ try {
     <div data-user={user.userId}
       id="tables_container"
       class="w-100 d-flex flex-wrap gap-2 p-2 overflow-y-auto align-content-start"
-      style="min-height:"
+      style="min-height: 0; max-height: 100%;"
     >
     </div>
 
@@ -43,37 +43,37 @@ try {
       <div id="sidebar-content" class="d-flex flex-column gap-3">
         <!-- Header del panel -->
         <div class="text-center mb-2">
-          <h5 class="fw-bold mb-1" style="color: #482E21;">Información de Mesa</h5>
-          <p class="text-muted mb-0" style="font-size: 0.9rem;">Seleccione una mesa para ver detalles</p>
+          <h5 class="fw-bold mb-1 text-brown">Información de Mesa</h5>
+          <p class="text-muted mb-0 small">Seleccione una mesa para ver detalles</p>
         </div>
 
         <!-- Campos de información (inicialmente visibles) -->
         <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Nombre de Cliente</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="Sin cliente" />
+          <label class="fw-bold mb-2 text-brown">Nombre de Cliente</label>
+          <input class="form-control mb-2" readonly placeholder="Sin cliente" />
         </div>
         <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Mesa</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="Sin seleccionar" />
+          <label class="fw-bold mb-2 text-brown">Mesa</label>
+          <input class="form-control mb-2" readonly placeholder="Sin seleccionar" />
         </div>
         <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Hora de Apertura</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="--/--/---- --:--" />
+          <label class="fw-bold mb-2 text-brown">Hora de Apertura</label>
+          <input class="form-control mb-2" readonly placeholder="--/--/---- --:--" />
         </div>
         <div class="data-groupd d-flex flex-column">
-          <label class="fw-bold mb-2" style="color: #482E21;">Última vez abierto</label>
-          <input class="w-100 border-0 rounded-2 input fw-light" readonly placeholder="--/--/---- --:--" />
+          <label class="fw-bold mb-2 text-brown">Última vez abierto</label>
+          <input class="form-control mb-2" readonly placeholder="--/--/---- --:--" />
         </div>
 
         <!-- Botones de acción -->
         <div class="d-flex flex-column gap-2 mt-3">
-          <button id="finishOrder" class="bill-btn w-100 fourth_color" style="display: none;">
+          <button id="finishOrder" class="btn btn-primary w-100" style="display: none;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
               <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
             </svg>
             Ver Mesa
           </button>
-          <button id="closeOrder" class="bill-btn w-100 third_color_light" style="display: none;">
+          <button id="closeOrder" class="btn btn-danger w-100" style="display: none;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
               <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
@@ -81,6 +81,9 @@ try {
             Cerrar Cuentas
           </button>
         </div>
+      <style>
+        .text-brown { color: #482E21; }
+      </style>
       </div>
     </div>
   </div>

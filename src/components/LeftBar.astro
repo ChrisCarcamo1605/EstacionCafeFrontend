@@ -15,7 +15,7 @@ const { options = [], title, selectedOption = "" , returnPath="/administracion",
 <div
   class="siderbar_left d-flex align-items-center flex-column border-end pt-3 px-3 z-2 vh-100"
 >
-  <div class="w-100 d-flex flex-row align-items-left">
+  <div id="return-btn" class="w-100 d-flex flex-row align-items-left">
     <a href={returnPath}>
       <button
         class="btn btn-link text-dark text-decoration-none p-0 align-items-center d-flex flex-row"
@@ -87,6 +87,10 @@ const { options = [], title, selectedOption = "" , returnPath="/administracion",
       }
     });
   });
+
+   document.querySelector("#return-btn")?.addEventListener("click", () => {
+      sessionStorage.clear();
+    });
 </script>
 
 <style>

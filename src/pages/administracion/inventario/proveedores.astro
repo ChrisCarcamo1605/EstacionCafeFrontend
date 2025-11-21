@@ -3,6 +3,7 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
+import { BACKEND_API_URL } from "../../../config/api";
 
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
@@ -23,7 +24,7 @@ const initialSuppliers = [
 ---
 
 <Layout title="Proveedores">
-    <div class="d-flex flex-column" style="min-height: 100vh;">
+    <div class="d-flex flex-column min-vh-100">
         <Navbar />
 
         <div class="d-flex flex-grow-1">

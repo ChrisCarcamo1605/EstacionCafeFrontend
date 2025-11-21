@@ -3,14 +3,20 @@ export const prerender = false;
 import Layout from "../../../layouts/Layout.astro";
 import Navbar from "../../../components/Navbar.astro";
 import LeftBar from "../../../components/LeftBar.astro";
+import {BACKEND_API_URL} from '../../../config/api';
 
-const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
+const sidebarOptions = [
+  "Consumibles",
+  "Productos",
+  "Ingredientes",
+  "Proveedores",
+];
 
 const inventoryRouteMap: Record<string, string> = {
-    "Consumibles": "/administracion/inventario/consumibles",
-    "Productos": "/administracion/inventario/productos",
-    "Ingredientes": "/administracion/inventario/ingredientes",
-    "Proveedores": "/administracion/inventario/proveedores"
+  Consumibles: "/administracion/inventario/consumibles",
+  Productos: "/administracion/inventario/productos",
+  Ingredientes: "/administracion/inventario/ingredientes",
+  Proveedores: "/administracion/inventario/proveedores",
 };
 
 const initialProducts = [

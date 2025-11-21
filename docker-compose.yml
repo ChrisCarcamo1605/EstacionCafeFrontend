@@ -1,95 +1,9 @@
 services:
-  # Base de Datos PostgreSQL
-  db:
-    image: postgres:15-alpine
-    container_name: estacion-cafe-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: estacioncafedb
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: estacionPass2025
-    ports:
-      - "5555:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - estacion-cafe-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d estacioncafedb"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Backend API EstacionCafe
-  backend:
-    build:
-      context: ./projects/EstacionCafe
-      dockerfile: Dockerfile
-    container_name: estacion-cafe-backend
-    restart: unless-stopped
-    ports:
-      - "3484:3484"
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USERNAME: admin
-      DB_PASSWORD: estacionPass2025
-      DB_NAME: estacioncafedb
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - estacion-cafe-network
-    command: sh -c "npm start & sleep 15 && npm run migration:run && npm run seed:run && wait"
-
-  # Machine Learning Dashboard
-  ml-dashboard:
-    build:
-      context: ./projects/machinelearningcafeteria
-      dockerfile: Dockerfile
-    container_name: estacion-cafe-ml
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      DATABASE_URL: postgresql://admin:estacionPass2025@db:5432/estacioncafedb
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - estacion-cafe-network
-
-  # Servidor de Email y Alertas
-  email-server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    container_name: estacion-cafe-email-server
-    restart: unless-stopped
-    ports:
-      - "3004:3004"
-    env_file:
-      - ./server/.env.docker
-    environment:
-      NODE_ENV: production
-    depends_on:
-      backend:
-        condition: service_started
-    networks:
-      - estacion-cafe-network
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3004/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-  # Frontend Astro
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: estacion-cafe-frontend
+    container_name: EstacionCafeTEC-WEB
     restart: unless-stopped
     ports:
       - "4321:4321"
@@ -99,9 +13,6 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 4321
-    depends_on:
-      - backend
-      - email-server
     networks:
       - estacion-cafe-network
 

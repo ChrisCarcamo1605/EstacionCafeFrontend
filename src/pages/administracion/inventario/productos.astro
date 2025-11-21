@@ -56,13 +56,13 @@ const productTypes = productTypesData || [];
 ---
 
 <Layout>
-    <div class="d-flex flex-column" style="min-height: 100vh;">
+    <div class="d-flex flex-column min-vh-100">
         <Navbar />
 
         <div class="d-flex flex-grow-1">
             <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Productos" routeMap={inventoryRouteMap} />
 
-            <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif; position: relative;">
+            <div class="flex-grow-1 bg-light position-relative" style="font-family: 'Roboto', sans-serif;">
                 <div class="p-4">
                     <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
                         <div class="d-flex flex-column gap-1">
@@ -103,7 +103,7 @@ const productTypes = productTypesData || [];
                     <div style="margin-right: 300px;">
                         <div class="d-flex align-items-start">
                             <div style="width: 100%;">
-                                <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Productos</h1>
+                                <h1 class="h3 fw-bold mb-4">Productos</h1>
 
                                 <div class="d-flex gap-4 mb-3">
                                     <div class="flex-grow-1">
@@ -1079,132 +1079,32 @@ const productTypes = productTypesData || [];
     </script>
 </Layout>
 
-<style>
-    .form-control, .form-select {
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-        padding: 8px 12px;
-    }
-
-    .form-label {
-        font-size: 1rem;
-    }
-
-    .table th {
-        font-weight: 600;
-        font-size: 0.875rem;
-        padding: 12px 16px;
-    }
-
-    .table td {
-        padding: 12px 16px;
-        vertical-align: middle;
-    }
-
-    .btn {
-        border-radius: 8px;
-    }
-
-    .card {
-        border-radius: 8px;
-    }
-
-    .badge {
-        font-size: 0.75rem;
-        padding: 4px 8px;
-    }
-
-    #filtersAccordion .card-body {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-    }
-
-    .form-control:focus, .form-select:focus {
-        border-color: #482E21;
-        box-shadow: 0 0 0 0.2rem rgba(72, 46, 33, 0.25);
-    }
-
-    .btn-primary {
-        background-color: #482E21;
-        border-color: #482E21;
-    }
-
-    .btn-primary:hover {
-        background-color: #3a251a;
-        border-color: #3a251a;
-    }
-
-    .filter-toggle-btn.active,
-    .sort-toggle-btn.active {
-        background-color: #482E21 !important;
-        color: white !important;
-        border-color: #482E21 !important;
-    }
-
-    .search-input:not(:placeholder-shown),
-    .filter-input:not(:placeholder-shown) {
-        border-color: #482E21;
-        background-color: #f8f9fa;
-    }
-
-    .sort-dropdown-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        z-index: 1000;
-        min-width: 200px;
-    }
-
-    .sort-options {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .sort-option {
-        padding: 8px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        font-size: 0.875rem;
-    }
-
-    .sort-option:hover {
-        background-color: #e9ecef;
-    }
-
-    .sort-option:active {
-        background-color: #dee2e6;
-    }
-
-    .table-hover tbody tr:hover {
-        background-color: rgba(72, 46, 33, 0.05);
-        cursor: pointer;
-    }
-
-    .table-hover tbody tr.table-primary {
-        background-color: #007bff !important;
-        color: white;
-    }
-
-    .table-hover tbody tr.table-primary:hover {
-        background-color: #0069d9 !important;
-    }
-
-    .table-responsive {
-        border-radius: 8px;
-    }
-
-    #searchId:read-only {
-        background-color: #f8f9fa;
-        cursor: not-allowed;
-    }
-
-    [data-nav-configured="true"] {
-        cursor: pointer !important;
-    }
-
-    [data-nav-configured="true"]:hover {
-        background-color: #f8f9fa !important;
-    }
-</style>
+    <style>
+        /* Solo estilos personalizados que no cubre Bootstrap */
+        .btn-primary {
+            background-color: #482E21;
+            border-color: #482E21;
+        }
+        .btn-primary:hover {
+            background-color: #3a251a;
+            border-color: #3a251a;
+        }
+        .btn-warning {
+            background-color: #F3DCBB;
+            color: #000;
+            border-color: #F3DCBB;
+        }
+        .btn-warning:hover {
+            background-color: #e2c89c;
+            color: #000;
+            border-color: #e2c89c;
+        }
+        .btn-danger {
+            background-color: #930000;
+            border-color: #930000;
+        }
+        .btn-danger:hover {
+            background-color: #7a0000;
+            border-color: #7a0000;
+        }
+    </style>

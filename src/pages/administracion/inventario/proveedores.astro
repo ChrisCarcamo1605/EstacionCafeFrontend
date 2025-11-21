@@ -14,23 +14,13 @@ const inventoryRouteMap: Record<string, string> = {
     "Proveedores": "/administracion/inventario/proveedores"
 };
 
-const response = await fetch(`${BACKEND_API_URL}/suppliers`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-
-let suppliersData = null;
-if (response.ok) {
-    const result = await response.json();
-    suppliersData = result.data;
-    console.log('Datos de proveedores:', suppliersData);
-} else {
-    console.error("Error fetching suppliers data:", response.statusText);
-}
-
-const initialSuppliers = suppliersData || [];
+const initialSuppliers = [
+    { supplierId: "PROV-001", name: "Distribuidora Café Premium", phone: "555-0101", email: "ventas@cafepremium.com", active: true },
+    { supplierId: "PROV-002", name: "Importadora Granos Selectos", phone: "555-0102", email: "contacto@granosselectos.com", active: true },
+    { supplierId: "PROV-003", name: "Suministros Baristas", phone: "555-0103", email: "info@suministrosbaristas.com", active: false },
+    { supplierId: "PROV-004", name: "Dulces y Postres La Esquina", phone: "555-0104", email: "pedidos@dulceslaesquina.com", active: true },
+    { supplierId: "PROV-005", name: "Equipos Café Profesional", phone: "555-0105", email: "servicio@equiposcafe.com", active: true }
+];
 ---
 
 <Layout title="Proveedores">
@@ -40,975 +30,156 @@ const initialSuppliers = suppliersData || [];
         <div class="d-flex flex-grow-1">
             <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Proveedores" routeMap={inventoryRouteMap} />
 
-            <div class="main-content-with-navbar-sidebar flex-grow-1 bg-light position-relative" style="font-family: 'Roboto', sans-serif;">
+            <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
                 <div class="p-4">
-                    <!-- BOTONES EN LA ESQUINA SUPERIOR DERECHA (no fijos) -->
-                    <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
-                        <div class="d-flex flex-column gap-1">
-                            <button 
-                                class="btn d-flex align-items-center justify-content-center gap-2" 
-                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
-                                id="addSupplierBtn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                </svg>
-                                Agregar
-                            </button>
-                            <button 
+                    <div class="d-flex align-items-start gap-5">
+                        <div style="width: calc(100% - 300px);">
+                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Proveedores</h1>
 
-                                class="btn d-flex align-items-center justify-content-center gap-2" 
-                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; color: rgb(0, 0, 0); border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
-                                id="updateSupplierBtn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                </svg>
-                                Actualizar
-                            </button>
-                            <button 
-                                class="btn d-flex align-items-center justify-content-center gap-2" 
-                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #930000; color: white; border: 1px solid #930000; width: 257px; height: 50px; font-size: 1.1rem;"
-                                id="deleteSupplierBtn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                </svg>
-                                Eliminar
-                            </button>
-                        </div>
-                    </div>
-
-                    <div style="margin-right: 300px;">
-                        <div class="d-flex align-items-start">
-                            <div style="width: 100%;">
-                                <h1 class="h3 fw-bold mb-4">Proveedores</h1>
-
-                                <div class="d-flex gap-4 mb-3">
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
-                                        <input type="text" class="form-control search-input" id="searchId" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" readonly />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
-                                        <input type="text" class="form-control search-input" id="searchName" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
-                                    
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Teléfono</label>
-                                        <input type="text" class="form-control search-input" id="searchPhone" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
+                            <div class="d-flex gap-4 mb-3">
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" readonly />
                                 </div>
 
-                                <div class="d-flex gap-4">
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Email</label>
-                                        <input type="text" class="form-control search-input" id="searchEmail" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+                                
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Teléfono</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+                            </div>
 
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Estado</label>
-                                        <select class="form-select search-input" id="searchStatus" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                            <option value="active">Activo</option>
-                                            <option value="inactive">Inactivo</option>
-                                        </select>
-                                    </div>
+                            <div class="d-flex gap-4">
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Email</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
 
-                                <div id="message" class="mt-3" style="display: none;"></div>
-
-                                <!-- BOTONES ORDENAR Y FILTRAR -->
-                                <div class="d-flex gap-4 mt-3 align-items-center">
-                                    <div class="position-relative">
-                                        <button 
-                                            class="btn mt-4 d-flex align-items-center gap-2 sort-toggle-btn" 
-                                            style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
-                                            type="button"
-                                            id="sortButton"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
-                                            </svg>
-                                            Ordenar
-                                        </button>
-                                        <div class="sort-dropdown-menu" id="sortDropdown" style="display: none;">
-                                            <div class="card shadow-sm border-0 mt-1">
-                                                <div class="card-body p-2">
-                                                    <h6 class="fw-bold mb-2">Ordenar por</h6>
-                                                    <div class="sort-options">
-                                                        <div class="sort-option" data-sort-by="id" data-sort-order="asc">
-                                                            <span>ID (Ascendente)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="id" data-sort-order="desc">
-                                                            <span>ID (Descendente)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="name" data-sort-order="asc">
-                                                            <span>Nombre (A-Z)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="name" data-sort-order="desc">
-                                                            <span>Nombre (Z-A)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="email" data-sort-order="asc">
-                                                            <span>Email (A-Z)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="email" data-sort-order="desc">
-                                                            <span>Email (Z-A)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="status" data-sort-order="asc">
-                                                            <span>Estado (Activos primero)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="status" data-sort-order="desc">
-                                                            <span>Estado (Inactivos primero)</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <button 
-                                            class="btn mt-4 d-flex align-items-center gap-2 filter-toggle-btn" 
-                                            style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
-                                            type="button"
-                                            id="filterButton"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
-                                            </svg>
-                                            Filtrar
-                                        </button>
-                                    </div>
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Estado</label>
+                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                        <option selected>Activo</option>
+                                        <option>Inactivo</option>
+                                    </select>
                                 </div>
+                            </div>
 
-                                <div class="mt-3" id="filtersAccordion" style="display: none;">
-                                    <div class="card card-body border-0 shadow-sm">
-                                        <h6 class="fw-bold mb-3">Filtros Avanzados</h6>
-                                        
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">ID</label>
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control filter-input" 
-                                                    id="filterId"
-                                                    placeholder="Buscar por ID"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Nombre</label>
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control filter-input" 
-                                                    id="filterName"
-                                                    placeholder="Buscar por nombre"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Teléfono</label>
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control filter-input" 
-                                                    id="filterPhone"
-                                                    placeholder="Buscar por teléfono"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Email</label>
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control filter-input" 
-                                                    id="filterEmail"
-                                                    placeholder="Buscar por email"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Mostrar</label>
-                                                <select class="form-select filter-input" id="filterStatus">
-                                                    <option value="active">Solo activos</option>
-                                                    <option value="inactive">Solo inactivos</option>
-                                                    <option value="">Todos los estados</option>
-                                                </select>
-                                            </div>
-                                            
-                                            <div class="col-md-4 d-flex align-items-end gap-2">
-                                                <button 
-                                                    class="btn btn-primary flex-grow-1" 
-                                                    id="applyFilters"
-                                                    style="background-color: #482E21; border-color: #482E21;"
-                                                >
-                                                    Aplicar Filtros
-                                                </button>
-                                                <button 
-                                                    class="btn btn-outline-secondary" 
-                                                    id="clearFilters"
-                                                >
-                                                    Limpiar
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div class="d-flex gap-4 mt-3 align-items-center">
+                                <div>
+                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                                        </svg>
+                                        Ordenar
+                                    </button>
+                                </div>
+                                <div>
+                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                                        </svg>
+                                        Filtrar
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="mt-5">
-                            <div class="card shadow-sm border-0" style="border-radius: 8px;">
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover mb-0">
-                                            <thead style="background-color: #482E21; color: white;">
+                    <div class="mt-5">
+                        <div class="card shadow-sm border-0" style="border-radius: 8px;">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead style="background-color: #482E21; color: white;">
+                                            <tr>
+                                                <th scope="col" style="width: 15%;">ID</th>
+                                                <th scope="col" style="width: 25%;">Nombre</th>
+                                                <th scope="col" style="width: 20%;">Teléfono</th>
+                                                <th scope="col" style="width: 25%;">Email</th>
+                                                <th scope="col" style="width: 15%;">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {initialSuppliers.map((supplier) => (
                                                 <tr>
-                                                    <th scope="col" style="width: 15%;">ID</th>
-                                                    <th scope="col" style="width: 25%;">Nombre</th>
-                                                    <th scope="col" style="width: 20%;">Teléfono</th>
-                                                    <th scope="col" style="width: 25%;">Email</th>
-                                                    <th scope="col" style="width: 15%;">Estado</th>
+                                                    <th scope="row">{supplier.supplierId}</th>
+                                                    <td>{supplier.name}</td>
+                                                    <td>{supplier.phone}</td>
+                                                    <td>{supplier.email}</td>
+                                                    <td>
+                                                        <span class={`badge ${supplier.active ? 'bg-success' : 'bg-danger'}`}>
+                                                            {supplier.active ? 'Activo' : 'Inactivo'}
+                                                        </span>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody id="suppliersTableBody">
-                                                {initialSuppliers.length > 0 ? (
-                                                    initialSuppliers
-                                                        .filter((supplier: any) => supplier.active)
-                                                        .map((supplier: any) => (
-                                                            <tr data-supplier-id={supplier.supplierId}>
-                                                                <th scope="row">{supplier.supplierId || 'N/A'}</th>
-                                                                <td>{supplier.name || ''}</td>
-                                                                <td>{supplier.phone || ''}</td>
-                                                                <td>{supplier.email || ''}</td>
-                                                                <td>
-                                                                    <span class={`badge ${supplier.active ? 'bg-success' : 'bg-danger'}`}>
-                                                                        {supplier.active ? 'Activo' : 'Inactivo'}
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                ) : (
-                                                    <tr>
-                                                        <td colspan="5" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-inbox" viewBox="0 0 16 16">
-                                                                    <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm-1.17-.437A1.5 1.5 0 0 1 4.98 3h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1 .106.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z"/>
-                                                                </svg>
-                                                                <p class="mt-2 mb-0">No hay datos disponibles</p>
-                                                                <small>Verifica que el endpoint esté funcionando correctamente</small>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="position-absolute mt-5" style="top: 100px; right: 40px;">
+                    <div class="d-flex flex-column gap-1">
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                            Agregar
+                        </button>
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                            Actualizar
+                        </button>
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #930000; color: white; border: 1px solid #930000; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <div 
-        id="initial-suppliers-data" 
-        data-suppliers={JSON.stringify(initialSuppliers)}
-        data-api-url={BACKEND_API_URL}
-        style="display: none;"
-    ></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Inicializando funcionalidad de proveedores...');
-            
-            let selectedSupplierId: string | null = null;
-            let allSuppliers: any[] = [];
-            let currentFilteredSuppliers: any[] = [];
-
-            const addSupplierBtn = document.getElementById('addSupplierBtn');
-            const updateSupplierBtn = document.getElementById('updateSupplierBtn');
-            const deleteSupplierBtn = document.getElementById('deleteSupplierBtn');
-            const message = document.getElementById('message');
-            const searchPhone = document.getElementById('searchPhone') as HTMLInputElement;
-
-            if (searchPhone) {
-                searchPhone.addEventListener('input', function(e) {
-                    this.value = this.value.replace(/[^0-9]/g, '');
-                });
-            }
-
-            async function addNewSupplier() {
-                const name = (document.getElementById('searchName') as HTMLInputElement)?.value.trim();
-                const phone = (document.getElementById('searchPhone') as HTMLInputElement)?.value.trim();
-                const email = (document.getElementById('searchEmail') as HTMLInputElement)?.value.trim();
-                const status = (document.getElementById('searchStatus') as HTMLSelectElement)?.value;
-
-                if (!name || !phone || !email) {
-                    showMessage('Por favor complete los campos Nombre, Teléfono y Email', 'error');
-                    return;
-                }
-
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    showMessage('Por favor ingrese un email válido', 'error');
-                    return;
-                }
-
-                try {
-                    const supplierData = {
-                        name: name,
-                        phone: phone,
-                        email: email,
-                        active: status === 'active'
-                    };
-
-                    console.log('Enviando datos para agregar:', supplierData);
-
-                    const response = await fetch(`${BACKEND_API_URL}/suppliers`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(supplierData)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Proveedor agregado exitosamente:', result);
-                        showMessage('Proveedor agregado exitosamente', 'success');
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al agregar proveedor:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo agregar el proveedor'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            async function updateSupplier() {
-                if (!selectedSupplierId) {
-                    showMessage('Por favor seleccione un proveedor de la tabla haciendo clic en la fila', 'error');
-                    return;
-                }
-
-                const name = (document.getElementById('searchName') as HTMLInputElement)?.value.trim();
-                const phone = (document.getElementById('searchPhone') as HTMLInputElement)?.value.trim();
-                const email = (document.getElementById('searchEmail') as HTMLInputElement)?.value.trim();
-                const status = (document.getElementById('searchStatus') as HTMLSelectElement)?.value;
-
-                if (!name || !phone || !email) {
-                    showMessage('Por favor complete los campos Nombre, Teléfono y Email', 'error');
-                    return;
-                }
-
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    showMessage('Por favor ingrese un email válido', 'error');
-                    return;
-                }
-
-                try {
-                    const supplierData = {
-                        name: name,
-                        phone: phone,
-                        email: email,
-                        active: status === 'active'
-                    };
-
-                    console.log('Enviando datos para actualizar:', supplierData, 'ID:', selectedSupplierId);
-
-                    const response = await fetch(`${BACKEND_API_URL}/suppliers/${selectedSupplierId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(supplierData)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Proveedor actualizado exitosamente:', result);
-                        showMessage('Proveedor actualizado exitosamente', 'success');
-                        clearSelection();
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al actualizar proveedor:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo actualizar el proveedor'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            async function deleteSupplier() {
-                if (!selectedSupplierId) {
-                    showMessage('Por favor seleccione un proveedor de la tabla haciendo clic en la fila', 'error');
-                    return;
-                }
-
-                if (!confirm('¿Está seguro de que desea eliminar este proveedor?')) {
-                    return;
-                }
-
-                try {
-                    console.log('Eliminando proveedor ID:', selectedSupplierId);
-
-                    const response = await fetch(`${BACKEND_API_URL}/suppliers/${selectedSupplierId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-
-                    if (response.ok) {
-                        console.log('Proveedor eliminado exitosamente');
-                        showMessage('Proveedor eliminado exitosamente', 'success');
-                        clearSelection();
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al eliminar proveedor:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo eliminar el proveedor'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            function showMessage(text: string | null, type: string) {
-                if (!message) return;
-                
-                message.textContent = text;
-                message.style.display = 'block';
-                message.className = `alert alert-${type === 'success' ? 'success' : 'danger'} mt-3`;
-                
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 5000);
-            }
-
-            function clearForm() {
-                const idInput = document.getElementById('searchId') as HTMLInputElement;
-                const nameInput = document.getElementById('searchName') as HTMLInputElement;
-                const phoneInput = document.getElementById('searchPhone') as HTMLInputElement;
-                const emailInput = document.getElementById('searchEmail') as HTMLInputElement;
-                const statusSelect = document.getElementById('searchStatus') as HTMLSelectElement;
-                
-                if (idInput) idInput.value = '';
-                if (nameInput) nameInput.value = '';
-                if (phoneInput) phoneInput.value = '';
-                if (emailInput) emailInput.value = '';
-                if (statusSelect) statusSelect.value = 'active';
-            }
-
-            function clearSelection() {
-                selectedSupplierId = null;
-                const allRows = document.querySelectorAll('#suppliersTableBody tr');
-                allRows.forEach(row => {
-                    row.classList.remove('table-primary');
-                });
-            }
-
-            function loadSupplierData(supplierId: any) {
-                console.log('Buscando proveedor con ID:', supplierId);
-                console.log('Proveedores filtrados actuales:', currentFilteredSuppliers);
-                
-                const supplier = currentFilteredSuppliers.find(s => {
-                    console.log('Comparando:', s.supplierId, 'con', supplierId, 'tipo:', typeof s.supplierId, typeof supplierId);
-                    return s.supplierId == supplierId; 
-                });
-                
-                if (!supplier) {
-                    console.error('Proveedor no encontrado con ID:', supplierId);
-                    showMessage('Error: No se pudo cargar los datos del proveedor', 'error');
-                    return;
-                }
-
-                console.log('Proveedor encontrado:', supplier);
-
-                const idInput = document.getElementById('searchId') as HTMLInputElement;
-                const nameInput = document.getElementById('searchName') as HTMLInputElement;
-                const phoneInput = document.getElementById('searchPhone') as HTMLInputElement;
-                const emailInput = document.getElementById('searchEmail') as HTMLInputElement;
-                const statusSelect = document.getElementById('searchStatus') as HTMLSelectElement;
-                
-                if (idInput) {
-                    idInput.value = supplier.supplierId || '';
-                    console.log('ID input llenado:', idInput.value);
-                }
-                if (nameInput) {
-                    nameInput.value = supplier.name || '';
-                    console.log('Nombre input llenado:', nameInput.value);
-                }
-                if (phoneInput) {
-                    phoneInput.value = supplier.phone || '';
-                    console.log('Teléfono input llenado:', phoneInput.value);
-                }
-                if (emailInput) {
-                    emailInput.value = supplier.email || '';
-                    console.log('Email input llenado:', emailInput.value);
-                }
-                if (statusSelect) {
-                    statusSelect.value = supplier.active ? 'active' : 'inactive';
-                    console.log('Estado select llenado:', statusSelect.value);
-                }
-
-                console.log('Formulario llenado exitosamente para proveedor:', supplierId);
-            }
-
-            if (addSupplierBtn) {
-                addSupplierBtn.addEventListener('click', addNewSupplier);
-                console.log('Botón agregar configurado');
-            }
-
-            if (updateSupplierBtn) {
-                updateSupplierBtn.addEventListener('click', updateSupplier);
-                console.log('Botón actualizar configurado');
-            }
-
-            if (deleteSupplierBtn) {
-                deleteSupplierBtn.addEventListener('click', deleteSupplier);
-                console.log('Botón eliminar configurado');
-            }
-
-
-            let lastClickTime = 0;
-            const DOUBLE_CLICK_DELAY = 300;
-
-            const tableBody = document.getElementById('suppliersTableBody');
-            if (tableBody) {
-                tableBody.addEventListener('click', function(event) {
-                    const target = event.target as HTMLElement;
-                    const row = target.closest('tr');
-                    
-                    if (row && row.getAttribute('data-supplier-id')) {
-                        const currentTime = new Date().getTime();
-                        const timeSinceLastClick = currentTime - lastClickTime;
-                        
-                        if (timeSinceLastClick < DOUBLE_CLICK_DELAY) {
-                            console.log('Doble clic detectado en fila');
-                            handleDoubleClick(row);
-                        } else {
-                            handleSingleClick(row);
-                        }
-                        
-                        lastClickTime = currentTime;
-                    }
-                });
-            }
-
-            function handleSingleClick(row: HTMLTableRowElement) {
-                const allRows = document.querySelectorAll('#suppliersTableBody tr');
-                allRows.forEach(r => r.classList.remove('table-primary'));
-                
-                row.classList.add('table-primary');
-                
-                selectedSupplierId = row.getAttribute('data-supplier-id');
-                
-                console.log('Proveedor seleccionado (clic simple):', selectedSupplierId);
-            }
-
-            function handleDoubleClick(row: HTMLTableRowElement) {
-                const supplierId = row.getAttribute('data-supplier-id');
-                if (!supplierId) return;
-
-                console.log('Procesando doble clic para proveedor ID:', supplierId);
-                
-                handleSingleClick(row);
-                
-                loadSupplierData(supplierId);
-                
-                showMessage(`Datos del proveedor cargados en el formulario. Puede editarlos y hacer clic en "Actualizar".`, 'info');
-                
-                console.log('Formulario llenado automáticamente (doble clic) para proveedor:', supplierId);
-            }
-
-            const applyFiltersBtn = document.getElementById('applyFilters');
-            const clearFiltersBtn = document.getElementById('clearFilters');
-            const filterButton = document.getElementById('filterButton');
-            const filtersAccordion = document.getElementById('filtersAccordion');
-            const sortButton = document.getElementById('sortButton');
-            const sortDropdown = document.getElementById('sortDropdown');
-            
-            const searchId = document.getElementById('searchId') as HTMLInputElement;
-            const searchName = document.getElementById('searchName') as HTMLInputElement;
-            const searchEmail = document.getElementById('searchEmail') as HTMLInputElement;
-            const searchStatus = document.getElementById('searchStatus') as HTMLSelectElement;
-            
-            const filterId = document.getElementById('filterId') as HTMLInputElement;
-            const filterName = document.getElementById('filterName') as HTMLInputElement;
-            const filterPhone = document.getElementById('filterPhone') as HTMLInputElement;
-            const filterEmail = document.getElementById('filterEmail') as HTMLInputElement;
-            const filterStatus = document.getElementById('filterStatus') as HTMLSelectElement;
-            
-            const initialDataElement = document.getElementById('initial-suppliers-data');
-            
-            // Obtener la URL de la API desde el data attribute
-            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
-            
-            if (initialDataElement && initialDataElement.dataset.suppliers) {
-                allSuppliers = JSON.parse(initialDataElement.dataset.suppliers);
-                console.log('Datos iniciales cargados:', allSuppliers.length, 'proveedores');
-                console.log('Primer proveedor:', allSuppliers[0]);
-            } else {
-                console.error('No se pudieron cargar los datos iniciales');
-                allSuppliers = [];
-            }
-
-            let currentFilters = {
-                id: '',
-                name: '',
-                phone: '',
-                email: '',
-                status: 'active',
-            };
-
-            let currentSort = {
-                by: 'id',
-                order: 'asc'
-            };
-
-            let isFiltersVisible = false;
-            let isSortVisible = false;
-
-            function toggleSortDropdown() {
-                isSortVisible = !isSortVisible;
-                if (sortDropdown) {
-                    if (isSortVisible) {
-                        sortDropdown.style.display = 'block';
-                        if (sortButton) sortButton.classList.add('active');
-                        if (isFiltersVisible) {
-                            toggleFiltersAccordion();
-                        }
-                    } else {
-                        sortDropdown.style.display = 'none';
-                        if (sortButton) sortButton.classList.remove('active');
-                    }
-                }
-            }
-
-            function toggleFiltersAccordion() {
-                isFiltersVisible = !isFiltersVisible;
-                if (filtersAccordion) {
-                    if (isFiltersVisible) {
-                        filtersAccordion.style.display = 'block';
-                        if (filterButton) filterButton.classList.add('active');
-                        if (isSortVisible) {
-                            toggleSortDropdown();
-                        }
-                    } else {
-                        filtersAccordion.style.display = 'none';
-                        if (filterButton) filterButton.classList.remove('active');
-                    }
-                }
-            }
-
-            function applySort(sortBy: string | null, sortOrder: string | null) {
-                console.log('Aplicando ordenamiento:', sortBy, sortOrder);
-                if (sortBy) currentSort.by = sortBy;
-                if (sortOrder) currentSort.order = sortOrder;
-                updateTable();
-                
-                if (isSortVisible) {
-                    toggleSortDropdown();
-                }
-            }
-
-            function applyQuickSearch() {
-                console.log('Aplicando búsqueda rápida...');
-                currentFilters = {
-                    id: searchId ? searchId.value.toLowerCase() : '',
-                    name: searchName ? searchName.value.toLowerCase() : '',
-                    phone: searchPhone ? searchPhone.value.toLowerCase() : '',
-                    email: searchEmail ? searchEmail.value.toLowerCase() : '',
-                    status: searchStatus ? searchStatus.value : 'active',
-                };
-                updateTable();
-            }
-
-            function applyAdvancedFilters() {
-                console.log('Aplicando filtros avanzados...');
-                currentFilters = {
-                    id: filterId ? filterId.value.toLowerCase() : '',
-                    name: filterName ? filterName.value.toLowerCase() : '',
-                    phone: filterPhone ? filterPhone.value.toLowerCase() : '',
-                    email: filterEmail ? filterEmail.value.toLowerCase() : '',
-                    status: filterStatus ? filterStatus.value : 'active',
-                };
-                updateTable();
-                
-                if (isFiltersVisible) {
-                    toggleFiltersAccordion();
-                }
-            }
-
-            function clearAllFilters() {
-                console.log('Limpiando todos los filtros...');
-                
-                if (searchId) searchId.value = '';
-                if (searchName) searchName.value = '';
-                if (searchPhone) searchPhone.value = '';
-                if (searchEmail) searchEmail.value = '';
-                if (searchStatus) searchStatus.value = '';
-                
-                if (filterId) filterId.value = '';
-                if (filterName) filterName.value = '';
-                if (filterPhone) filterPhone.value = '';
-                if (filterEmail) filterEmail.value = '';
-                if (filterStatus) filterStatus.value = 'active';
-                
-                currentFilters = {
-                    id: '',
-                    name: '',
-                    phone: '',
-                    email: '',
-                    status: 'active',
-                };
-                
-                updateTable();
-            }
-
-            function sortSuppliers(suppliers: any[]) {
-                return suppliers.sort((a: { supplierId: string; name: string; email: string; active: any; }, b: { supplierId: string; name: string; email: string; active: any; }) => {
-                    let valueA, valueB;
-                    
-                    switch (currentSort.by) {
-                        case 'id':
-                            valueA = a.supplierId || '';
-                            valueB = b.supplierId || '';
-                            const numA = Number(valueA);
-                            const numB = Number(valueB);
-                            valueA = isNaN(numA) ? valueA.toString().toLowerCase() : numA;
-                            valueB = isNaN(numB) ? valueB.toString().toLowerCase() : numB;
-                            break;
-                        case 'name':
-                            valueA = a.name || '';
-                            valueB = b.name || '';
-                            valueA = valueA.toString().toLowerCase();
-                            valueB = valueB.toString().toLowerCase();
-                            break;
-                        case 'email':
-                            valueA = a.email || '';
-                            valueB = b.email || '';
-                            valueA = valueA.toString().toLowerCase();
-                            valueB = valueB.toString().toLowerCase();
-                            break;
-                        case 'status':
-                            valueA = a.active ? 1 : 0;
-                            valueB = b.active ? 1 : 0;
-                            break;
-                        default:
-                            valueA = a.supplierId || '';
-                            valueB = b.supplierId || '';
-                    }
-                    
-                    if (currentSort.order === 'asc') {
-                        return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-                    } else {
-                        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
-                    }
-                });
-            }
-
-            function updateTable() {
-                if (!tableBody) {
-                    console.error('No se encontró el elemento suppliersTableBody');
-                    return;
-                }
-
-                if (!allSuppliers.length) {
-                    console.log('No hay datos de proveedores para mostrar');
-                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No hay datos disponibles</td></tr>';
-                    return;
-                }
-                
-                console.log('Filtros aplicados:', currentFilters);
-                console.log('Ordenamiento aplicado:', currentSort);
-
-                let filteredSuppliers = allSuppliers.filter(supplier => {
-                    if (currentFilters.status === 'active' && !supplier.active) {
-                        return false;
-                    }
-                    if (currentFilters.status === 'inactive' && supplier.active) {
-                        return false;
-                    }
-                    
-                    if (currentFilters.id && supplier.supplierId) {
-                        const supplierId = supplier.supplierId.toString().toLowerCase();
-                        if (!supplierId.includes(currentFilters.id)) {
-                            return false;
-                        }
-                    }
-                    
-                    if (currentFilters.name && supplier.name) {
-                        const supplierName = supplier.name.toLowerCase();
-                        if (!supplierName.includes(currentFilters.name)) {
-                            return false;
-                        }
-                    }
-                    
-                    if (currentFilters.phone && supplier.phone) {
-                        const supplierPhone = supplier.phone ? supplier.phone.toString().toLowerCase() : '';
-                        if (!supplierPhone.includes(currentFilters.phone)) {
-                            return false;
-                        }
-                    }
-                    
-                    if (currentFilters.email && supplier.email) {
-                        const supplierEmail = supplier.email.toLowerCase();
-                        if (!supplierEmail.includes(currentFilters.email)) {
-                            return false;
-                        }
-                    }
-                    
-                    return true;
-                });
-
-                filteredSuppliers = sortSuppliers(filteredSuppliers);
-
-                currentFilteredSuppliers = filteredSuppliers;
-                console.log('Proveedores filtrados guardados:', currentFilteredSuppliers.length);
-
-                console.log('Proveedores filtrados y ordenados:', filteredSuppliers.length);
-
-                if (filteredSuppliers.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="text-center py-4">
-                                <div class="text-muted">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                                    </svg>
-                                    <p class="mt-2 mb-0">No se encontraron proveedores</p>
-                                    <small>Intenta con otros criterios de búsqueda</small>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    tableBody.innerHTML = filteredSuppliers.map(supplier => `
-                        <tr data-supplier-id="${supplier.supplierId || 'N/A'}">
-                            <th scope="row">${supplier.supplierId || 'N/A'}</th>
-                            <td>${supplier.name || ''}</td>
-                            <td>${supplier.phone || ''}</td>
-                            <td>${supplier.email || ''}</td>
-                            <td>
-                                <span class="badge ${supplier.active ? 'bg-success' : 'bg-danger'}">
-                                    ${supplier.active ? 'Activo' : 'Inactivo'}
-                                </span>
-                            </td>
-                        </tr>
-                    `).join('');
-                }
-            }
-
-            if (applyFiltersBtn) {
-                applyFiltersBtn.addEventListener('click', applyAdvancedFilters);
-            }
-            
-            if (clearFiltersBtn) {
-                clearFiltersBtn.addEventListener('click', clearAllFilters);
-            }
-
-            if (filterButton) {
-                filterButton.addEventListener('click', toggleFiltersAccordion);
-            }
-
-            if (sortButton) {
-                sortButton.addEventListener('click', toggleSortDropdown);
-            }
-
-            const sortOptions = document.querySelectorAll('.sort-option');
-            sortOptions.forEach(option => {
-                option.addEventListener('click', function(this: HTMLElement) {
-                    const sortBy = this.getAttribute('data-sort-by');
-                    const sortOrder = this.getAttribute('data-sort-order');
-                    applySort(sortBy, sortOrder);
-                });
-            });
-
-            const quickSearchInputs = [searchId, searchName, searchPhone, searchEmail, searchStatus];
-            quickSearchInputs.forEach(input => {
-                if (input) {
-                    input.addEventListener('input', applyQuickSearch);
-                    input.addEventListener('change', applyQuickSearch);
-                }
-            });
-
-            const advancedFilterInputs = [filterId, filterName, filterPhone, filterEmail, filterStatus];
-            advancedFilterInputs.forEach(input => {
-                if (input) {
-                    input.addEventListener('keypress', function(e) {
-                        if ((e as KeyboardEvent).key === 'Enter') {
-                            applyAdvancedFilters();
-                        }
-                    });
-                }
-            });
-
-            document.addEventListener('click', function(event) {
-                const target = event.target as Node;
-                if (isSortVisible && sortButton && !sortButton.contains(target) && sortDropdown && !sortDropdown.contains(target)) {
-                    toggleSortDropdown();
-                }
-                if (isFiltersVisible && filterButton && !filterButton.contains(target) && filtersAccordion && !filtersAccordion.contains(target)) {
-                    toggleFiltersAccordion();
-                }
-            });
-
-            updateTable();
-            console.log('Sistema de proveedores inicializado correctamente');
-        });
-    </script>
 </Layout>
 
-    <style>
-        /* Solo estilos personalizados que no cubre Bootstrap */
-        .btn-primary {
-            background-color: #482E21;
-            border-color: #482E21;
-        }
-        .btn-primary:hover {
-            background-color: #3a251a;
-            border-color: #3a251a;
-        }
-        .btn-warning {
-            background-color: #F3DCBB;
-            color: #000;
-            border-color: #F3DCBB;
-        }
-        .btn-warning:hover {
-            background-color: #e2c89c;
-            color: #000;
-            border-color: #e2c89c;
-        }
-        .btn-danger {
-            background-color: #930000;
-            border-color: #930000;
-        }
-        .btn-danger:hover {
-            background-color: #7a0000;
-            border-color: #7a0000;
-        }
-    </style>
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
+    }
+
+    .form-label {
+        font-size: 1rem;
+    }
+
+    .table th {
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 12px 16px;
+    }
+
+    .table td {
+        padding: 12px 16px;
+        vertical-align: middle;
+    }
+
+    .btn {
+        border-radius: 8px;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+</style>

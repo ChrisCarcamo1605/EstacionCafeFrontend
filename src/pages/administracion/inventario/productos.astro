@@ -19,1092 +19,194 @@ const inventoryRouteMap: Record<string, string> = {
   Proveedores: "/administracion/inventario/proveedores",
 };
 
-const productsResponse = await fetch(`${BACKEND_API_URL}/products`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+const initialProducts = [
+    { productId: "PROD-001", name: "Café Americano", productTypeId: "1", description: "Café negro americano", cost: "2.50", price: "5.00", active: true },
+    { productId: "PROD-002", name: "Capuchino", productTypeId: "1", description: "Café con leche espumosa", cost: "3.00", price: "6.50", active: true },
+    { productId: "PROD-003", name: "Croissant", productTypeId: "2", description: "Croissant de mantequilla", cost: "1.50", price: "3.50", active: true },
+    { productId: "PROD-004", name: "Té Verde", productTypeId: "1", description: "Té verde natural", cost: "1.80", price: "4.00", active: false },
+    { productId: "PROD-005", name: "Muffin de Chocolate", productTypeId: "2", description: "Muffin con chips de chocolate", cost: "2.00", price: "4.50", active: true }
+];
 
-let productsData = null;
-if (productsResponse.ok) {
-    const result = await productsResponse.json();
-    productsData = result.data;
-    console.log('Datos de productos:', productsData);
-} else {
-    console.error("Error fetching products data:", productsResponse.statusText);
-}
-
-const typesResponse = await fetch(`${BACKEND_API_URL}/product-type`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-
-let productTypesData = [];
-if (typesResponse.ok) {
-    const result = await typesResponse.json();
-    productTypesData = result.data || [];
-    console.log('Tipos de productos:', productTypesData);
-} else {
-    console.error("Error fetching product types data:", typesResponse.statusText);
-}
-
-const initialProducts = productsData || [];
-const productTypes = productTypesData || [];
+const productTypes = [
+    { productTypeId: "1", name: "Bebidas" },
+    { productTypeId: "2", name: "Repostería" },
+    { productTypeId: "3", name: "Sandwiches" }
+];
 ---
 
-<Layout>
-    <div class="d-flex flex-column min-vh-100">
+<Layout title="Productos">
+    <div class="d-flex flex-column" style="min-height: 100vh;">
         <Navbar />
 
         <div class="d-flex flex-grow-1">
             <LeftBar title="Inventario" options={sidebarOptions} selectedOption="Productos" routeMap={inventoryRouteMap} />
 
-            <div class="flex-grow-1 bg-light position-relative" style="font-family: 'Roboto', sans-serif;">
+            <div class="flex-grow-1" style="background-color: #f8f9fa; font-family: 'Roboto', sans-serif;">
                 <div class="p-4">
-                    <div class="position-absolute" style="top: 100px; right: 20px; z-index: 10;">
-                        <div class="d-flex flex-column gap-1">
-                            <button 
-                                class="btn d-flex align-items-center justify-content-center gap-2" 
-                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;"
-                                id="addProductBtn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                                </svg>
-                                Agregar Producto
-                            </button>
-                            <button 
-                                class="btn d-flex align-items-center justify-content-center gap-2" 
-                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; color: rgb(0, 0, 0); border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;"
-                                id="updateProductBtn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                </svg>
-                                Actualizar
-                            </button>
-                            <button 
-                                class="btn d-flex align-items-center justify-content-center gap-2" 
-                                style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #930000; color: white; border: 1px solid #930000; width: 257px; height: 50px; font-size: 1.1rem;"
-                                id="deleteProductBtn"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                    <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                </svg>
-                                Eliminar
-                            </button>
-                        </div>
-                    </div>
+                    <div class="d-flex align-items-start gap-5">
+                        <div style="width: calc(100% - 300px);">
+                            <h1 class="h3 fw-bold mb-4" style="font-family: 'Roboto', sans-serif;">Productos</h1>
 
-                    <div style="margin-right: 300px;">
-                        <div class="d-flex align-items-start">
-                            <div style="width: 100%;">
-                                <h1 class="h3 fw-bold mb-4">Productos</h1>
-
-                                <div class="d-flex gap-4 mb-3">
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
-                                        <input type="text" class="form-control search-input" id="searchId" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" readonly />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
-                                        <input type="text" class="form-control search-input" id="searchName" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Tipo de Producto</label>
-                                        <select class="form-select search-input" id="searchProductType" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
-                                            <option value="">Todos los tipos</option>
-                                            {productTypes.map((type: any) => (
-                                                <option value={type.productTypeId}>{type.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                            <div class="d-flex gap-4 mb-3">
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">ID</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" readonly />
                                 </div>
 
-                                <div class="d-flex gap-4">
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Descripción</label>
-                                        <input type="text" class="form-control search-input" id="searchDescription" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Costo</label>
-                                        <input type="number" class="form-control search-input" id="searchCost" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" step="0.01" min="0" />
-                                    </div>
-
-                                    <div class="flex-grow-1">
-                                        <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Precio Venta</label>
-                                        <input type="number" class="form-control search-input" id="searchPrice" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" step="0.01" min="0" />
-                                    </div>
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Nombre</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
 
-                                <div id="message" class="mt-3" style="display: none;"></div>
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Tipo de Producto</label>
+                                    <select class="form-select" style="font-family: 'Roboto', sans-serif; border-radius: 8px;">
+                                        <option selected>Seleccionar</option>
+                                        {productTypes.map((type) => (
+                                            <option value={type.productTypeId}>{type.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
 
-                                <div class="d-flex gap-4 mt-3 align-items-center">
-                                    <div class="position-relative">
-                                        <button 
-                                            class="btn mt-4 d-flex align-items-center gap-2 sort-toggle-btn" 
-                                            style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
-                                            type="button"
-                                            id="sortButton"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
-                                            </svg>
-                                            Ordenar
-                                        </button>
-                                        <div class="sort-dropdown-menu" id="sortDropdown" style="display: none;">
-                                            <div class="card shadow-sm border-0 mt-1">
-                                                <div class="card-body p-2">
-                                                    <h6 class="fw-bold mb-2">Ordenar por</h6>
-                                                    <div class="sort-options">
-                                                        <div class="sort-option" data-sort-by="productId" data-sort-order="asc">
-                                                            <span>ID (Ascendente)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="productId" data-sort-order="desc">
-                                                            <span>ID (Descendente)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="name" data-sort-order="asc">
-                                                            <span>Nombre (A-Z)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="name" data-sort-order="desc">
-                                                            <span>Nombre (Z-A)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="cost" data-sort-order="asc">
-                                                            <span>Costo (Menor a Mayor)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="cost" data-sort-order="desc">
-                                                            <span>Costo (Mayor a Menor)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="price" data-sort-order="asc">
-                                                            <span>Precio (Menor a Mayor)</span>
-                                                        </div>
-                                                        <div class="sort-option" data-sort-by="price" data-sort-order="desc">
-                                                            <span>Precio (Mayor a Menor)</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="position-relative">
-                                        <button 
-                                            class="btn mt-4 d-flex align-items-center gap-2 filter-toggle-btn" 
-                                            style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;"
-                                            type="button"
-                                            id="filterButton"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                                <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
-                                            </svg>
-                                            Filtrar
-                                        </button>
-                                    </div>
+                            <div class="d-flex gap-4">
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Descripción</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
                                 </div>
 
-                                <div class="mt-3" id="filtersAccordion" style="display: none;">
-                                    <div class="card card-body border-0 shadow-sm">
-                                        <h6 class="fw-bold mb-3">Filtros Avanzados</h6>
-                                        
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">ID</label>
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control filter-input" 
-                                                    id="filterId"
-                                                    placeholder="Buscar por ID"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Nombre</label>
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control filter-input" 
-                                                    id="filterName"
-                                                    placeholder="Buscar por nombre"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Tipo de Producto</label>
-                                                <select class="form-select filter-input" id="filterProductType">
-                                                    <option value="">Todos los tipos</option>
-                                                    {productTypes.map((type: any) => (
-                                                        <option value={type.productTypeId}>{type.name}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Descripción</label>
-                                                <input 
-                                                    type="text" 
-                                                    class="form-control filter-input" 
-                                                    id="filterDescription"
-                                                    placeholder="Buscar en descripción"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Costo Mínimo</label>
-                                                <input 
-                                                    type="number" 
-                                                    class="form-control filter-input" 
-                                                    id="filterCostMin"
-                                                    placeholder="Costo mínimo"
-                                                    min="0"
-                                                    step="0.01"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Costo Máximo</label>
-                                                <input 
-                                                    type="number" 
-                                                    class="form-control filter-input" 
-                                                    id="filterCostMax"
-                                                    placeholder="Costo máximo"
-                                                    min="0"
-                                                    step="0.01"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Precio Mínimo</label>
-                                                <input 
-                                                    type="number" 
-                                                    class="form-control filter-input" 
-                                                    id="filterPriceMin"
-                                                    placeholder="Precio mínimo"
-                                                    min="0"
-                                                    step="0.01"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Precio Máximo</label>
-                                                <input 
-                                                    type="number" 
-                                                    class="form-control filter-input" 
-                                                    id="filterPriceMax"
-                                                    placeholder="Precio máximo"
-                                                    min="0"
-                                                    step="0.01"
-                                                />
-                                            </div>
-                                            
-                                            <div class="col-md-4 d-flex align-items-end gap-2">
-                                                <button 
-                                                    class="btn btn-primary flex-grow-1" 
-                                                    id="applyFilters"
-                                                    style="background-color: #482E21; border-color: #482E21;"
-                                                >
-                                                    Aplicar Filtros
-                                                </button>
-                                                <button 
-                                                    class="btn btn-outline-secondary" 
-                                                    id="clearFilters"
-                                                >
-                                                    Limpiar
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Costo</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+
+                                <div class="flex-grow-1">
+                                    <label class="form-label fw-bold mb-2" style="font-family: 'Roboto', sans-serif;">Precio Venta</label>
+                                    <input type="text" class="form-control" style="font-family: 'Roboto', sans-serif; border-radius: 8px;" />
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-4 mt-3 align-items-center">
+                                <div>
+                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                                        </svg>
+                                        Ordenar
+                                    </button>
+                                </div>
+                                <div>
+                                    <button class="btn mt-4 d-flex align-items-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #E6E6E6; border: 1px solid #E6E6E6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                            <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/>
+                                        </svg>
+                                        Filtrar
+                                    </button>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="mt-5">
-                            <div class="card shadow-sm border-0" style="border-radius: 8px;">
-                                <div class="card-body p-0">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover mb-0">
-                                            <thead style="background-color: #482E21; color: white;">
-                                                <tr>
-                                                    <th scope="col" style="width: 8%;">ID</th>
-                                                    <th scope="col" style="width: 15%;">Nombre</th>
-                                                    <th scope="col" style="width: 15%;">Tipo</th>
-                                                    <th scope="col" style="width: 22%;">Descripción</th>
-                                                    <th scope="col" style="width: 12%;">Costo</th>
-                                                    <th scope="col" style="width: 12%;">Precio</th>
-                                                    <th scope="col" style="width: 10%;">Estado</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="productsTableBody">
-                                                {initialProducts.length > 0 ? (
-                                                    initialProducts.map((product: any) => {
-                                                        const productType = productTypes.find((type: any) => type.productTypeId === product.productTypeId);
-                                                        const productTypeName = productType ? productType.name : 'Sin tipo';
-                                                        
-                                                        return (
-                                                            <tr data-product-id={product.productId}>
-                                                                <th scope="row">{product.productId || 'N/A'}</th>
-                                                                <td>{product.name || ''}</td>
-                                                                <td>{productTypeName}</td>
-                                                                <td>{product.description || ''}</td>
-                                                                <td>${product.cost ? parseFloat(product.cost).toFixed(2) : '0.00'}</td>
-                                                                <td>${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}</td>
-                                                                <td>
-                                                                    <span class={`badge ${product.active ? 'bg-success' : 'bg-danger'}`}>
-                                                                        {product.active ? 'Activo' : 'Inactivo'}
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })
-                                                ) : (
+                    <div class="mt-5">
+                        <div class="card shadow-sm border-0" style="border-radius: 8px;">
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead style="background-color: #482E21; color: white;">
+                                            <tr>
+                                                <th scope="col" style="width: 15%;">ID</th>
+                                                <th scope="col" style="width: 20%;">Nombre</th>
+                                                <th scope="col" style="width: 15%;">Tipo</th>
+                                                <th scope="col" style="width: 25%;">Descripción</th>
+                                                <th scope="col" style="width: 12%;">Costo</th>
+                                                <th scope="col" style="width: 12%;">Precio</th>
+                                                <th scope="col" style="width: 10%;">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {initialProducts.map((product) => {
+                                                const productType = productTypes.find(type => type.productTypeId === product.productTypeId);
+                                                const productTypeName = productType ? productType.name : 'Sin tipo';
+                                                
+                                                return (
                                                     <tr>
-                                                        <td colspan="7" class="text-center py-4">
-                                                            <div class="text-muted">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-inbox" viewBox="0 0 16 16">
-                                                                    <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm-1.17-.437A1.5 1.5 0 0 1 4.98 3h6.04a1.5 1.5 0 0 1 1.17.563l3.7 4.625a.5.5 0 0 1 .106.374l-.39 3.124A1.5 1.5 0 0 1 14.117 13H1.883a1.5 1.5 0 0 1-1.489-1.314l-.39-3.124a.5.5 0 0 1 .106-.374l3.7-4.625z"/>
-                                                                </svg>
-                                                                <p class="mt-2 mb-0">No hay datos disponibles</p>
-                                                                <small>Verifica que el endpoint esté funcionando correctamente</small>
-                                                            </div>
+                                                        <th scope="row">{product.productId}</th>
+                                                        <td>{product.name}</td>
+                                                        <td>{productTypeName}</td>
+                                                        <td>{product.description}</td>
+                                                        <td>${product.cost}</td>
+                                                        <td>${product.price}</td>
+                                                        <td>
+                                                            <span class={`badge ${product.active ? 'bg-success' : 'bg-danger'}`}>
+                                                                {product.active ? 'Activo' : 'Inactivo'}
+                                                            </span>
                                                         </td>
                                                     </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="position-absolute mt-5" style="top: 100px; right: 40px;">
+                    <div class="d-flex flex-column gap-1">
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #482E21; color: white; border: 1px solid #482E21; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                            </svg>
+                            Agregar
+                        </button>
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #F3DCBB; border: 1px solid #F3DCBB; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                            Actualizar
+                        </button>
+                        <button class="btn d-flex align-items-center justify-content-center gap-2" style="font-family: 'Roboto', sans-serif; border-radius: 8px; background-color: #930000; color: white; border: 1px solid #930000; width: 257px; height: 50px; font-size: 1.1rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                            </svg>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <div 
-        id="initial-products-data" 
-        data-products={JSON.stringify(initialProducts)}
-        data-api-url={BACKEND_API_URL}
-        style="display: none;"
-    ></div>
-    <div 
-        id="product-types-data" 
-        data-types={JSON.stringify(productTypes)}
-        style="display: none;"
-    ></div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Inicializando funcionalidad de productos...');
-            
-            let selectedProductId: string | null = null;
-            let allProducts: any[] = [];
-            let productTypes: any[] = [];
-            let currentFilteredProducts: any[] = [];
-
-            const addProductBtn = document.getElementById('addProductBtn');
-            const updateProductBtn = document.getElementById('updateProductBtn');
-            const deleteProductBtn = document.getElementById('deleteProductBtn');
-            const message = document.getElementById('message');
-
-            const initialDataElement = document.getElementById('initial-products-data');
-            
-            // Obtener la URL de la API desde el data attribute
-            const BACKEND_API_URL = initialDataElement?.dataset.apiUrl || 'http://localhost:3484/api';
-            
-            if (initialDataElement && initialDataElement.dataset.products) {
-                allProducts = JSON.parse(initialDataElement.dataset.products);
-                console.log('Datos iniciales cargados:', allProducts.length, 'productos');
-                console.log('Estructura del primer producto:', allProducts[0]);
-            } else {
-                console.error('No se pudieron cargar los datos iniciales');
-                allProducts = [];
-            }
-
-            const typesDataElement = document.getElementById('product-types-data');
-            if (typesDataElement && typesDataElement.dataset.types) {
-                productTypes = JSON.parse(typesDataElement.dataset.types);
-                console.log('Tipos de productos cargados:', productTypes.length, 'tipos');
-            } else {
-                console.error('No se pudieron cargar los tipos de productos');
-                productTypes = [];
-            }
-
-            async function addNewProduct() {
-                const name = (document.getElementById('searchName') as HTMLInputElement)?.value.trim();
-                const description = (document.getElementById('searchDescription') as HTMLInputElement)?.value.trim();
-                const productTypeId = (document.getElementById('searchProductType') as HTMLSelectElement)?.value;
-                const cost = (document.getElementById('searchCost') as HTMLInputElement)?.value.trim();
-                const price = (document.getElementById('searchPrice') as HTMLInputElement)?.value.trim();
-
-                if (!name || !description || !productTypeId || !cost || !price) {
-                    showMessage('Por favor complete todos los campos obligatorios', 'error');
-                    return;
-                }
-
-                if (parseFloat(cost) < 0 || parseFloat(price) < 0) {
-                    showMessage('El costo y precio deben ser valores positivos', 'error');
-                    return;
-                }
-
-                try {
-                    const productData = {
-                        name: name,
-                        description: description,
-                        productTypeId: parseInt(productTypeId),
-                        price: parseFloat(price).toString(), 
-                        cost: parseFloat(cost).toString(),   
-                        active: true
-                    };
-
-                    console.log('Enviando datos para agregar:', productData);
-
-                    const response = await fetch(`${BACKEND_API_URL}/products`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(productData)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Producto agregado exitosamente:', result);
-                        showMessage('Producto agregado exitosamente', 'success');
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al agregar producto:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo agregar el producto'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            async function updateProduct() {
-                if (!selectedProductId) {
-                    showMessage('Por favor seleccione un producto de la tabla haciendo clic en la fila', 'error');
-                    return;
-                }
-
-                const name = (document.getElementById('searchName') as HTMLInputElement)?.value.trim();
-                const description = (document.getElementById('searchDescription') as HTMLInputElement)?.value.trim();
-                const productTypeId = (document.getElementById('searchProductType') as HTMLSelectElement)?.value;
-                const cost = (document.getElementById('searchCost') as HTMLInputElement)?.value.trim();
-                const price = (document.getElementById('searchPrice') as HTMLInputElement)?.value.trim();
-
-                if (!name || !description || !productTypeId || !cost || !price) {
-                    showMessage('Por favor complete todos los campos obligatorios', 'error');
-                    return;
-                }
-
-                if (parseFloat(cost) < 0 || parseFloat(price) < 0) {
-                    showMessage('El costo y precio deben ser valores positivos', 'error');
-                    return;
-                }
-
-                try {
-                    const productData = {
-                        name: name,
-                        description: description,
-                        productTypeId: parseInt(productTypeId),
-                        price: parseFloat(price).toString(), 
-                        cost: parseFloat(cost).toString(),  
-                        active: true
-                    };
-
-                    console.log('Enviando datos para actualizar:', productData, 'ID:', selectedProductId);
-
-                    const response = await fetch(`${BACKEND_API_URL}/products/${selectedProductId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(productData)
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        console.log('Producto actualizado exitosamente:', result);
-                        showMessage('Producto actualizado exitosamente', 'success');
-                        clearSelection();
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al actualizar producto:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo actualizar el producto'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            async function deleteProduct() {
-                if (!selectedProductId) {
-                    showMessage('Por favor seleccione un producto de la tabla haciendo clic en la fila', 'error');
-                    return;
-                }
-
-                if (!confirm('¿Está seguro de que desea ELIMINAR PERMANENTEMENTE este producto? Esta acción no se puede deshacer.')) {
-                    return;
-                }
-
-                try {
-                    console.log('Eliminando producto ID:', selectedProductId);
-
-                    const response = await fetch(`${BACKEND_API_URL}/products/${selectedProductId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-
-                    if (response.ok) {
-                        console.log('Producto eliminado exitosamente');
-                        showMessage('Producto eliminado exitosamente', 'success');
-                        clearSelection();
-                        clearForm();
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1500);
-                    } else {
-                        const errorData = await response.json();
-                        console.error('Error al eliminar producto:', errorData);
-                        showMessage(`Error: ${errorData.message || 'No se pudo eliminar el producto'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error de red:', error);
-                    showMessage('Error de conexión. Verifique que el servidor esté funcionando.', 'error');
-                }
-            }
-
-            function showMessage(text: string, type: string) {
-                if (!message) return;
-                
-                message.textContent = text;
-                message.style.display = 'block';
-                message.className = `alert alert-${type === 'success' ? 'success' : 'danger'} mt-3`;
-                
-                setTimeout(() => {
-                    message.style.display = 'none';
-                }, 5000);
-            }
-
-            function clearForm() {
-                const idInput = document.getElementById('searchId') as HTMLInputElement;
-                const nameInput = document.getElementById('searchName') as HTMLInputElement;
-                const productTypeInput = document.getElementById('searchProductType') as HTMLSelectElement;
-                const descriptionInput = document.getElementById('searchDescription') as HTMLInputElement;
-                const costInput = document.getElementById('searchCost') as HTMLInputElement;
-                const priceInput = document.getElementById('searchPrice') as HTMLInputElement;
-                
-                if (idInput) idInput.value = '';
-                if (nameInput) nameInput.value = '';
-                if (productTypeInput) productTypeInput.value = '';
-                if (descriptionInput) descriptionInput.value = '';
-                if (costInput) costInput.value = '';
-                if (priceInput) priceInput.value = '';
-            }
-
-            function clearSelection() {
-                selectedProductId = null;
-                const allRows = document.querySelectorAll('#productsTableBody tr');
-                allRows.forEach(row => {
-                    row.classList.remove('table-primary');
-                });
-            }
-
-            function loadProductData(productId: string) {
-                console.log('Buscando producto con ID:', productId);
-                
-                const product = currentFilteredProducts.find(p => p.productId == productId);
-                
-                if (!product) {
-                    console.error('Producto no encontrado con ID:', productId);
-                    showMessage('Error: No se pudo cargar los datos del producto', 'error');
-                    return;
-                }
-
-                console.log('Producto encontrado:', product);
-
-                const idInput = document.getElementById('searchId') as HTMLInputElement;
-                const nameInput = document.getElementById('searchName') as HTMLInputElement;
-                const productTypeInput = document.getElementById('searchProductType') as HTMLSelectElement;
-                const descriptionInput = document.getElementById('searchDescription') as HTMLInputElement;
-                const costInput = document.getElementById('searchCost') as HTMLInputElement;
-                const priceInput = document.getElementById('searchPrice') as HTMLInputElement;
-                
-                if (idInput) idInput.value = product.productId || '';
-                if (nameInput) nameInput.value = product.name || '';
-                if (productTypeInput) productTypeInput.value = product.productTypeId || '';
-                if (descriptionInput) descriptionInput.value = product.description || '';
-                if (costInput) costInput.value = product.cost || '';
-                if (priceInput) priceInput.value = product.price || '';
-
-                console.log('Formulario llenado exitosamente para producto:', productId);
-            }
-
-            if (addProductBtn) {
-                addProductBtn.addEventListener('click', addNewProduct);
-            }
-
-            if (updateProductBtn) {
-                updateProductBtn.addEventListener('click', updateProduct);
-            }
-
-            if (deleteProductBtn) {
-                deleteProductBtn.addEventListener('click', deleteProduct);
-            }
-
-            const applyFiltersBtn = document.getElementById('applyFilters');
-            const clearFiltersBtn = document.getElementById('clearFilters');
-            const filterButton = document.getElementById('filterButton');
-            const filtersAccordion = document.getElementById('filtersAccordion');
-            const sortButton = document.getElementById('sortButton');
-            const sortDropdown = document.getElementById('sortDropdown');
-            
-            const searchId = document.getElementById('searchId') as HTMLInputElement;
-            const searchName = document.getElementById('searchName') as HTMLInputElement;
-            const searchProductType = document.getElementById('searchProductType') as HTMLSelectElement;
-            const searchDescription = document.getElementById('searchDescription') as HTMLInputElement;
-            const searchCost = document.getElementById('searchCost') as HTMLInputElement;
-            const searchPrice = document.getElementById('searchPrice') as HTMLInputElement;
-            
-            const filterId = document.getElementById('filterId') as HTMLInputElement;
-            const filterName = document.getElementById('filterName') as HTMLInputElement;
-            const filterProductType = document.getElementById('filterProductType') as HTMLSelectElement;
-            const filterDescription = document.getElementById('filterDescription') as HTMLInputElement;
-            const filterCostMin = document.getElementById('filterCostMin') as HTMLInputElement;
-            const filterCostMax = document.getElementById('filterCostMax') as HTMLInputElement;
-            const filterPriceMin = document.getElementById('filterPriceMin') as HTMLInputElement;
-            const filterPriceMax = document.getElementById('filterPriceMax') as HTMLInputElement;
-            
-            let currentFilters = {
-                id: '',
-                name: '',
-                productType: '',
-                description: '',
-                costMin: '',
-                costMax: '',
-                priceMin: '',
-                priceMax: '',
-            };
-
-            let currentSort = {
-                by: 'productId',
-                order: 'asc'
-            };
-
-            let isFiltersVisible = false;
-            let isSortVisible = false;
-
-            function toggleSortDropdown() {
-                isSortVisible = !isSortVisible;
-                if (sortDropdown) {
-                    if (isSortVisible) {
-                        sortDropdown.style.display = 'block';
-                        if (sortButton) sortButton.classList.add('active');
-                        if (isFiltersVisible) {
-                            toggleFiltersAccordion();
-                        }
-                    } else {
-                        sortDropdown.style.display = 'none';
-                        if (sortButton) sortButton.classList.remove('active');
-                    }
-                }
-            }
-
-            function toggleFiltersAccordion() {
-                isFiltersVisible = !isFiltersVisible;
-                if (filtersAccordion) {
-                    if (isFiltersVisible) {
-                        filtersAccordion.style.display = 'block';
-                        if (filterButton) filterButton.classList.add('active');
-                        if (isSortVisible) {
-                            toggleSortDropdown();
-                        }
-                    } else {
-                        filtersAccordion.style.display = 'none';
-                        if (filterButton) filterButton.classList.remove('active');
-                    }
-                }
-            }
-
-            function applySort(sortBy: string | null, sortOrder: string | null) {
-                console.log('Aplicando ordenamiento:', sortBy, sortOrder);
-                if (sortBy) currentSort.by = sortBy;
-                if (sortOrder) currentSort.order = sortOrder;
-                updateTable();
-                
-                if (isSortVisible) {
-                    toggleSortDropdown();
-                }
-            }
-
-            function applyQuickSearch() {
-                console.log('Aplicando búsqueda rápida...');
-                currentFilters = {
-                    id: searchId ? searchId.value.toLowerCase() : '',
-                    name: searchName ? searchName.value.toLowerCase() : '',
-                    productType: searchProductType ? searchProductType.value : '',
-                    description: searchDescription ? searchDescription.value.toLowerCase() : '',
-                    costMin: '',
-                    costMax: '',
-                    priceMin: '',
-                    priceMax: '',
-                };
-                updateTable();
-            }
-
-            function applyAdvancedFilters() {
-                console.log('Aplicando filtros avanzados...');
-                currentFilters = {
-                    id: filterId ? filterId.value.toLowerCase() : '',
-                    name: filterName ? filterName.value.toLowerCase() : '',
-                    productType: filterProductType ? filterProductType.value : '',
-                    description: filterDescription ? filterDescription.value.toLowerCase() : '',
-                    costMin: filterCostMin ? filterCostMin.value : '',
-                    costMax: filterCostMax ? filterCostMax.value : '',
-                    priceMin: filterPriceMin ? filterPriceMin.value : '',
-                    priceMax: filterPriceMax ? filterPriceMax.value : '',
-                };
-                updateTable();
-                
-                if (isFiltersVisible) {
-                    toggleFiltersAccordion();
-                }
-            }
-
-            function clearAllFilters() {
-                console.log('Limpiando todos los filtros...');
-                
-                if (searchId) searchId.value = '';
-                if (searchName) searchName.value = '';
-                if (searchProductType) searchProductType.value = '';
-                if (searchDescription) searchDescription.value = '';
-                if (searchCost) searchCost.value = '';
-                if (searchPrice) searchPrice.value = '';
-                
-                if (filterId) filterId.value = '';
-                if (filterName) filterName.value = '';
-                if (filterProductType) filterProductType.value = '';
-                if (filterDescription) filterDescription.value = '';
-                if (filterCostMin) filterCostMin.value = '';
-                if (filterCostMax) filterCostMax.value = '';
-                if (filterPriceMin) filterPriceMin.value = '';
-                if (filterPriceMax) filterPriceMax.value = '';
-                
-                currentFilters = {
-                    id: '',
-                    name: '',
-                    productType: '',
-                    description: '',
-                    costMin: '',
-                    costMax: '',
-                    priceMin: '',
-                    priceMax: '',
-                };
-                
-                updateTable();
-            }
-
-            function sortProducts(products: any[]) {
-                return products.sort((a, b) => {
-                    let valueA, valueB;
-                    
-                    switch (currentSort.by) {
-                        case 'productId':
-                            valueA = a.productId || 0;
-                            valueB = b.productId || 0;
-                            break;
-                        case 'name':
-                            valueA = a.name || '';
-                            valueB = b.name || '';
-                            valueA = valueA.toString().toLowerCase();
-                            valueB = valueB.toString().toLowerCase();
-                            break;
-                        case 'cost':
-                            valueA = parseFloat(a.cost || 0);
-                            valueB = parseFloat(b.cost || 0);
-                            break;
-                        case 'price':
-                            valueA = parseFloat(a.price || 0);
-                            valueB = parseFloat(b.price || 0);
-                            break;
-                        default:
-                            valueA = a.productId || 0;
-                            valueB = b.productId || 0;
-                    }
-                    
-                    if (currentSort.order === 'asc') {
-                        return valueA < valueB ? -1 : valueA > valueB ? 1 : 0;
-                    } else {
-                        return valueA > valueB ? -1 : valueA < valueB ? 1 : 0;
-                    }
-                });
-            }
-
-            function updateTable() {
-                const tableBody = document.getElementById('productsTableBody');
-                if (!tableBody) {
-                    console.error('No se encontró el elemento productsTableBody');
-                    return;
-                }
-
-                if (!allProducts.length) {
-                    console.log('No hay datos de productos para mostrar');
-                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay datos disponibles</td></tr>';
-                    return;
-                }
-                
-                console.log('Filtros aplicados:', currentFilters);
-                console.log('Ordenamiento aplicado:', currentSort);
-
-                let filteredProducts = allProducts.filter(product => {
-                    if (currentFilters.id && product.productId) {
-                        const productId = product.productId.toString().toLowerCase();
-                        if (!productId.includes(currentFilters.id)) {
-                            return false;
-                        }
-                    }
-                    
-                    if (currentFilters.name && product.name) {
-                        const productName = product.name.toLowerCase();
-                        if (!productName.includes(currentFilters.name)) {
-                            return false;
-                        }
-                    }
-                    
-                    if (currentFilters.productType) {
-                        if (!product.productTypeId && currentFilters.productType !== '') {
-                            return false;
-                        }
-                        if (product.productTypeId && product.productTypeId.toString() !== currentFilters.productType) {
-                            return false;
-                        }
-                    }
-                    
-                    if (currentFilters.description && product.description) {
-                        const productDescription = product.description.toLowerCase();
-                        if (!productDescription.includes(currentFilters.description)) {
-                            return false;
-                        }
-                    }
-                    
-                    const productCost = parseFloat(product.cost || 0);
-                    if (currentFilters.costMin && productCost < parseFloat(currentFilters.costMin)) {
-                        return false;
-                    }
-                    if (currentFilters.costMax && productCost > parseFloat(currentFilters.costMax)) {
-                        return false;
-                    }
-                    
-                    const productPrice = parseFloat(product.price || 0);
-                    if (currentFilters.priceMin && productPrice < parseFloat(currentFilters.priceMin)) {
-                        return false;
-                    }
-                    if (currentFilters.priceMax && productPrice > parseFloat(currentFilters.priceMax)) {
-                        return false;
-                    }
-                    
-                    return true;
-                });
-
-                filteredProducts = sortProducts(filteredProducts);
-
-                currentFilteredProducts = filteredProducts;
-                console.log('Productos filtrados guardados:', currentFilteredProducts.length);
-
-                if (filteredProducts.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="text-center py-4">
-                                <div class="text-muted">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                                    </svg>
-                                    <p class="mt-2 mb-0">No se encontraron productos</p>
-                                    <small>Intenta con otros criterios de búsqueda</small>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    tableBody.innerHTML = filteredProducts.map(product => {
-                        const productType = productTypes.find(type => type.productTypeId === product.productTypeId);
-                        const productTypeName = productType ? productType.name : 'Sin tipo';
-                        
-                        return `
-                        <tr data-product-id="${product.productId || 'N/A'}">
-                            <th scope="row">${product.productId || 'N/A'}</th>
-                            <td>${product.name || ''}</td>
-                            <td>${productTypeName}</td>
-                            <td>${product.description || ''}</td>
-                            <td>$${parseFloat(product.cost || 0).toFixed(2)}</td>
-                            <td>$${parseFloat(product.price || 0).toFixed(2)}</td>
-                            <td>
-                                <span class="badge ${product.active ? 'bg-success' : 'bg-danger'}">
-                                    ${product.active ? 'Activo' : 'Inactivo'}
-                                </span>
-                            </td>
-                        </tr>
-                    `}).join('');
-                }
-            }
-
-            if (applyFiltersBtn) {
-                applyFiltersBtn.addEventListener('click', applyAdvancedFilters);
-            }
-            
-            if (clearFiltersBtn) {
-                clearFiltersBtn.addEventListener('click', clearAllFilters);
-            }
-
-            if (filterButton) {
-                filterButton.addEventListener('click', toggleFiltersAccordion);
-            }
-
-            if (sortButton) {
-                sortButton.addEventListener('click', toggleSortDropdown);
-            }
-
-            const sortOptions = document.querySelectorAll('.sort-option');
-            sortOptions.forEach(option => {
-                option.addEventListener('click', function(this: HTMLElement) {
-                    const sortBy = this.getAttribute('data-sort-by');
-                    const sortOrder = this.getAttribute('data-sort-order');
-                    applySort(sortBy, sortOrder);
-                });
-            });
-
-            const quickSearchInputs = [searchId, searchName, searchProductType, searchDescription, searchCost, searchPrice];
-            quickSearchInputs.forEach(input => {
-                if (input) {
-                    input.addEventListener('input', applyQuickSearch);
-                    input.addEventListener('change', applyQuickSearch);
-                }
-            });
-
-            const advancedFilterInputs = [filterId, filterName, filterProductType, filterDescription, filterCostMin, filterCostMax, filterPriceMin, filterPriceMax];
-            advancedFilterInputs.forEach(input => {
-                if (input) {
-                    input.addEventListener('keypress', function(e) {
-                        if ((e as KeyboardEvent).key === 'Enter') {
-                            applyAdvancedFilters();
-                        }
-                    });
-                }
-            });
-
-            let lastClickTime = 0;
-            const DOUBLE_CLICK_DELAY = 300;
-
-            const tableBody = document.getElementById('productsTableBody');
-            if (tableBody) {
-                tableBody.addEventListener('click', function(event) {
-                    const target = event.target as HTMLElement;
-                    if (!target) return;
-                    const row = target.closest('tr');
-                    
-                    if (row && row.getAttribute('data-product-id')) {
-                        const currentTime = new Date().getTime();
-                        const timeSinceLastClick = currentTime - lastClickTime;
-                        
-                        if (timeSinceLastClick < DOUBLE_CLICK_DELAY) {
-                            console.log('Doble clic detectado en fila');
-                            handleDoubleClick(row);
-                        } else {
-                            handleSingleClick(row);
-                        }
-                        
-                        lastClickTime = currentTime;
-                    }
-                });
-            }
-
-            function handleSingleClick(row: HTMLTableRowElement) {
-                const allRows = document.querySelectorAll('#productsTableBody tr');
-                allRows.forEach(r => r.classList.remove('table-primary'));
-                
-                row.classList.add('table-primary');
-                
-                selectedProductId = row.getAttribute('data-product-id');
-                
-                console.log('Producto seleccionado (clic simple):', selectedProductId);
-            }
-
-            function handleDoubleClick(row: HTMLTableRowElement) {
-                const productId = row.getAttribute('data-product-id');
-                if (!productId) return;
-
-                console.log('Procesando doble clic para producto ID:', productId);
-                
-                handleSingleClick(row);
-                
-                loadProductData(productId);
-                
-                showMessage(`Datos del producto cargados en el formulario. Puede editarlos y hacer clic en "Actualizar".`, 'info');
-                
-                console.log('Formulario llenado automáticamente (doble clic) para producto:', productId);
-            }
-
-            document.addEventListener('click', function(event) {
-                const target = event.target as Node;
-                if (isSortVisible && sortButton && !sortButton.contains(target) && sortDropdown && !sortDropdown.contains(target)) {
-                    toggleSortDropdown();
-                }
-                if (isFiltersVisible && filterButton && !filterButton.contains(target) && filtersAccordion && !filtersAccordion.contains(target)) {
-                    toggleFiltersAccordion();
-                }
-            });
-
-            updateTable();
-            console.log('Sistema de productos inicializado correctamente');
-        });
-    </script>
 </Layout>
 
-    <style>
-        /* Solo estilos personalizados que no cubre Bootstrap */
-        .btn-primary {
-            background-color: #482E21;
-            border-color: #482E21;
-        }
-        .btn-primary:hover {
-            background-color: #3a251a;
-            border-color: #3a251a;
-        }
-        .btn-warning {
-            background-color: #F3DCBB;
-            color: #000;
-            border-color: #F3DCBB;
-        }
-        .btn-warning:hover {
-            background-color: #e2c89c;
-            color: #000;
-            border-color: #e2c89c;
-        }
-        .btn-danger {
-            background-color: #930000;
-            border-color: #930000;
-        }
-        .btn-danger:hover {
-            background-color: #7a0000;
-            border-color: #7a0000;
-        }
-    </style>
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
+    }
+
+    .form-label {
+        font-size: 1rem;
+    }
+
+    .table th {
+        font-weight: 600;
+        font-size: 0.875rem;
+        padding: 12px 16px;
+    }
+
+    .table td {
+        padding: 12px 16px;
+        vertical-align: middle;
+    }
+
+    .btn {
+        border-radius: 8px;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+</style>

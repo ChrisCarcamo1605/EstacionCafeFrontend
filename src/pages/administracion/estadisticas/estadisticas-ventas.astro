@@ -12,41 +12,46 @@ const estadisticasRouteMap: Record<string, string> = {
     "Reporte de Ventas": "/administracion/estadisticas/reporte-ventas"
 };
 
-const response = await fetch(`${ML_API_URL}/sales-data`, {
-    method: "GET",
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+const json = {
+    analisis_productos: [
+        { producto: "Café Espresso", unidades_vendidas: 150, ingresos_totales: 2250, rentabilidad: 25.5 },
+        { producto: "Capuchino", unidades_vendidas: 120, ingresos_totales: 1800, rentabilidad: 22.3 },
+        { producto: "Latte", unidades_vendidas: 95, ingresos_totales: 1425, rentabilidad: 18.7 },
+        { producto: "Mocha", unidades_vendidas: 80, ingresos_totales: 1360, rentabilidad: 16.2 },
+        { producto: "Americano", unidades_vendidas: 110, ingresos_totales: 1100, rentabilidad: 15.8 },
+        { producto: "Té Verde", unidades_vendidas: 65, ingresos_totales: 455, rentabilidad: 12.1 },
+        { producto: "Pastel Chocolate", unidades_vendidas: 45, ingresos_totales: 675, rentabilidad: 28.9 },
+        { producto: "Croissant", unidades_vendidas: 85, ingresos_totales: 680, rentabilidad: 14.3 }
+    ],
+    predicciones: [
+        { fecha: "2024-01-15", prediccion: "2,850", dia_semana: "Lunes" },
+        { fecha: "2024-01-16", prediccion: "3,120", dia_semana: "Martes" },
+        { fecha: "2024-01-17", prediccion: "2,950", dia_semana: "Miércoles" },
+        { fecha: "2024-01-18", prediccion: "3,450", dia_semana: "Jueves" },
+        { fecha: "2024-01-19", prediccion: "4,200", dia_semana: "Viernes" }
+    ]
+};
 
-const response1 = await fetch(`${BACKEND_API_URL}/bills`,{
-    method: "GET",
-    headers:{
-      "Content-Type": "application/json",
-    },
-});
-
-let json1 = null;
-if (response1.ok) {
-    json1 = await response1.json();
-} else {
-}
-
-
-let json = null;
-if (response.ok) {
-    json = await response.json();
-} else {
-    console.error("Error fetching data:", response.statusText);
-}
+const json1 = {
+    data: [
+        { id: 1, total: "125.50" },
+        { id: 2, total: "89.75" },
+        { id: 3, total: "156.20" },
+        { id: 4, total: "203.40" },
+        { id: 5, total: "78.90" },
+        { id: 6, total: "145.60" },
+        { id: 7, total: "189.30" },
+        { id: 8, total: "95.25" },
+        { id: 9, total: "167.80" },
+        { id: 10, total: "134.45" }
+    ]
+};
 
 const productosMasRentables = json.analisis_productos
     .sort((a: any, b: any) => b.rentabilidad - a.rentabilidad)
     .slice(0, 7);
 ---
-
 <Layout title="Estadisticas de Ventas">
-    <!-- Navbar en la parte superior -->
     <Navbar />
     
     <div class="d-flex">
@@ -102,8 +107,8 @@ const productosMasRentables = json.analisis_productos
                                                 <tr>
                                                     <th scope="row">{analisis_productos.producto}</th>
                                                     <td>{analisis_productos.unidades_vendidas}</td>
-                                                    <td>{analisis_productos.ingresos_totales}</td>
-                                                    <td>{analisis_productos.rentabilidad}</td>
+                                                    <td>${analisis_productos.ingresos_totales}</td>
+                                                    <td>{analisis_productos.rentabilidad}%</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -137,7 +142,7 @@ const productosMasRentables = json.analisis_productos
                                     </div>
                                     <div class="card-body py-2 px-2 text-center">
                                         <h6 class="card-title fw-bold mb-1" style="color: #482E21;">
-                                            {prediccion.prediccion}<span>$</span>
+                                            ${prediccion.prediccion}
                                         </h6>
                                         <p class="card-text mb-0 fs-8 text-muted">
                                             {prediccion.dia_semana}

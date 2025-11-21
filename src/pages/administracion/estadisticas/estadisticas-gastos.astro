@@ -12,18 +12,20 @@ const estadisticasRouteMap: Record<string, string> = {
     "Reporte de Ventas": "/administracion/estadisticas/reporte-ventas"
 };
 
-const response1 = await fetch(`${BACKEND_API_URL}/purchases`,{
-    method: "GET",
-    headers:{
-      "Content-Type": "application/json",
-    },
-});
-
-let json1 = null;
-if (response1.ok) {
-    json1 = await response1.json();
-} else {
-}
+const json1 = {
+    data: [
+        { purchaseId: "COMP-001", date: "2024-01-10", supplier: { name: "Proveedor A" }, total: "1250.50", cashRegister: "Caja 1" },
+        { purchaseId: "COMP-002", date: "2024-01-11", supplier: { name: "Proveedor B" }, total: "890.75", cashRegister: "Caja 2" },
+        { purchaseId: "COMP-003", date: "2024-01-12", supplier: { name: "Proveedor A" }, total: "1560.20", cashRegister: "Caja 1" },
+        { purchaseId: "COMP-004", date: "2024-01-13", supplier: { name: "Proveedor C" }, total: "2034.40", cashRegister: "Caja 3" },
+        { purchaseId: "COMP-005", date: "2024-01-14", supplier: { name: "Proveedor B" }, total: "780.90", cashRegister: "Caja 2" },
+        { purchaseId: "COMP-006", date: "2024-01-15", supplier: { name: "Proveedor D" }, total: "1456.60", cashRegister: "Caja 1" },
+        { purchaseId: "COMP-007", date: "2024-01-16", supplier: { name: "Proveedor A" }, total: "1893.30", cashRegister: "Caja 3" },
+        { purchaseId: "COMP-008", date: "2024-01-17", supplier: { name: "Proveedor C" }, total: "952.25", cashRegister: "Caja 2" },
+        { purchaseId: "COMP-009", date: "2024-01-18", supplier: { name: "Proveedor D" }, total: "1678.80", cashRegister: "Caja 1" },
+        { purchaseId: "COMP-010", date: "2024-01-19", supplier: { name: "Proveedor B" }, total: "1345.45", cashRegister: "Caja 3" }
+    ]
+};
 
 const compras = json1.data;
 const totalGastado = compras.reduce((sum: number, compra: any) => sum + parseFloat(compra.total), 0);
@@ -37,7 +39,6 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
 ---
 
 <Layout title="Estadisticas de Gastos">
-    <!-- Navbar en la parte superior -->
     <Navbar />
     
     <div class="d-flex">
@@ -139,7 +140,7 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
     <script>
-    const routeMap = {
+    const routeMap: Record<string, string> = {
         "Estadisticas de Ventas": "http://localhost:4321/administracion/estadisticas/estadisticas-ventas",
         "Estadisticas de Gastos": "http://localhost:4321/administracion/estadisticas/estadisticas-gastos", 
         "Reporte de Ventas": "http://localhost:4321/administracion/estadisticas/reporte-ventas"
@@ -154,8 +155,8 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
                 if (text && text in routeMap) {
                     (item as HTMLElement).style.cursor = 'pointer';
                     item.addEventListener('click', () => {
-                        console.log('Navegando a:', routeMap[text as keyof typeof routeMap]);
-                        window.location.href = routeMap[text as keyof typeof routeMap];
+                        console.log('Navegando a:', routeMap[text]);
+                        window.location.href = routeMap[text];
                     });
                     
                     item.addEventListener('mouseenter', () => {
@@ -179,7 +180,7 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
             options.forEach(optionText => {
                 const elements = document.querySelectorAll('*');
                 elements.forEach(element => {
-                    if (element.textContent?.trim() === optionText && routeMap[optionText as keyof typeof routeMap]) {
+                    if (element.textContent?.trim() === optionText && routeMap[optionText]) {
                         if (!element.hasAttribute('data-nav-configured')) {
                             (element as HTMLElement).style.cursor = 'pointer';
                             element.setAttribute('data-nav-configured', 'true');
@@ -187,8 +188,8 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
                             element.addEventListener('click', (e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                console.log('Navegando a:', routeMap[optionText as keyof typeof routeMap]);
-                                window.location.href = routeMap[optionText as keyof typeof routeMap];
+                                console.log('Navegando a:', routeMap[optionText]);
+                                window.location.href = routeMap[optionText];
                             });
                             
                             element.addEventListener('mouseenter', () => {
@@ -223,8 +224,8 @@ const proveedoresCompras = compras.map((compra: any) => compra.supplier.name);
                         container.addEventListener('click', (e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('Navegando a:', routeMap[text as keyof typeof routeMap]);
-                            window.location.href = routeMap[text as keyof typeof routeMap];
+                            console.log('Navegando a:', routeMap[text]);
+                            window.location.href = routeMap[text];
                         });
                         
                         container.addEventListener('mouseenter', () => {

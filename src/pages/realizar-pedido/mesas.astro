@@ -1,40 +1,24 @@
 ---
-export const prerender = false;
 import LeftBar from "../../components/LeftBar.astro";
 import Layout from "../../layouts/Layout.astro";
-import { BACKEND_API_URL } from '../../config/api';
-const user = (Astro.locals as any).user;
+import { BACKEND_API_URL } from "../../config/api";
 
-// Obtener zonas desde la API
-import { MesaApiService } from "../../services/mesa-api.service";
-
-let options: string[] = [];
-try {
-  const mesas = await MesaApiService.getMesas();
-  // Extraer zonas únicas (ej: "ZONA A" -> "A")
-  const zonasUnicas = [...new Set(mesas.map((m: any) => {
-    const zona = m.zone?.split(" ")[1];
-    return zona || m.zone;
-  }))];
-  options = zonasUnicas.filter((z: any) => z) as string[];
-} catch (error) {
-  console.error("Error al cargar zonas:", error);
-  options = ["A", "B", "C", "D", "E"];
-}
+// Default zones - will be loaded from API client-side
+const options: string[] = ["A", "B", "C", "D", "E"];
 ---
 
 <Layout>
   <div class="d-flex flex-row">
-    <LeftBar title="Mesas" options={options} returnPath="/home"/>
+    <LeftBar title="Mesas" options={options} returnPath="/home" />
 
-    <div data-user={user.userId}
+    <div
       id="tables_container"
       class="w-100 d-flex flex-wrap gap-2 p-2 overflow-y-auto align-content-start"
       style="min-height: 0; max-height: 100%;"
     >
     </div>
 
-    <div 
+    <div
       class="d-flex flex-column gap-3 table-bar py-3 px-3"
       style="width:450px; overflow-y: auto;"
     >
@@ -42,7 +26,9 @@ try {
         <!-- Header del panel -->
         <div class="text-center mb-2">
           <h5 class="fw-bold mb-1 text-brown">Información de Mesa</h5>
-          <p class="text-muted mb-0 small">Seleccione una mesa para ver detalles</p>
+          <p class="text-muted mb-0 small">
+            Seleccione una mesa para ver detalles
+          </p>
         </div>
 
         <!-- Campos de información (inicialmente visibles) -->
@@ -52,36 +38,81 @@ try {
         </div>
         <div class="data-groupd d-flex flex-column">
           <label class="fw-bold mb-2 text-brown">Mesa</label>
-          <input class="form-control mb-2" readonly placeholder="Sin seleccionar" />
+          <input
+            class="form-control mb-2"
+            readonly
+            placeholder="Sin seleccionar"
+          />
         </div>
         <div class="data-groupd d-flex flex-column">
           <label class="fw-bold mb-2 text-brown">Hora de Apertura</label>
-          <input class="form-control mb-2" readonly placeholder="--/--/---- --:--" />
+          <input
+            class="form-control mb-2"
+            readonly
+            placeholder="--/--/---- --:--"
+          />
         </div>
         <div class="data-groupd d-flex flex-column">
           <label class="fw-bold mb-2 text-brown">Última vez abierto</label>
-          <input class="form-control mb-2" readonly placeholder="--/--/---- --:--" />
+          <input
+            class="form-control mb-2"
+            readonly
+            placeholder="--/--/---- --:--"
+          />
         </div>
 
         <!-- Botones de acción -->
         <div class="d-flex flex-column gap-2 mt-3">
-          <button id="finishOrder" class="btn btn-primary w-100" style="display: none;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
-              <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+          <button
+            id="finishOrder"
+            class="btn btn-primary w-100"
+            style="display: none;"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-arrow-right-circle me-2"
+              viewBox="0 0 16 16"
+              style="vertical-align: middle;"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
+              ></path>
             </svg>
             Ver Mesa
           </button>
-          <button id="closeOrder" class="btn btn-danger w-100" style="display: none;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+          <button
+            id="closeOrder"
+            class="btn btn-danger w-100"
+            style="display: none;"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-x-circle me-2"
+              viewBox="0 0 16 16"
+              style="vertical-align: middle;"
+            >
+              <path
+                d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"
+              ></path>
+              <path
+                d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"
+              ></path>
             </svg>
             Cerrar Cuentas
           </button>
         </div>
-      <style>
-        .text-brown { color: #482E21; }
-      </style>
+        <style>
+          .text-brown {
+            color: #482e21;
+          }
+        </style>
       </div>
     </div>
   </div>

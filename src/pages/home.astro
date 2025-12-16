@@ -1,11 +1,10 @@
 ---
-export const prerender = false;
 import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
 import loginImage from "../../public/loginimage.jpg";
 
-const user = (Astro.locals as any)?.user;
-const isAdmin = user?.role === "admin";
+// In static mode, we'll show all options and handle permissions client-side if needed
+const isAdmin = true; // Show all options in static mode
 ---
 
 <Layout title="Home">

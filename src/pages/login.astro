@@ -1,16 +1,7 @@
 ---
-export const prerender = false;
 import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
 import loginImage from "../../public/loginimage.jpg";
-
-
-
-
-
-// Obtener el mensaje de error de la URL
-const url = new URL(Astro.request.url);
-const errorMessage = url.searchParams.get('error');
 ---
 
 <Layout title="Login">
@@ -31,21 +22,31 @@ const errorMessage = url.searchParams.get('error');
           class="d-flex flex-column w-100 text-center justify-content-center"
           style="max-width: 340px;"
         >
-          <h2 class="fw-semibold mb-3 text-center pattaya_title" style="color:#5a3c2e;">
+          <h2
+            class="fw-semibold mb-3 text-center pattaya_title"
+            style="color:#5a3c2e;"
+          >
             Iniciar Sesión
           </h2>
 
-          {errorMessage && (
-            <div class="alert alert-danger alert-dismissible fade show p-2 d-flex justify-content-center align-items-center gap-2" role="alert">
-              <p class="m-0">{errorMessage}</p>
-              <button type="button" class="btn-close align-self-center pt-1 pe-3 pe-4" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          )}
+          <div
+            id="error-message"
+            class="alert alert-danger alert-dismissible fade p-2 d-none"
+            role="alert"
+          >
+            <p class="m-0" id="error-text"></p>
+            <button
+              type="button"
+              class="btn-close align-self-center pt-1 pe-3 pe-4"
+              data-bs-dismiss="alert"
+              aria-label="Close"></button>
+          </div>
 
-          <form method="POST" action="/api/login">
+          <form id="login-form">
             <div class="mb-3">
               <input
                 type="text"
+                id="username"
                 name="username"
                 class="form-control form-control-lg"
                 placeholder="Admin"
@@ -55,6 +56,7 @@ const errorMessage = url.searchParams.get('error');
             <div class="mb-4">
               <input
                 type="password"
+                id="password"
                 name="password"
                 class="form-control form-control-lg"
                 placeholder="1234"
@@ -111,4 +113,72 @@ const errorMessage = url.searchParams.get('error');
     </footer>
   </div>
 
+  <script>
+    import { BACKEND_API_URL } from "../config/api";
+
+    const loginForm = document.getElementById("login-form") as HTMLFormElement;
+    const errorMessage = document.getElementById(
+      "error-message",
+    ) as HTMLDivElement;
+    const errorText = document.getElementById(
+      "error-text",
+    ) as HTMLParagraphElement;
+
+    loginForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = (document.getElementById("username") as HTMLInputElement)
+        .value;
+      const password = (document.getElementById("password") as HTMLInputElement)
+        .value;
+
+      // Hide any previous error
+      errorMessage.classList.add("d-none");
+      errorMessage.classList.remove("show");
+
+      try {
+        // For now, just redirect to home (authentication is commented out in the original code)
+        // In production, you would call your backend API here:
+        /*
+        const response = await fetch(`${BACKEND_API_URL}/users/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const token = result.data.token;
+          
+          if (token) {
+            // Store token in localStorage
+            localStorage.setItem('auth_token', token);
+            localStorage.setItem('user', JSON.stringify(result.data.user));
+            window.location.href = '/home';
+          }
+        } else {
+          throw new Error('CREDENCIALES INCORRECTAS');
+        }
+        */
+
+        // Temporary: just redirect to home
+        window.location.href = "/home";
+      } catch (error: any) {
+        errorText.textContent = error.message || "ERROR DE CONEXION";
+        errorMessage.classList.remove("d-none");
+        errorMessage.classList.add("show");
+      }
+    });
+
+    // Check for error in URL params (for backwards compatibility)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlError = urlParams.get("error");
+    if (urlError) {
+      errorText.textContent = decodeURIComponent(urlError);
+      errorMessage.classList.remove("d-none");
+      errorMessage.classList.add("show");
+    }
+  </script>
 </Layout>

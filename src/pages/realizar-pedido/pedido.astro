@@ -1,34 +1,23 @@
 ---
-export const prerender = false;
-
 import Layout from "../../layouts/Layout.astro";
 import LeftBar from "../../components/LeftBar.astro";
 import Navbar from "../../components/Navbar.astro";
 import BillBar from "../../components/BillBar.astro";
-import { BACKEND_API_URL } from "../../config/api.ts"; 
+import { BACKEND_API_URL } from "../../config/api.ts";
 
 const details: any[] = [];
-const user = (Astro.locals as any).user;
 
-// Obtener tipos de productos desde la API
-import { BillApiService } from "../../services/bill-api.service";
+// Default options - will be loaded from API client-side
+const options: string[] = [];
 
-let options: string[] = [];
-try {
-  const productTypes = await BillApiService.getProductTypes();
-  options = productTypes.map((type: any) => type.name);
-} catch (error) {
-  console.error("Error al cargar tipos de productos:", error);
-  options = [];
-}
 // Aquí se recibirán los datos de la mesa y cuenta desde sessionStorage en el cliente
 const productRouteMap: Record<string, string> = {};
 ---
 
 <Layout title="Realizar Pedido">
-  <div id="products-container"
+  <div
+    id="products-container"
     class="container-fluid p-0 vh-100 overflow-hidden d-flex flex-column"
-    data-user={JSON.stringify(user.userId)}
   >
     <div class="w-100 m-0">
       <Navbar />
@@ -45,7 +34,8 @@ const productRouteMap: Record<string, string> = {};
         class="w-100 d-flex flex-wrap gap-2 p-2 overflow-y-auto align-content-start"
         id="products_container"
         style="min-height: 0; max-height: 100%;"
-      ></div>
+      >
+      </div>
       <BillBar details={details} />
     </div>
   </div>

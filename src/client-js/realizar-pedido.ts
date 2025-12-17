@@ -96,6 +96,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("Tipos de productos cargados:", productTypes);
     productsGrid.setProductTypes(productTypes);
 
+    // Actualizar el sidebar con los tipos de productos
+    const leftbarOptionsContainer = document.querySelector("#leftbar-options");
+    if (leftbarOptionsContainer) {
+      leftbarOptionsContainer.innerHTML = productTypes.map(type => 
+        `<div class="sidebar_option" data-option="${type.name}">
+          <span>${type.name}</span>
+        </div>`
+      ).join('');
+    }
+
     console.log("Iniciando carga de productos...");
     // Luego cargar y renderizar productos
     const products = await BillApiService.getProducts();
@@ -106,13 +116,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       orderManager.addProduct(product);
     });
     console.log("Productos renderizados");
+
+    // INICIALIZAR FILTRO DE TIPOS DE PRODUCTO después de cargar las opciones
+    const updatedSidebarOptions = document.querySelectorAll(".sidebar_option");
+    if (updatedSidebarOptions.length > 0) {
+      new ProductTypeFilter(updatedSidebarOptions);
+    }
   } catch (error) {
     console.error("Error al cargar productos:", error);
     alert("Error al cargar los productos: " + error);
-  }
-
-  // INICIALIZAR FILTRO DE TIPOS DE PRODUCTO
-  if (sidebarOptions.length > 0) {
-    new ProductTypeFilter(sidebarOptions);
   }
 });

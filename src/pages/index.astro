@@ -2,6 +2,7 @@
 import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
 import loginImage from "../../public/loginimage.jpg";
+import estacionWhite from "../../public/EstacionCafeWhite.png";
 ---
 
 <Layout title="Login">
@@ -86,7 +87,7 @@ import loginImage from "../../public/loginimage.jpg";
     >
       <div class="d-flex align-items-center">
         <img
-          src="/EstacionCafeWhite.png"
+          src={estacionWhite.src}
           alt="Estación Café"
           width="90"
           class="me-2"

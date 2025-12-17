@@ -1,7 +1,9 @@
 ---
 import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
-import loginImage from "../../public/loginimage.jpg";
+import home2 from "../../public/home2.png";
+import home1 from "../../public/home1.jpg";
+import home4 from "../../public/home4.jpg";
 
 // In static mode, we'll show all options and handle permissions client-side if needed
 const isAdmin = true; // Show all options in static mode
@@ -23,7 +25,7 @@ const isAdmin = true; // Show all options in static mode
           <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
-                src="/home2.png"
+                src={home2.src}
                 alt="Para llevar"
                 class="card-img"
                 style="height: 100%; width: 100%; object-fit: cover;"
@@ -43,7 +45,7 @@ const isAdmin = true; // Show all options in static mode
           <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
-                src="/home1.jpg"
+                src={home1.src}
                 alt="Pedidos"
                 class="card-img"
                 style="height: 100%; width: 100%; object-fit: cover;"
@@ -65,7 +67,7 @@ const isAdmin = true; // Show all options in static mode
               <div class="card shadow border-0 menu-item h-100">
                 <div style="position: relative; height: 100%;">
                   <img
-                    src="/home4.jpg"
+                    src={home4.src}
                     alt="Administración"
                     class="card-img"
                     style="height: 100%; width: 100%; object-fit: cover;"

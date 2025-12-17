@@ -1,6 +1,9 @@
 ---
 import Navbar from "../components/Navbar.astro";
 import Layout from "../layouts/Layout.astro";
+import inventarioImg from "../../public/inventario.jpg";
+import estadisticasImg from "../../public/estadisticas.jpg";
+import usuariosImg from "../../public/usuarios.jpg";
 const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"];
 ---
 
@@ -47,7 +50,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
           <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
-                src="/inventario.jpg"
+                src={inventarioImg.src}
                 class="card-img"
                 alt="Inventario"
                 style="height: 100%; width: 100%; object-fit: cover;"
@@ -70,7 +73,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
           <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
-                src="/estadisticas.jpg"
+                src={estadisticasImg.src}
                 class="card-img"
                 alt="Estadísticas"
                 style="height: 100%; width: 100%; object-fit: cover;"
@@ -92,7 +95,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
               <div class="card shadow border-0 menu-item h-100">
                 <div style="position: relative; height: 100%;">
                   <img
-                    src="/usuarios.jpg"
+                    src={usuariosImg.src}
                     class="card-img"
                     alt="Usuarios"
                     style="height: 100%; width: 100%; object-fit: cover;"

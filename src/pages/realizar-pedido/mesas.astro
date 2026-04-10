@@ -9,7 +9,7 @@ const options: string[] = ["A", "B", "C", "D", "E"];
 
 <Layout>
   <div class="d-flex flex-row">
-    <LeftBar title="Mesas" options={options} returnPath="/home" />
+    <LeftBar title="Mesas" options={options} returnPath={import.meta.env.BASE_URL + "home"} />
 
     <div
       id="tables_container"

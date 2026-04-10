@@ -6,9 +6,9 @@ import ApexCharts from "apexcharts";
 import {BACKEND_API_URL, ML_API_URL} from '../../../config/api'
 
 const estadisticasRouteMap: Record<string, string> = {
-    "Estadisticas de Ventas": "/administracion/estadisticas/estadisticas-ventas",
-    "Estadisticas de Gastos": "/administracion/estadisticas/estadisticas-gastos",
-    "Reporte de Ventas": "/administracion/estadisticas/reporte-ventas"
+    "Estadisticas de Ventas": import.meta.env.BASE_URL + "administracion/estadisticas/estadisticas-ventas",
+    "Estadisticas de Gastos": import.meta.env.BASE_URL + "administracion/estadisticas/estadisticas-gastos",
+    "Reporte de Ventas": import.meta.env.BASE_URL + "administracion/estadisticas/reporte-ventas"
 };
 
 const json = {

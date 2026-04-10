@@ -157,7 +157,7 @@ import estacionWhite from "../../public/EstacionCafeWhite.png";
             // Store token in localStorage
             localStorage.setItem('auth_token', token);
             localStorage.setItem('user', JSON.stringify(result.data.user));
-            window.location.href = '/home';
+            window.location.href = import.meta.env.BASE_URL + 'home';
           }
         } else {
           throw new Error('CREDENCIALES INCORRECTAS');
@@ -165,7 +165,7 @@ import estacionWhite from "../../public/EstacionCafeWhite.png";
         */
 
         // Temporary: just redirect to home
-        window.location.href = "/home";
+        window.location.href = import.meta.env.BASE_URL + "home";
       } catch (error: any) {
         errorText.textContent = error.message || "ERROR DE CONEXION";
         errorMessage.classList.remove("d-none");

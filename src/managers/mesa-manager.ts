@@ -174,7 +174,7 @@ export class MesaManager {
   private goToRealizarPedido(): void {
     StorageService.setMesa(this.mesaSeleccionada!);
     StorageService.setCuenta(this.billSeleccionada!);
-    window.location.href = "/realizar-pedido/pedido";
+    window.location.href = import.meta.env.BASE_URL + "realizar-pedido/pedido";
   }
 
   /**

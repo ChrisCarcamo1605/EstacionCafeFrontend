@@ -27,7 +27,7 @@ const productRouteMap: Record<string, string> = {};
       <LeftBar
         options={options}
         title="Pedido"
-        returnPath="/home"
+        returnPath={import.meta.env.BASE_URL + "home"}
         routeMap={productRouteMap}
       />
       <div

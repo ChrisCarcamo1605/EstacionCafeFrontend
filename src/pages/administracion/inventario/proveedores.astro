@@ -7,10 +7,10 @@ import { BACKEND_API_URL } from "../../../config/api";
 const sidebarOptions = ["Consumibles", "Productos", "Ingredientes", "Proveedores"];
 
 const inventoryRouteMap: Record<string, string> = {
-    "Consumibles": "/administracion/inventario/consumibles",
-    "Productos": "/administracion/inventario/productos",
-    "Ingredientes": "/administracion/inventario/ingredientes",
-    "Proveedores": "/administracion/inventario/proveedores"
+    "Consumibles": import.meta.env.BASE_URL + "administracion/inventario/consumibles",
+    "Productos": import.meta.env.BASE_URL + "administracion/inventario/productos",
+    "Ingredientes": import.meta.env.BASE_URL + "administracion/inventario/ingredientes",
+    "Proveedores": import.meta.env.BASE_URL + "administracion/inventario/proveedores"
 };
 
 const initialSuppliers = [

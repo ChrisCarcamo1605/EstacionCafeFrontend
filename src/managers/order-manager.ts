@@ -140,7 +140,7 @@ export class OrderManager {
       // Limpiar sesión y redirigir
       StorageService.clearSession();
       alert("Pedido finalizado exitosamente");
-      window.location.href = "/realizar-pedido/mesas";
+      window.location.href = import.meta.env.BASE_URL + "realizar-pedido/mesas";
     } catch (error: any) {
       console.error("Error al finalizar pedido:", error);
       alert(error.message || "Error al finalizar el pedido");
@@ -164,7 +164,7 @@ export class OrderManager {
     }
 
     StorageService.clearSession();
-    window.location.href = "/realizar-pedido/mesas";
+    window.location.href = import.meta.env.BASE_URL + "realizar-pedido/mesas";
   }
 
   /**
@@ -172,7 +172,7 @@ export class OrderManager {
    */
   saveAndGoBack(): void {
     StorageService.clearSession();
-    window.location.href = "/realizar-pedido/mesas";
+    window.location.href = import.meta.env.BASE_URL + "realizar-pedido/mesas";
   }
 
   /**

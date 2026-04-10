@@ -6,7 +6,7 @@ import LeftBar from "../../components/LeftBar.astro";
 const sidebarOptions = ["Planilla"];
 
 const inventoryRouteMap = {
-    "Planilla": "/administracion/planilla"
+    "Planilla": import.meta.env.BASE_URL + "administracion/planilla"
 };
 
 const initialPayroll = [

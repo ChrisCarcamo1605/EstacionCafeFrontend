@@ -9,7 +9,7 @@ interface Props {
   routeMap?: Record<string, string>;
 }
 
-const { options = [], title, selectedOption = "" , returnPath={import.meta.env.BASE_URL + "administracion"}, routeMap = {} } = Astro.props;
+const { options = [], title, selectedOption = "" , returnPath = import.meta.env.BASE_URL + "administracion", routeMap = {} } = Astro.props;
 ---
 
 <div

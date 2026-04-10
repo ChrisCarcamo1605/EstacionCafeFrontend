@@ -17,7 +17,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
   >
     <!-- Botón Volver - MÁS GRANDE -->
 
-    <a href="/home">
+    <a href={import.meta.env.BASE_URL + "home"}>
       <div class="mb-3">
         <button
           class="btn btn-link text-dark text-decoration-none p-0 align-items-center d-flex flex-row"
@@ -44,7 +44,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
       <!-- Redirige a consumibles -->
       <div class="col-md-4" style="height: 100%;">
         <a
-          href="/administracion/inventario/consumibles"
+          href={import.meta.env.BASE_URL + "administracion/inventario/consumibles"}
           class="text-decoration-none"
         >
           <div class="card shadow border-0 menu-item h-100">
@@ -67,7 +67,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
       <!-- Redirige a estadisticas-ventas -->
       <div class="col-md-4" style="height: 100%;">
         <a
-          href="/administracion/estadisticas/estadisticas-ventas"
+          href={import.meta.env.BASE_URL + "administracion/estadisticas/estadisticas-ventas"}
           class="text-decoration-none"
         >
           <div class="card shadow border-0 menu-item h-100">
@@ -91,7 +91,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
       <div class="col-md-4" style="height: 100%;">
         <div class="row g-2 h-100">
           <div class="col-12" style="height: calc(50% - 5px);">
-            <a href="/administracion/planilla" class="text-decoration-none">
+            <a href={import.meta.env.BASE_URL + "administracion/planilla"} class="text-decoration-none">
               <div class="card shadow border-0 menu-item h-100">
                 <div style="position: relative; height: 100%;">
                   <img
@@ -112,7 +112,7 @@ const options = ["Inventario", "Estadísticas", "Usuarios", "Gastos", "Ajustes"]
           <!-- Redirige a ajustes-general -->
           <div class="col-12" style="height: calc(50%  - 5px);">
             <a
-              href="/administracion/ajustes/ajustes-alerta"
+              href={import.meta.env.BASE_URL + "administracion/ajustes/ajustes-alerta"}
               class="text-decoration-none"
             >
               <div

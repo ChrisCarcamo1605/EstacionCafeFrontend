@@ -21,7 +21,7 @@ const isAdmin = true; // Show all options in static mode
     >
       <!-- Para llevar -->
       <div class=`${isAdmin ? 'col-md-3' : 'col-md-4'}` style="height: 100%;">
-        <a href="/realizar-pedido/pedido" class="text-decoration-none">
+        <a href={import.meta.env.BASE_URL + "realizar-pedido/pedido"} class="text-decoration-none">
           <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
@@ -41,7 +41,7 @@ const isAdmin = true; // Show all options in static mode
 
       <!-- Realizar Pedido -->
       <div class=`${isAdmin ? 'col-md-6' : 'col-md-8'}` style="height: 100%;">
-        <a href="/realizar-pedido/mesas" class="text-decoration-none">
+        <a href={import.meta.env.BASE_URL + "realizar-pedido/mesas"} class="text-decoration-none">
           <div class="card shadow border-0 menu-item h-100">
             <div style="position: relative; height: 100%;">
               <img
@@ -63,7 +63,7 @@ const isAdmin = true; // Show all options in static mode
       {
         isAdmin && (
           <div class="col-md-3" style="height: 100%;">
-            <a href="/administracion" class="text-decoration-none">
+            <a href={import.meta.env.BASE_URL + "administracion"} class="text-decoration-none">
               <div class="card shadow border-0 menu-item h-100">
                 <div style="position: relative; height: 100%;">
                   <img
